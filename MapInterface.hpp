@@ -12,6 +12,7 @@ namespace r2d2
     namespace adt
     {
         class Box{}; //temporary mock class until Box is finished
+        class Coordinate{};
     }
 }
 
