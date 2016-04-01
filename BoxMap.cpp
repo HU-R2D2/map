@@ -73,6 +73,7 @@ namespace r2d2
             for (std::pair<adt::Box, BoxInfo> box_cut : new_boxes){
                 map.push_back(box_cut);
             }
+            map.push_back(std::pair<adt::Box, BoxInfo>{box, box_info});
         }
 
         void BoxMap::save(const std::string filename)
