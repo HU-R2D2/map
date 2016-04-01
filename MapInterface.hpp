@@ -2,19 +2,8 @@
 
 #include <vector>
 #include <memory>
-/*
-Include from adt repo, but still changing
 
-#include "../adt/Box.hpp"
-*/
-namespace r2d2
-{
-    namespace adt
-    {
-        class Box{}; //temporary mock class until Box is finished
-        class Coordinate{};
-    }
-}
+#include "../adt/source/include/Box.hpp"
 
 namespace r2d2
 {
@@ -44,16 +33,16 @@ namespace r2d2
        {
 
        public:
-           virtual BoxInfo & get_box_info(const adt::Box & box) = 0;
-           virtual adt::Box & get_map_bounding_box() = 0;
-           virtual std::shared_ptr<BoxInfo**> get_map_area_2d(const adt::Box & area, const adt::Box & pixel_size) = 0;
+           virtual BoxInfo & get_box_info(const Box & box) = 0;
+           virtual Box & get_map_bounding_box() = 0;
+           virtual std::shared_ptr<BoxInfo**> get_map_area_2d(const Box & area, const Box & pixel_size) = 0;
        };
 
        class ReadWriteMap : public ReadOnlyMap
        {
 
        public:
-           virtual void set_box_info(const adt::Box & box, const BoxInfo & box_info) = 0;
+           virtual void set_box_info(const Box & box, const BoxInfo & box_info) = 0;
        };
 
        class SaveLoadMap : public ReadWriteMap
@@ -65,6 +54,3 @@ namespace r2d2
        };
    }
 }
-
-
-
