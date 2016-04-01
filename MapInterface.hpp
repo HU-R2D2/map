@@ -25,8 +25,9 @@ namespace r2d2
 
        public:
           BoxInfo(const bool has_obstacle = false, const bool has_unknown = false, const bool has_navigatable = false);
-          bool operator== (const BoxInfo & lhs) const;
-          bool operator!= (const BoxInfo & lhs) const;
+          bool operator== (const BoxInfo & rhs) const;
+          bool operator!= (const BoxInfo & rhs) const;
+		  friend std::ostream & operator<< (std::ostream & os, const BoxInfo & rhs);
 
 
        private:
@@ -61,5 +62,6 @@ namespace r2d2
        };
    }
 }
+
 
 
