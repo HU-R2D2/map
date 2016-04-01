@@ -30,9 +30,8 @@ namespace r2d2
           const bool get_has_unknown();
           const bool get_has_navigatable();
 
-          bool operator== (const BoxInfo & lhs) const;
-          bool operator!= (const BoxInfo & lhs) const;
-
+          bool operator== (const BoxInfo & rhs) const;
+          bool operator!= (const BoxInfo & rhs) const;
 
        private:
           const bool has_obstacle;
@@ -66,5 +65,6 @@ namespace r2d2
        };
    }
 }
+
 
 
