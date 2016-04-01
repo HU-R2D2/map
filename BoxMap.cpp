@@ -7,12 +7,27 @@ namespace r2d2
 
         BoxInfo & BoxMap::get_box_info(const adt::Box & box)
         {
-            return BoxInfo();
+            bool temp_has_obstacle = false;
+            bool temp_has_unknown = false;
+            bool temp_has_navigatable = false;
+            
+            for (std::pair<adt::Box, BoxInfo> known_box : map){
+                if (known_box.first.intersects(box)){
+                    temp_has_obstacle = temp_has_obstacle || known_box.second.get_has_obstacle();
+                    temp_has_unknown = temp_has_unknown || known_box.second.get_has_unknown();
+                    temp_has_navigatable = temp_has_navigatable || known_box.second.get_has_navigatable();
+                }
+            }
+            return BoxInfo{temp_has_obstacle, temp_has_unknown, temp_has_navigatable};
         }
 
         adt::Box & BoxMap::get_map_bounding_box()
         {
-            return adt::Box();
+            adt::Box temp_box{};
+            for (std::pair<adt::Box, BoxInfo> box : map){
+                temp_box = temp_box.get_union_box(box);
+            }
+            return temp_box;
         }
 
         std::shared_ptr<BoxInfo**> BoxMap::get_map_area_2d(const adt::Box & area, const adt::Box & pixel_size)
