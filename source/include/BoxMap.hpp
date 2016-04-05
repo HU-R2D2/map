@@ -1,5 +1,5 @@
 #pragma once
-
+#include "gtest/gtest.h"
 #include "MapInterface.hpp"
 
 namespace r2d2
