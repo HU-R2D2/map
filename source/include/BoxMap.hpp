@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _BOXMAP_HPP
+#define _BOXMAP_HPP
 
 #include "../../../adt/source/include/Box.hpp"
 #include "MapInterface.hpp"
@@ -27,3 +28,4 @@ namespace r2d2
 
     };
 }
+#endif //_BOXMAP_HPP
