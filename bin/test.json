@@ -1,0 +1,19 @@
+{
+	"box" : {
+		"leftCoordinate": {
+			"x": 10.00000,
+			"y": 11.00000,
+			"z": 12.00000
+		},
+		"rightCoordinate": {
+			"x": 10.00000,
+			"y": 11.00000,
+			"z": 12.00000
+		},
+		"boxInfo": {
+			"has_obstacle": true,
+			"has_unknown": false,
+			"has_navigatable": false
+		}
+	}
+}
