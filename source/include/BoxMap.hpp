@@ -19,8 +19,6 @@ namespace r2d2
 
         void set_box_info(Box & box, BoxInfo & box_info) override;
 
-        std::string removechars(std::string str);
-        std::string Length_to_string(Length lth);
         void save(std::string filename) override;
         void load(std::string filename) override;
 
