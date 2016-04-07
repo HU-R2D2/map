@@ -1,5 +1,5 @@
 {
-	"leftCoordinate" : [{"x": 20.00, "y": 30.00, "z": 40.00}, {"x": 20.00, "y": 30.00, "z": 40.00}],
-	"rightCoordinate" : [{"x": 11.00, "y": 12.00, "z": 13.00}, {"x": 14.00, "y": 15.00, "z": 16.00}],
+	"leftCoordinates" : [{"x": 20.00, "y": 30.00, "z": 40.00}, {"x": 20.00, "y": 30.00, "z": 40.00}],
+	"rightCoordinates" : [{"x": 11.00, "y": 12.00, "z": 13.00}, {"x": 14.00, "y": 15.00, "z": 16.00}],
 	"boxInfo" : [{"has_obstacle": false, "has_unknown": true,"has_navigatable": true},{"has_obstacle": false, "has_unknown": true,"has_navigatable": true}]
 }

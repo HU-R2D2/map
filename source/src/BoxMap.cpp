@@ -99,21 +99,6 @@ namespace r2d2
         map.push_back(std::pair<Box, BoxInfo>{box, box_info});
     }
 
-    std::string removechars(std::string str) {
-        for ( auto & c : str ) {
-            if ( isalpha( c ) ) c = ' ';
-        }
-        return str;
-    }
-
-    template <typename T>
-    string NumberToString ( T Number )
-    {
-        stringstream ss;
-        ss << Number;
-        return ss.str();
-    }
-
     void BoxMap::save(std::string filename)
     {
         rapidjson::Document d;
@@ -174,10 +159,10 @@ namespace r2d2
         d.AddMember("leftCoordinates", leftCoordinates, d.GetAllocator());
         d.AddMember("rightCoordinates", rightCoordinates, d.GetAllocator());
         d.AddMember("boxInfo", boxInfos, d.GetAllocator());
+
         FILE* fp = fopen(filename.c_str(), "wb");
         char writeBuffer[65536];
         rapidjson::FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
-
         rapidjson::Writer<rapidjson::FileWriteStream> writer(os);
         d.Accept(writer);
     }
@@ -189,14 +174,14 @@ namespace r2d2
         char buff[65536];
         rapidjson::FileReadStream is(pFILE, buff, sizeof(buff));
         rapidjson::Document d;
-
         d.ParseStream<0, rapidjson::UTF8<>, rapidjson::FileReadStream>(is);
-        const rapidjson::Value& a = d["leftCoordinates"];
 
-        for(rapidjson::SizeType i = 0; i < a.Size(); i++) {
-            Box pBox = Box(Coordinate((d["leftCoordinates"][i]["x"].GetDouble() * Length::METER), (d["leftCoordinates"][i]["y"].GetDouble() * Length::METER), (d["leftCoordinates"][i]["z"].GetDouble() * Length::METER)), Coordinate((d["rightCoordinates"][i]["x"].GetDouble() * Length::METER), (d["rightCoordinates"][i]["y"].GetDouble() * Length::METER), (d["rightCoordinates"][i]["z"].GetDouble() * Length::METER)));
-            BoxInfo pBoxInfo(d["boxInfo"][i]["has_obstacle"].GetBool(),d["boxInfo"][i]["has_unknown"].GetBool(),d["boxInfo"][i]["has_navigatable"].GetBool());
-            set_box_info(pBox, pBoxInfo);
+        const rapidjson::Value& elementSize = d["leftCoordinates"];
+
+        for(rapidjson::SizeType i = 0; i < elementSize.Size(); i++) {
+            Box mBox = Box(Coordinate((d["leftCoordinates"][i]["x"].GetDouble() * Length::METER), (d["leftCoordinates"][i]["y"].GetDouble() * Length::METER), (d["leftCoordinates"][i]["z"].GetDouble() * Length::METER)), Coordinate((d["rightCoordinates"][i]["x"].GetDouble() * Length::METER), (d["rightCoordinates"][i]["y"].GetDouble() * Length::METER), (d["rightCoordinates"][i]["z"].GetDouble() * Length::METER)));
+            BoxInfo mBoxInfo(d["boxInfo"][i]["has_obstacle"].GetBool(),d["boxInfo"][i]["has_unknown"].GetBool(),d["boxInfo"][i]["has_navigatable"].GetBool());
+            set_box_info(mBox, mBoxInfo);
         }
     }
 }

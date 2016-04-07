@@ -8,6 +8,6 @@ int main(int argc, char ** argv){
     Length l1 = 200.43 * Length::METER;
     r2d2::BoxMap bm1{};
 
-    bm1.load("C:/Users/MaikelB/Source/Repos/map/bin/cookies");
+    bm1.load("C:/Users/MaikelB/Source/Repos/map/source/src/test.json");
     bm1.save("cookies");
 }
