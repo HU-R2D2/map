@@ -30,13 +30,5 @@ namespace r2d2
         return BoxInfo::has_navigatable;
     }
 
-    void SaveLoadMap::save(std::string filename) {
-
-    }
-
-    void SaveLoadMap::load(std::string filename) {
-
-    }
-
 }
 

@@ -1,5 +1,4 @@
 .idea/
 .idea/*
 
-.bin/
-.bin/*
+/bin
