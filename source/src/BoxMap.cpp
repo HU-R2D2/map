@@ -5,7 +5,7 @@
 namespace r2d2
 {
 
-    BoxInfo BoxMap::get_box_info(const Box box)
+    const BoxInfo BoxMap::get_box_info(const Box box)
     {
         bool temp_has_obstacle = false;
         bool temp_has_unknown = false;
@@ -19,13 +19,14 @@ namespace r2d2
             }
         }
 
-        cout << "has_obstacle: " << temp_has_obstacle << "\nhas_unknown: " << temp_has_unknown << "\nhas_navigatable: " << temp_has_navigatable;
+        //cout << "has_obstacle: " << temp_has_obstacle << "\nhas_unknown: " << temp_has_unknown << "\nhas_navigatable: " << temp_has_navigatable;
         return BoxInfo{ temp_has_obstacle, temp_has_unknown, temp_has_navigatable };
     }
 
-    Box BoxMap::get_map_bounding_box()
+    const Box BoxMap::get_map_bounding_box()
     {
-        Box temp_box = Box();
+        if (map.empty()){ return Box{}; }
+        Box temp_box{ map[0].first };
         for (std::pair<Box, BoxInfo> box : map){
             temp_box = temp_box.get_union_box(box.first);
         }
@@ -48,7 +49,7 @@ namespace r2d2
             if (box.intersects(map[j].first)){
 
                 to_be_removed.push_back(j);
-                cout << "should remove box: " << j << "; total boxes: "<< get_map_size() <<"\n";
+                //cout << "should remove box: " << j << "; total boxes: "<< get_map_size() <<"\n";
                 if (!box.contains(map[j].first)){
                     std::pair<Box, BoxInfo> temp_box = map[j];
 
@@ -85,16 +86,16 @@ namespace r2d2
 
         for (int i : to_be_removed){
 
-            cout << "removed: " << i << "\n";
+            //cout << "removed: " << i << "\n";
             map.erase(map.begin() + i);
         }
         map.shrink_to_fit();
         for (std::pair<Box, BoxInfo> box_cut : new_boxes){
             map.push_back(box_cut);
-            cout << "added box: " << box_cut.first << "\n";
+            //cout << "added box: " << box_cut.first << "\n";
         }
         map.push_back(std::pair<Box, BoxInfo>{box, box_info});
-        cout << "added box: " << box << "\n";
+        //cout << "added box: " << box << "\n";
     }
 
     void BoxMap::save(std::string filename)

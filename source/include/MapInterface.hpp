@@ -39,9 +39,9 @@ namespace r2d2
     public:
         BoxInfo(bool has_obstacle = false, bool has_unknown = false, bool has_navigatable = false);
 
-        bool get_has_obstacle();
-        bool get_has_unknown();
-        bool get_has_navigatable();
+        bool get_has_obstacle() const;
+        bool get_has_unknown() const;
+        bool get_has_navigatable() const;
 
         bool operator==(const BoxInfo rhs) const;
         bool operator!=(const BoxInfo rhs) const;
@@ -57,8 +57,8 @@ namespace r2d2
     {
 
     public:
-        virtual BoxInfo get_box_info(const Box box) = 0;
-        virtual Box get_map_bounding_box() = 0;
+        virtual const BoxInfo get_box_info(const Box box) = 0;
+        virtual const Box get_map_bounding_box() = 0;
         virtual std::shared_ptr<BoxInfo*> get_map_area_2d(Box & area, Box & pixel_size) = 0;
     };
 

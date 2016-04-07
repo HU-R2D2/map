@@ -20,13 +20,13 @@ namespace r2d2
         return !operator==(rhs);
     }
 
-    bool BoxInfo::get_has_obstacle(){
+    bool BoxInfo::get_has_obstacle() const{
         return BoxInfo::has_obstacle;
     }
-    bool BoxInfo::get_has_unknown(){
+    bool BoxInfo::get_has_unknown() const{
         return BoxInfo::has_unknown;
     }
-    bool BoxInfo::get_has_navigatable(){
+    bool BoxInfo::get_has_navigatable() const{
         return BoxInfo::has_navigatable;
     }
 }
