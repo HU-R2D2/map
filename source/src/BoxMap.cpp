@@ -3,6 +3,13 @@
 #include "../include/BoxMap.hpp"
 #include "../include/rapidjson/document.h"
 #include "../include/rapidjson/filereadstream.h"
+#include "../include/rapidjson/prettywriter.h"
+#include "../include/rapidjson/stringbuffer.h"
+#include "../include/rapidjson/filewritestream.h"
+#include"../include/rapidjson/writer.h"
+#include <fstream>
+#include <string> 
+#include <sstream>
 
 namespace r2d2
 {
@@ -94,13 +101,69 @@ namespace r2d2
 
     void BoxMap::save(std::string filename)
     {
+        int filenameIndex = 0;
+
+        rapidjson::StringBuffer s;
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
+        writer.StartObject();
+
+        for (std::pair<Box, BoxInfo> Boxes : map){
+            filenameIndex++;
+            string Result;//string which will contain the result
+            stringstream convert; // stringstream used for the conversion
+            convert << filenameIndex;//add the value of Number to the characters in the stream
+
+            Result = convert.str();//set Result to the content of the stream
+            const char * waarde = Result.c_str();// c_string type
+
+            writer.String(waarde);
+            writer.StartObject();
+            writer.String("leftcoordinate");
+            writer.StartObject();
+            writer.String("x");
+            writer.Double(Boxes.first.get_bottom_left().get_x() / Length::METER); //zetWaarde
+            writer.String("y");
+            writer.Double(Boxes.first.get_bottom_left().get_y() / Length::METER); //zetWaarde
+            writer.String("z");
+            writer.Double(Boxes.first.get_bottom_left().get_z() / Length::METER); //zetWaarde
+            writer.EndObject();
+            writer.String("leftcoordinate");
+            writer.StartObject();
+            writer.String("x");
+            writer.Double(Boxes.first.get_top_right().get_x() / Length::METER); //zetWaarde
+            writer.String("y");
+            writer.Double(Boxes.first.get_top_right().get_y() / Length::METER); //zetWaarde
+            writer.String("z");
+            writer.Double(Boxes.first.get_top_right().get_z() / Length::METER); //zetWaarde
+            writer.EndObject();
+            writer.String("boxinfo");
+            writer.StartObject();
+            writer.String("has_obstacle");
+            writer.Bool(Boxes.second.get_has_obstacle()); //zetWaarde
+            writer.String("has_obstacle");
+            writer.Bool(Boxes.second.get_has_unknown()); //zetWaarde
+            writer.String("has_obstacle");
+            writer.Bool(Boxes.second.get_has_navigatable()); //zetWaarde
+            writer.EndObject();
+            writer.EndObject();
+
+        }
+        writer.EndObject();
+        std::cout << s.GetString() << endl;
+        std::ofstream fs(filename);
+        if (!fs)
+        {
+            std::cerr << "Cannot open the output file." << std::endl;
+        }
+        fs << s.GetString() << endl;// output to fs
+
 
     }
 
 
     void BoxMap::load(std::string filename)
     {
-        FILE* pFILE = fopen(filename.c_str() , "rb");
+        FILE* pFILE = fopen(filename.c_str(), "rb");
         char buff[65536];
         rapidjson::FileReadStream is(pFILE, buff, sizeof(buff));
         // 1. Parse a JSON string into DOM
@@ -108,7 +171,7 @@ namespace r2d2
         d.ParseStream<0, rapidjson::UTF8<>, rapidjson::FileReadStream>(is);
 
         Box pBox = Box(Coordinate((d["box0"]["leftCoordinate"]["x"].GetDouble() * Length::METER), (d["box0"]["leftCoordinate"]["y"].GetDouble() * Length::METER), (d["box0"]["leftCoordinate"]["z"].GetDouble() * Length::METER)), Coordinate((d["box0"]["rightCoordinate"]["x"].GetDouble() * Length::METER), (d["box0"]["rightCoordinate"]["y"].GetDouble() * Length::METER), (d["box0"]["rightCoordinate"]["z"].GetDouble() * Length::METER)));
-        BoxInfo pBoxInfo(d["box0"]["boxInfo"]["has_obstacle"].GetBool(),d["box0"]["boxInfo"]["has_unknown"].GetBool(),d["box0"]["boxInfo"]["has_navigatable"].GetBool());
+        BoxInfo pBoxInfo(d["box0"]["boxInfo"]["has_obstacle"].GetBool(), d["box0"]["boxInfo"]["has_unknown"].GetBool(), d["box0"]["boxInfo"]["has_navigatable"].GetBool());
         set_box_info(pBox, pBoxInfo);
     }
 }
