@@ -1,0 +1,36 @@
+{
+	"box0" : {
+		"leftCoordinate": {
+			"x": 10.00000,
+			"y": 11.00000,
+			"z": 12.00000
+		},
+		"rightCoordinate": {
+			"x": 10.00000,
+			"y": 11.00000,
+			"z": 12.00000
+		},
+		"boxInfo": {
+			"has_obstacle": true,
+			"has_unknown": false,
+			"has_navigatable": false
+		}
+	},
+	"box1" : {
+		"leftCoordinate": {
+			"x": 15.00000,
+			"y": 16.00000,
+			"z": 17.00000
+		},
+		"rightCoordinate": {
+			"x": 15.00000,
+			"y": 18.00000,
+			"z": 20.00000
+		},
+		"boxInfo": {
+			"has_obstacle": false,
+			"has_unknown": true,
+			"has_navigatable": true
+		}
+	}
+}
