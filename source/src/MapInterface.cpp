@@ -10,12 +10,12 @@ namespace r2d2
         has_navigatable{ has_navigatable }
     {}
 
-    bool BoxInfo::operator==(BoxInfo & rhs)
+    bool BoxInfo::operator==(const BoxInfo rhs) const
     {
         return has_obstacle == rhs.has_obstacle && has_unknown == rhs.has_unknown && has_navigatable == rhs.has_navigatable;
     }
 
-    bool BoxInfo::operator!=(BoxInfo & rhs)
+    bool BoxInfo::operator!=(const BoxInfo rhs) const
     {
         return !operator==(rhs);
     }

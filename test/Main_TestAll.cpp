@@ -3,6 +3,7 @@
 #include <limits.h>
 #include "gtest/gtest.h"
 #include "../source/include/MapInterface.hpp"
+#include "../source/include/BoxMap.hpp"
 
 int main(int argc, char ** argv){
     std::cout << "test";
