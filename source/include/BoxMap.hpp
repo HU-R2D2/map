@@ -13,7 +13,6 @@ namespace r2d2
 
         const BoxInfo get_box_info(const Box box) override;
         const Box get_map_bounding_box() override;
-        std::shared_ptr<BoxInfo*> get_map_area_2d(Box & area, Box & pixel_size) override;
 
         void set_box_info(const Box box, const BoxInfo box_info) override;
 

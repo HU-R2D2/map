@@ -32,12 +32,6 @@ namespace r2d2
         return temp_box;
     }
 
-    std::shared_ptr<BoxInfo*> BoxMap::get_map_area_2d(Box & area, Box & pixel_size)
-    {
-        std::shared_ptr < BoxInfo*> bs;
-        return bs;
-    }
-
     void BoxMap::set_box_info(const Box box, const BoxInfo box_info)
     {
 
