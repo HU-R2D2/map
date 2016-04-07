@@ -4,33 +4,8 @@
 #include <vector>
 #include <memory>
 
-#include "../../../adt/source/include/Box.hpp"
+#include "Box.hpp"
 
-/*
-class Length{
-};
-
-class Coordinate{
-public:
-    Coordinate(Length, Length, Length);
-
-    Length get_x();
-    Length get_y();
-    Length get_z();
-};
-
-class Box{
-public:
-    Box();
-    bool Box::intersects(Box box);
-    bool contains(Box & box);
-    Box get_union_box(Box & box);
-
-    Box get_intersection_box(Box & box);
-
-    Coordinate get_bottom_left();
-};
-*/
 namespace r2d2
 {
     class BoxInfo
@@ -78,4 +53,4 @@ namespace r2d2
     };
 }
 
-#endif
+#endif //_MAPINTERFACE_HPP

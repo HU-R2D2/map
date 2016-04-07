@@ -16,8 +16,8 @@ int main(int argc, char ** argv){
     if (argc > 1){max = atoi(argv[1]); }
     for (int i = 0; i < max; i++){
         testMap.set_box_info(Box{ Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER }, Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER } }, r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 });
-        cout << "\n" << testMap.get_map_size() << "\n";
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        //cout << "\n" << testMap.get_map_size() << "\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
     cout << testMap.get_map_size() << "\n";
