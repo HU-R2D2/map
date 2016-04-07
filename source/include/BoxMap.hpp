@@ -11,7 +11,7 @@ namespace r2d2
 
     public:
 
-        BoxMap();
+        BoxMap(){};
 
         BoxInfo get_box_info(Box & box) override;
         Box get_map_bounding_box() override;

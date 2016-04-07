@@ -1,6 +1,8 @@
 
 #include "../../../adt/source/include/Box.hpp"
 #include "../include/BoxMap.hpp"
+#include "../include/rapidjson/document.h"
+#include "../include/rapidjson/filereadstream.h"
 
 namespace r2d2
 {
@@ -98,6 +100,15 @@ namespace r2d2
 
     void BoxMap::load(std::string filename)
     {
+        FILE* pFILE = fopen(filename.c_str() , "rb");
+        char buff[65536];
+        rapidjson::FileReadStream is(pFILE, buff, sizeof(buff));
+        // 1. Parse a JSON string into DOM
+        rapidjson::Document d;
+        d.ParseStream<0, rapidjson::UTF8<>, rapidjson::FileReadStream>(is);
 
+        Box pBox = Box(Coordinate((d["box0"]["leftCoordinate"]["x"].GetDouble() * Length::METER), (d["box0"]["leftCoordinate"]["y"].GetDouble() * Length::METER), (d["box0"]["leftCoordinate"]["z"].GetDouble() * Length::METER)), Coordinate((d["box0"]["rightCoordinate"]["x"].GetDouble() * Length::METER), (d["box0"]["rightCoordinate"]["y"].GetDouble() * Length::METER), (d["box0"]["rightCoordinate"]["z"].GetDouble() * Length::METER)));
+        BoxInfo pBoxInfo(d["box0"]["boxInfo"]["has_obstacle"].GetBool(),d["box0"]["boxInfo"]["has_unknown"].GetBool(),d["box0"]["boxInfo"]["has_navigatable"].GetBool());
+        set_box_info(pBox, pBoxInfo);
     }
 }
