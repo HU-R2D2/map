@@ -38,6 +38,19 @@
 #include "../include/MapInterface.hpp"
 #include "../include/BoxMap.hpp"
 
+Box random_box(){
+    return Box{ Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER }, Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER } };
+}
+
+//! [map_interface_example]
+void make_map_interface(){
+    r2d2::ReadWriteMap * map = new r2d2::BoxMap{};
+    map->set_box_info(random_box(), r2d2::BoxInfo{});
+    cout << map->get_map_bounding_box() << endl;
+    delete map;
+}
+//! [map_interface_example]
+
 int main(int argc, char ** argv){
     r2d2::BoxMap testMap{};
     srand(time(NULL));
