@@ -66,4 +66,6 @@ namespace r2d2
     bool BoxInfo::get_has_navigatable() const{
         return BoxInfo::has_navigatable;
     }
+
 }
+
