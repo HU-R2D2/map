@@ -8,7 +8,7 @@
 // @section LICENSE
 // License: newBSD
 //
-// Copyright © 2016, HU University of Applied Sciences Utrecht.
+// Copyright ï¿½ 2016, HU University of Applied Sciences Utrecht.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -52,6 +52,8 @@ void make_map_interface(){
 //! [map_interface_example]
 
 int main(int argc, char ** argv){
+    Length l1 = 200.43 * Length::METER;
+
     r2d2::BoxMap testMap{};
     srand(time(NULL));
     int max = 5;
@@ -59,7 +61,7 @@ int main(int argc, char ** argv){
     for (int i = 0; i < max; i++){
         testMap.set_box_info(Box{ Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER }, Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER } }, r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 });
         //cout << "\n" << testMap.get_map_size() << "\n";
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        //std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
     cout << testMap.get_map_size() << "\n";
