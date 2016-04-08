@@ -48,11 +48,13 @@ namespace r2d2
         //! @brief Saves the data of a BoxMap to a json file
         //!
         //! @param filename the destination of the file
+        //! @snippet source/src/main.cpp save_example
         void save(std::string filename) override;
 
         //! @brief Loads the data of a json file to a BoxMap
         //!
         //! @param filename the destination of the file that needs to be loaded
+        //! @snippet source/src/main.cpp load_example
         void load(std::string filename) override;
 
         int get_map_size();

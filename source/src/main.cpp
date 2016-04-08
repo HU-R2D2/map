@@ -51,6 +51,20 @@ void make_map_interface(){
 }
 //! [map_interface_example]
 
+//! [save_example]
+void save_map(){
+    r2d2::BoxMap bm{};
+    bm.set_box_info(random_box(), r2d2::BoxInfo{});
+    bm.save("example.json");
+}
+//! [save_example]
+
+//! [load_example]
+void load_map(){
+    r2d2::BoxMap bm{};
+    bm.load("example.json");
+}
+//! [load_example]
 int main(int argc, char ** argv){
     Length l1 = 200.43 * Length::METER;
 
