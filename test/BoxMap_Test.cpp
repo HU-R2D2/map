@@ -214,7 +214,7 @@ TEST(BoxMap, UsageExample){
     r2d2::BoxMap bm{};
     cout << "May take a minute or 2...\n";
 
-    for (int i = 0; i < 50; i++){
+    for (int i = 0; i < 20; i++){
         bm.set_box_info(
             Box{
             Coordinate{
@@ -229,13 +229,13 @@ TEST(BoxMap, UsageExample){
                 }
         },
         r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 }
-                    );
+        );
     }
     ASSERT_GT(bm.get_map_size(), 9);
     ASSERT_TRUE(
         (bm.get_box_info(bm.get_map_bounding_box())
-        == r2d2::BoxInfo{ true, true, true })
-        );
+                    == r2d2::BoxInfo{ true, true, true })
+    );
 
     Box bounding = bm.get_map_bounding_box();
     ASSERT_TRUE(
