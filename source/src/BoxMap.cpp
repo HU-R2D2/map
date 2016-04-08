@@ -110,34 +110,34 @@ namespace r2d2
 
         for(int j = 0; j < map.size(); j++) {
             rapidjson::Value leftCoordinate(rapidjson::kObjectType);
-                rapidjson::Value lcX;
-                lcX.SetDouble(map[j].first.get_bottom_left().get_x() / Length::METER);
+            rapidjson::Value lcX;
+            lcX.SetDouble(map[j].first.get_bottom_left().get_x() / Length::METER);
 
-                rapidjson::Value lcY(rapidjson::kStringType);
-                lcY.SetDouble(map[j].first.get_bottom_left().get_y() / Length::METER);
+            rapidjson::Value lcY(rapidjson::kStringType);
+            lcY.SetDouble(map[j].first.get_bottom_left().get_y() / Length::METER);
 
-                rapidjson::Value lcZ(rapidjson::kStringType);
-                lcZ.SetDouble(map[j].first.get_bottom_left().get_z() / Length::METER);
+            rapidjson::Value lcZ(rapidjson::kStringType);
+            lcZ.SetDouble(map[j].first.get_bottom_left().get_z() / Length::METER);
 
             rapidjson::Value rightCoordinate(rapidjson::kObjectType);
-                rapidjson::Value rcX;
-                rcX.SetDouble(map[j].first.get_top_right().get_x() / Length::METER);
+            rapidjson::Value rcX;
+            rcX.SetDouble(map[j].first.get_top_right().get_x() / Length::METER);
 
-                rapidjson::Value rcY(rapidjson::kStringType);
-                rcY.SetDouble(map[j].first.get_top_right().get_y() / Length::METER);
+            rapidjson::Value rcY(rapidjson::kStringType);
+            rcY.SetDouble(map[j].first.get_top_right().get_y() / Length::METER);
 
-                rapidjson::Value rcZ(rapidjson::kStringType);
-                rcZ.SetDouble(map[j].first.get_top_right().get_z() / Length::METER);
+            rapidjson::Value rcZ(rapidjson::kStringType);
+            rcZ.SetDouble(map[j].first.get_top_right().get_z() / Length::METER);
 
             rapidjson::Value boxInfo(rapidjson::kObjectType);
-                rapidjson::Value has_obstacle;
-                has_obstacle.SetBool(map[j].second.get_has_obstacle());
+            rapidjson::Value has_obstacle;
+            has_obstacle.SetBool(map[j].second.get_has_obstacle());
 
-                rapidjson::Value has_unknown;
-                has_unknown.SetBool(map[j].second.get_has_unknown());
+            rapidjson::Value has_unknown;
+            has_unknown.SetBool(map[j].second.get_has_unknown());
 
-                rapidjson::Value has_navigatable;
-                has_navigatable.SetBool(map[j].second.get_has_navigatable());
+            rapidjson::Value has_navigatable;
+            has_navigatable.SetBool(map[j].second.get_has_navigatable());
 
             leftCoordinate.AddMember("x", lcX, d.GetAllocator());
             leftCoordinate.AddMember("y", lcY, d.GetAllocator());
