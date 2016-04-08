@@ -289,9 +289,6 @@ namespace r2d2
         map.push_back(std::pair<Box, BoxInfo>{box, box_info});
     }
 
-    //! @brief Saves the data of a BoxMap to a json file
-    //!
-    //! @param filename the destination of the file
     void BoxMap::save(std::string filename)
     {
         //! Create a DOM document
@@ -380,9 +377,6 @@ namespace r2d2
         fclose(pFILE);
     }
 
-    //! @brief Loads the data of a json file to a BoxMap
-    //!
-    //! @param filename the destination of the file that needs to be loaded
     void BoxMap::load(std::string filename)
     {
         //! Open file

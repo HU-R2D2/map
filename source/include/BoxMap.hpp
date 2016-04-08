@@ -45,7 +45,14 @@ namespace r2d2
 
         void set_box_info(const Box box, const BoxInfo box_info) override;
 
+        //! @brief Saves the data of a BoxMap to a json file
+        //!
+        //! @param filename the destination of the file
         void save(std::string filename) override;
+
+        //! @brief Loads the data of a json file to a BoxMap
+        //!
+        //! @param filename the destination of the file that needs to be loaded
         void load(std::string filename) override;
 
         int get_map_size();
