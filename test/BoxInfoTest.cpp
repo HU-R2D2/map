@@ -1,14 +1,14 @@
 // ++--++
-// @file main.cpp
+// @file BoxInfoTest.cpp
 // @date Created: <07-04-16>
 // @version <1.0.0>
 //
-// @author Sander Kolman
+// @author Rutger de Gruijter
 //
 // @section LICENSE
 // License: newBSD
 //
-// Copyright ï¿½ 2016, HU University of Applied Sciences Utrecht.
+// Copyright © 2016, HU University of Applied Sciences Utrecht.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -28,35 +28,53 @@
 // OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // ++--++
 
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <random>
-#include <time.h>
-#include <chrono>
-#include <thread>
-#include "../include/MapInterface.hpp"
-#include "../include/BoxMap.hpp"
+#include "../source/include/MapInterface.hpp"
+#include "gtest/gtest.h"
+#include "../source/include/BoxMap.hpp"
 
-int main(int argc, char ** argv){
-    Length l1 = 200.43 * Length::METER;
+/**
+* Constructor
+*/
+//BoxInfo(bool has_obstacle = false, bool has_unknown = false, bool has_navigatable = false);
 
-    r2d2::BoxMap testMap{};
-    srand(time(NULL));
-    int max = 5;
-    if (argc > 1){max = atoi(argv[1]); }
-    for (int i = 0; i < max; i++){
-        testMap.set_box_info(Box{ Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER }, Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER } }, r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 });
-        //cout << "\n" << testMap.get_map_size() << "\n";
-        //std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
-
-    cout << testMap.get_map_size() << "\n";
-    for (int i = 0; i < 10; i++){
-        cout << testMap.get_box_info(Box{ Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER }, Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER } }).get_has_obstacle();
-        cout << "\n";// << testMap.get_map_size() << "\n";
-    }
-    cout << "\n" << testMap.get_map_size() << "\n";
-    cout << testMap.get_map_bounding_box();
-    return 0;
+TEST(BoxInfo, Constructor)
+{
+	r2d2::BoxInfo bi{};
+	
 }
+
+/**
+* OPERATORS
+*/
+//Operator==
+//bool operator==(const BoxInfo rhs) const;
+/*
+TEST(BoxInfo, IsEqual)
+{
+	r2d2::BoxInfo::operator== 
+
+}
+
+//Operator!=
+//bool operator!=(const BoxInfo rhs) const;
+TEST(BoxInfo, NotEqual)
+{
+	
+}
+
+
+TEST(BoxInfo, get_has_obstacle)
+{
+
+}
+
+TEST(BoxInfo, get_has_unknown)
+{
+
+}
+
+TEST(BoxInfo, get_has_unknown)
+{
+
+}
+*/
