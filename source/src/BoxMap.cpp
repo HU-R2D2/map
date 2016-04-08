@@ -4,6 +4,7 @@
 // @version <1.0.0>
 //
 // @author Sander Kolman
+// @author Maikel Bolderdijk
 //
 // @section LICENSE
 // License: newBSD
@@ -288,16 +289,27 @@ namespace r2d2
         map.push_back(std::pair<Box, BoxInfo>{box, box_info});
     }
 
+    //! @brief Saves the data of a BoxMap to a json file
+    //!
+    //! @param filename the destination of the file
     void BoxMap::save(std::string filename)
     {
+        //! Create a DOM document
         rapidjson::Document d;
         d.SetObject();
 
+        //! Create the first level of json
+        //! { "left_coordinates":[{}],
+        //!   "right_coordinates":[{}],
+        //!   "box_infos":[{}]
+        //! }
         rapidjson::Value left_coordinates(rapidjson::kArrayType);
         rapidjson::Value right_coordinates(rapidjson::kArrayType);
         rapidjson::Value box_infos(rapidjson::kArrayType);
 
         for(int j = 0; j < map.size(); j++) {
+            //! Create coordinate placeholders
+            //! "left_coordinates":[{"x":left_coordinate_x,"y":left_coordinate_y,"z":left_coordinate_z}]
             rapidjson::Value left_coordinate(rapidjson::kObjectType);
                 rapidjson::Value left_coordinate_x;
                 left_coordinate_x.SetDouble(map[j].first.get_bottom_left().get_x() / Length::METER);
@@ -308,6 +320,8 @@ namespace r2d2
                 rapidjson::Value left_coordinate_z(rapidjson::kStringType);
                 left_coordinate_z.SetDouble(map[j].first.get_bottom_left().get_z() / Length::METER);
 
+            //! Create coordinate placeholders
+            //! "right_coordinates":[{"x":right_coordinate_x,"y":right_coordinate_y,"z":right_coordinate_z}]
             rapidjson::Value right_coordinate(rapidjson::kObjectType);
                 rapidjson::Value right_coordinate_x;
                 right_coordinate_x.SetDouble(map[j].first.get_top_right().get_x() / Length::METER);
@@ -318,6 +332,8 @@ namespace r2d2
                 rapidjson::Value right_coordinate_z(rapidjson::kStringType);
                 right_coordinate_z.SetDouble(map[j].first.get_top_right().get_z() / Length::METER);
 
+            //! Create box_info placeholders
+            //! "box_infos":[{"has_obstacle":has_obstacle,"has_unknown":has_unknown,"has_navigatable":has_navigatable}]
             rapidjson::Value box_info(rapidjson::kObjectType);
                 rapidjson::Value has_obstacle;
                 has_obstacle.SetBool(map[j].second.get_has_obstacle());
@@ -328,6 +344,7 @@ namespace r2d2
                 rapidjson::Value has_navigatable;
                 has_navigatable.SetBool(map[j].second.get_has_navigatable());
 
+            //! Add indexes to Objects
             left_coordinate.AddMember("x", left_coordinate_x, d.GetAllocator());
             left_coordinate.AddMember("y", left_coordinate_y, d.GetAllocator());
             left_coordinate.AddMember("z", left_coordinate_z, d.GetAllocator());
@@ -340,35 +357,47 @@ namespace r2d2
             box_info.AddMember("has_unknown", has_unknown, d.GetAllocator());
             box_info.AddMember("has_navigatable", has_navigatable, d.GetAllocator());
 
+            //! Push object to their destination array
             left_coordinates.PushBack(left_coordinate, d.GetAllocator());
             right_coordinates.PushBack(right_coordinate, d.GetAllocator());
             box_infos.PushBack(box_info, d.GetAllocator());
         }
 
+        //! Add destination arrays to DOM element
         d.AddMember("left_coordinates", left_coordinates, d.GetAllocator());
         d.AddMember("right_coordinates", right_coordinates, d.GetAllocator());
         d.AddMember("box_infos", box_infos, d.GetAllocator());
 
+        //! Write the file to given filename
         FILE* pFILE = fopen(filename.c_str(), "wb");
         char writeBuffer[65536];
         rapidjson::FileWriteStream os(pFILE, writeBuffer, sizeof(writeBuffer));
         rapidjson::Writer<rapidjson::FileWriteStream> writer(os);
         d.Accept(writer);
 
+        //! Reset writer for re-use and close the file
         writer.Reset(os);
         fclose(pFILE);
     }
 
+    //! @brief Loads the data of a json file to a BoxMap
+    //!
+    //! @param filename the destination of the file that needs to be loaded
     void BoxMap::load(std::string filename)
     {
+        //! Open file
         FILE* pFILE = fopen(filename.c_str() , "rb");
         char buff[65536];
         rapidjson::FileReadStream frs(pFILE, buff, sizeof(buff));
         rapidjson::Document d;
+
+        //! Push contents into DOM element
         d.ParseStream<0, rapidjson::UTF8<>, rapidjson::FileReadStream>(frs);
 
+        //! Allocate element_size
         rapidjson::Value& element_size = d["left_coordinates"];
 
+        //! Load values from DOM element
         for(rapidjson::SizeType i = 0; i < element_size.Size(); i++) {
             Box map_Box = Box(Coordinate((d["left_coordinates"][i]["x"].GetDouble() * Length::METER),
                                       (d["left_coordinates"][i]["y"].GetDouble() * Length::METER),
@@ -383,6 +412,8 @@ namespace r2d2
             std::pair<Box, BoxInfo> psh(map_Box, map_BoxInfo);
             map.push_back(psh);
         }
+
+        //! Close file
         fclose(pFILE);
     }
 
