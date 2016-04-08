@@ -44,20 +44,43 @@ int main(int argc, char ** argv){
     Length l1 = 201.43 * Length::METER;
     Length l2 = 202.43 * Length::METER;
     Length l3 = 203.43 * Length::METER;
+    Length l11 = 401.43 * Length::METER;
+    Length l22 = 302.43 * Length::METER;
+    Length l33 = 503.43 * Length::METER;
     Coordinate c1{ l1, l2, l3 };
+    Coordinate c2{ l11, l22, l33 };
     Box boxA{};
     r2d2::BoxInfo boxAInfo{ false, false, false };
     Box boxB{c1,c1};
     r2d2::BoxInfo boxBInfo{ false, true, false };
-    Box boxC{};
+    Box boxC{c2,c2};
     r2d2::BoxInfo boxCInfo{ true, true, true };
     bm1.set_box_info(boxA, boxAInfo);
     bm1.set_box_info(boxB, boxBInfo);
     bm1.set_box_info(boxC, boxCInfo);
 
+
     //bm1.load("C:/Users/Anas/Documents/GitHub/map/source/src/test.json");
     bm1.save("C:/Users/Anas/Documents/GitHub/map/source/src/MAPPPPPPP.json");
     //std::cout << "Test";
+
+    r2d2::BoxMap testMap{};
+    srand(time(NULL));
+    int max = 5;
+    if (argc > 1){ max = atoi(argv[1]); }
+    for (int i = 0; i < max; i++){
+        testMap.set_box_info(Box{ Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER }, Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER } }, r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 });
+        //cout << "\n" << testMap.get_map_size() << "\n";
+        //std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+
+    cout << testMap.get_map_size() << "\n";
+    for (int i = 0; i < 10; i++){
+        cout << testMap.get_box_info(Box{ Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER }, Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER } }).get_has_obstacle();
+        cout << "\n";// << testMap.get_map_size() << "\n";
+    }
+    cout << "\n" << testMap.get_map_size() << "\n";
+    cout << bm1.get_map_bounding_box();
 
 
     return 0;

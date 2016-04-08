@@ -288,12 +288,10 @@ namespace r2d2
 
     void BoxMap::save(std::string filename)
     {
-        int filenameIndex = 0;
-
         rapidjson::StringBuffer s;
         rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
         writer.StartObject();
-        writer.String("leftcoordinate");
+        writer.String("left_coordinates");
         writer.StartArray();
 
         for (std::pair<Box, BoxInfo> Boxes : map){
@@ -309,7 +307,7 @@ namespace r2d2
 
         }
         writer.EndArray();
-        writer.String("rightcoordinate");
+        writer.String("right_coordinates");
         writer.StartArray();
         for (std::pair<Box, BoxInfo> Boxes : map){
             //rightcoordinate
@@ -324,7 +322,7 @@ namespace r2d2
 
         }
         writer.EndArray();
-        writer.String("boxinfo");
+        writer.String("box_infos");
         writer.StartArray();
         for (std::pair<Box, BoxInfo> Boxes : map){
             //boxinfo
@@ -341,7 +339,6 @@ namespace r2d2
         }
         writer.EndArray();
         writer.EndObject();
-        std::cout << s.GetString() << endl;
         std::ofstream fs(filename);
         if (!fs)
         {
@@ -355,21 +352,38 @@ namespace r2d2
 
     void BoxMap::load(std::string filename)
     {
+        //! Open file
         FILE* pFILE = fopen(filename.c_str(), "rb");
         char buff[65536];
-        rapidjson::FileReadStream is(pFILE, buff, sizeof(buff));
-        // 1. Parse a JSON string into DOM
+        rapidjson::FileReadStream frs(pFILE, buff, sizeof(buff));
         rapidjson::Document d;
-        d.ParseStream<0, rapidjson::UTF8<>, rapidjson::FileReadStream>(is);
 
-        const rapidjson::Value& elementSize = d["leftCoordinates"];
+        //! Push contents into DOM element
+        d.ParseStream<0, rapidjson::UTF8<>, rapidjson::FileReadStream>(frs);
 
-        for(rapidjson::SizeType i = 0; i < elementSize.Size(); i++) {
-            Box mBox = Box(Coordinate((d["leftCoordinates"][i]["x"].GetDouble() * Length::METER), (d["leftCoordinates"][i]["y"].GetDouble() * Length::METER), (d["leftCoordinates"][i]["z"].GetDouble() * Length::METER)), Coordinate((d["rightCoordinates"][i]["x"].GetDouble() * Length::METER), (d["rightCoordinates"][i]["y"].GetDouble() * Length::METER), (d["rightCoordinates"][i]["z"].GetDouble() * Length::METER)));
-            BoxInfo mBoxInfo(d["boxInfo"][i]["has_obstacle"].GetBool(),d["boxInfo"][i]["has_unknown"].GetBool(),d["boxInfo"][i]["has_navigatable"].GetBool());
-            set_box_info(mBox, mBoxInfo);
+        //! Allocate element_size
+        rapidjson::Value& element_size = d["left_coordinates"];
+
+        //! Load values from DOM element
+        for (rapidjson::SizeType i = 0; i < element_size.Size(); i++) {
+            Box map_Box = Box(Coordinate((d["left_coordinates"][i]["x"].GetDouble() * Length::METER),
+                (d["left_coordinates"][i]["y"].GetDouble() * Length::METER),
+                (d["left_coordinates"][i]["z"].GetDouble() * Length::METER)),
+                Coordinate((d["right_coordinates"][i]["x"].GetDouble() * Length::METER),
+                (d["right_coordinates"][i]["y"].GetDouble() * Length::METER),
+                (d["right_coordinates"][i]["z"].GetDouble() * Length::METER)));
+
+            BoxInfo map_BoxInfo(d["box_infos"][i]["has_obstacle"].GetBool(),
+                d["box_infos"][i]["has_unknown"].GetBool(),
+                d["box_infos"][i]["has_navigatable"].GetBool());
+            std::pair<Box, BoxInfo> psh(map_Box, map_BoxInfo);
+            map.push_back(psh);
         }
+
+        //! Close file
+        fclose(pFILE);
     }
+
 
     int BoxMap::get_map_size(){
         return map.size();
