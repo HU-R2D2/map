@@ -1,3 +1,7 @@
+//////
+// \project Roborescue
+// \package map
+//
 // ++--++
 // @file MapInterface.hpp
 // @date Created: <07-04-16>
