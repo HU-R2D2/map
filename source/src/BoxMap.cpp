@@ -106,18 +106,11 @@ namespace r2d2
         rapidjson::StringBuffer s;
         rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
         writer.StartObject();
+        writer.String("leftcoordinate");
+        writer.StartArray();
 
-        for (std::pair<Box, BoxInfo> Boxes : map){
-            filenameIndex++;
-            string Result;//string which will contain the result
-            stringstream convert; // stringstream used for the conversion
-            convert << filenameIndex;//add the value of Number to the characters in the stream
-            Result = convert.str();//set Result to the content of the stream
-            const char * waarde = Result.c_str();// c_string type
-
-            writer.String(waarde);
-            writer.StartObject();
-            writer.String("leftcoordinate");
+        for (std::pair<Box, BoxInfo> Boxes : map){ 
+            //leftcoordinate
             writer.StartObject();
             writer.String("x");
             writer.Double(Boxes.first.get_bottom_left().get_x() / Length::METER); //zetWaarde
@@ -126,7 +119,13 @@ namespace r2d2
             writer.String("z");
             writer.Double(Boxes.first.get_bottom_left().get_z() / Length::METER); //zetWaarde
             writer.EndObject();
-            writer.String("leftcoordinate");
+
+        }
+        writer.EndArray();
+        writer.String("rightcoordinate");
+        writer.StartArray();
+        for (std::pair<Box, BoxInfo> Boxes : map){
+            //rightcoordinate
             writer.StartObject();
             writer.String("x");
             writer.Double(Boxes.first.get_top_right().get_x() / Length::METER); //zetWaarde
@@ -135,18 +134,25 @@ namespace r2d2
             writer.String("z");
             writer.Double(Boxes.first.get_top_right().get_z() / Length::METER); //zetWaarde
             writer.EndObject();
-            writer.String("boxinfo");
+
+        }
+        writer.EndArray();
+        writer.String("boxinfo");
+        writer.StartArray();
+        for (std::pair<Box, BoxInfo> Boxes : map){
+            //boxinfo
             writer.StartObject();
             writer.String("has_obstacle");
             writer.Bool(Boxes.second.get_has_obstacle()); //zetWaarde
-            writer.String("has_obstacle");
+
+            writer.String("has_unknown");
             writer.Bool(Boxes.second.get_has_unknown()); //zetWaarde
-            writer.String("has_obstacle");
+            writer.String("has_navigatable");
             writer.Bool(Boxes.second.get_has_navigatable()); //zetWaarde
-            writer.EndObject();
             writer.EndObject();
 
         }
+        writer.EndArray();
         writer.EndObject();
         std::cout << s.GetString() << endl;
         std::ofstream fs(filename);
