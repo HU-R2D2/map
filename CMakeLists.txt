@@ -26,10 +26,8 @@ include_directories(
 
 
 
-link_directories(../deps/gtest-1.7.0/src ../adt/source/src)
-
+link_directories(../deps/gtest-1.7.0/src)
 ADD_LIBRARY(gtest ../deps/gtest-1.7.0/src/gtest-all.cc)
-
 ADD_LIBRARY(gtest_main ../deps/gtest-1.7.0/src/gtest_main.cc)
 
 

@@ -22,4 +22,5 @@ int main(int argc, char ** argv){
     //bm1.load("C:/Users/Anas/Documents/GitHub/map/source/src/test.json");
     bm1.save("C:/Users/Anas/Documents/GitHub/map/source/src/MAPPPPPPP.json");
     //std::cout << "Test";
+
 }
