@@ -1,14 +1,14 @@
 // ++--++
-// @file main.cpp
+// @file BoxInfoTest.cpp
 // @date Created: <07-04-16>
 // @version <1.0.0>
 //
-// @author Sander Kolman
+// @author Rutger de Gruijter
 //
 // @section LICENSE
 // License: newBSD
 //
-// Copyright ï¿½ 2016, HU University of Applied Sciences Utrecht.
+// Copyright © 2016, HU University of Applied Sciences Utrecht.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -28,37 +28,53 @@
 // OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // ++--++
 
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <random>
-#include <time.h>
-#include <chrono>
-#include <thread>
-#include "../include/MapInterface.hpp"
-#include "../include/BoxMap.hpp"
+#include "../source/include/MapInterface.hpp"
+#include "gtest/gtest.h"
+#include "../source/include/BoxMap.hpp"
 
-int main(int argc, char ** argv){
+/**
+* Constructor
+*/
+//BoxInfo(bool has_obstacle = false, bool has_unknown = false, bool has_navigatable = false);
 
-    r2d2::BoxMap bm1{};
-    Length l1 = 201.43 * Length::METER;
-    Length l2 = 202.43 * Length::METER;
-    Length l3 = 203.43 * Length::METER;
-    Coordinate c1{ l1, l2, l3 };
-    Box boxA{};
-    r2d2::BoxInfo boxAInfo{ false, false, false };
-    Box boxB{c1,c1};
-    r2d2::BoxInfo boxBInfo{ false, true, false };
-    Box boxC{};
-    r2d2::BoxInfo boxCInfo{ true, true, true };
-    bm1.set_box_info(boxA, boxAInfo);
-    bm1.set_box_info(boxB, boxBInfo);
-    bm1.set_box_info(boxC, boxCInfo);
-
-    //bm1.load("C:/Users/Anas/Documents/GitHub/map/source/src/test.json");
-    bm1.save("C:/Users/Anas/Documents/GitHub/map/source/src/MAPPPPPPP.json");
-    //std::cout << "Test";
-
-
-    return 0;
+TEST(BoxInfo, Constructor)
+{
+	r2d2::BoxInfo bi{};
+	
 }
+
+/**
+* OPERATORS
+*/
+//Operator==
+//bool operator==(const BoxInfo rhs) const;
+/*
+TEST(BoxInfo, IsEqual)
+{
+	r2d2::BoxInfo::operator== 
+
+}
+
+//Operator!=
+//bool operator!=(const BoxInfo rhs) const;
+TEST(BoxInfo, NotEqual)
+{
+	
+}
+
+
+TEST(BoxInfo, get_has_obstacle)
+{
+
+}
+
+TEST(BoxInfo, get_has_unknown)
+{
+
+}
+
+TEST(BoxInfo, get_has_unknown)
+{
+
+}
+*/
