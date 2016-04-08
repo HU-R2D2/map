@@ -309,31 +309,50 @@ namespace r2d2
 
         for(int j = 0; j < map.size(); j++) {
             //! Create coordinate placeholders
-            //! "left_coordinates":[{"x":left_coordinate_x,"y":left_coordinate_y,"z":left_coordinate_z}]
+            //! "left_coordinates":
+            //! [{
+            //! "x":left_coordinate_x,
+            //! "y":left_coordinate_y,
+            //! "z":left_coordinate_z
+            //! }]
             rapidjson::Value left_coordinate(rapidjson::kObjectType);
                 rapidjson::Value left_coordinate_x;
-                left_coordinate_x.SetDouble(map[j].first.get_bottom_left().get_x() / Length::METER);
+                left_coordinate_x.SetDouble(
+                        map[j].first.get_bottom_left().get_x() / Length::METER);
 
                 rapidjson::Value left_coordinate_y(rapidjson::kStringType);
-                left_coordinate_y.SetDouble(map[j].first.get_bottom_left().get_y() / Length::METER);
+                left_coordinate_y.SetDouble(
+                        map[j].first.get_bottom_left().get_y() / Length::METER);
 
                 rapidjson::Value left_coordinate_z(rapidjson::kStringType);
-                left_coordinate_z.SetDouble(map[j].first.get_bottom_left().get_z() / Length::METER);
+                left_coordinate_z.SetDouble(
+                        map[j].first.get_bottom_left().get_z() / Length::METER);
 
             //! Create coordinate placeholders
-            //! "right_coordinates":[{"x":right_coordinate_x,"y":right_coordinate_y,"z":right_coordinate_z}]
+            //! "right_coordinates":[{
+            //! "x":right_coordinate_x,
+            //! "y":right_coordinate_y,
+            //! "z":right_coordinate_z
+            //! }]
             rapidjson::Value right_coordinate(rapidjson::kObjectType);
                 rapidjson::Value right_coordinate_x;
-                right_coordinate_x.SetDouble(map[j].first.get_top_right().get_x() / Length::METER);
+                right_coordinate_x.SetDouble(
+                        map[j].first.get_top_right().get_x() / Length::METER);
 
                 rapidjson::Value right_coordinate_y(rapidjson::kStringType);
-                right_coordinate_y.SetDouble(map[j].first.get_top_right().get_y() / Length::METER);
+                right_coordinate_y.SetDouble(
+                        map[j].first.get_top_right().get_y() / Length::METER);
 
                 rapidjson::Value right_coordinate_z(rapidjson::kStringType);
-                right_coordinate_z.SetDouble(map[j].first.get_top_right().get_z() / Length::METER);
+                right_coordinate_z.SetDouble(
+                        map[j].first.get_top_right().get_z() / Length::METER);
 
             //! Create box_info placeholders
-            //! "box_infos":[{"has_obstacle":has_obstacle,"has_unknown":has_unknown,"has_navigatable":has_navigatable}]
+            //! "box_infos":[{
+            //! "has_obstacle":has_obstacle,
+            //! "has_unknown":has_unknown,
+            //! "has_navigatable":has_navigatable
+            //! }]
             rapidjson::Value box_info(rapidjson::kObjectType);
                 rapidjson::Value has_obstacle;
                 has_obstacle.SetBool(map[j].second.get_has_obstacle());
@@ -349,13 +368,37 @@ namespace r2d2
             left_coordinate.AddMember("y", left_coordinate_y, d.GetAllocator());
             left_coordinate.AddMember("z", left_coordinate_z, d.GetAllocator());
 
-            right_coordinate.AddMember("x", right_coordinate_x, d.GetAllocator());
-            right_coordinate.AddMember("y", right_coordinate_y, d.GetAllocator());
-            right_coordinate.AddMember("z", right_coordinate_z, d.GetAllocator());
+            right_coordinate.AddMember(
+                    "x",
+                    right_coordinate_x,
+                    d.GetAllocator()
+            );
+            right_coordinate.AddMember(
+                    "y",
+                    right_coordinate_y,
+                    d.GetAllocator()
+            );
+            right_coordinate.AddMember(
+                    "z",
+                    right_coordinate_z,
+                    d.GetAllocator()
+            );
 
-            box_info.AddMember("has_obstacle", has_obstacle, d.GetAllocator());
-            box_info.AddMember("has_unknown", has_unknown, d.GetAllocator());
-            box_info.AddMember("has_navigatable", has_navigatable, d.GetAllocator());
+            box_info.AddMember(
+                    "has_obstacle",
+                    has_obstacle,
+                    d.GetAllocator()
+            );
+            box_info.AddMember(
+                    "has_unknown",
+                    has_unknown,
+                    d.GetAllocator()
+            );
+            box_info.AddMember(
+                    "has_navigatable",
+                    has_navigatable,
+                    d.GetAllocator()
+            );
 
             //! Push object to their destination array
             left_coordinates.PushBack(left_coordinate, d.GetAllocator());
@@ -395,20 +438,31 @@ namespace r2d2
         d.ParseStream<0, rapidjson::UTF8<>, rapidjson::FileReadStream>(frs);
 
         //! Allocate element_size
-        rapidjson::Value& element_size = d["left_coordinates"];
+        const rapidjson::Value& element_size = d["left_coordinates"];
 
         //! Load values from DOM element
         for(rapidjson::SizeType i = 0; i < element_size.Size(); i++) {
-            Box map_Box = Box(Coordinate((d["left_coordinates"][i]["x"].GetDouble() * Length::METER),
-                                      (d["left_coordinates"][i]["y"].GetDouble() * Length::METER),
-                                      (d["left_coordinates"][i]["z"].GetDouble() * Length::METER)),
-                           Coordinate((d["right_coordinates"][i]["x"].GetDouble() * Length::METER),
-                                      (d["right_coordinates"][i]["y"].GetDouble() * Length::METER),
-                                      (d["right_coordinates"][i]["z"].GetDouble() * Length::METER)));
+            Box map_Box =
+                Box(Coordinate(
+                        (d["left_coordinates"][i]["x"].GetDouble()
+                         * Length::METER),
+                        (d["left_coordinates"][i]["y"].GetDouble()
+                         * Length::METER),
+                        (d["left_coordinates"][i]["z"].GetDouble()
+                         * Length::METER)),
+
+                    Coordinate(
+                        (d["right_coordinates"][i]["x"].GetDouble()
+                         * Length::METER),
+                        (d["right_coordinates"][i]["y"].GetDouble()
+                         * Length::METER),
+                        (d["right_coordinates"][i]["z"].GetDouble()
+                         * Length::METER)));
 
             BoxInfo map_BoxInfo(d["box_infos"][i]["has_obstacle"].GetBool(),
                              d["box_infos"][i]["has_unknown"].GetBool(),
                              d["box_infos"][i]["has_navigatable"].GetBool());
+            
             std::pair<Box, BoxInfo> psh(map_Box, map_BoxInfo);
             map.push_back(psh);
         }
