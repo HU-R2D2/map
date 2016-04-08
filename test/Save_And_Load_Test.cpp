@@ -11,7 +11,7 @@ TEST(BoxMap, saveAndLoad) {
     srand(time(NULL));
     r2d2::BoxMap bm{};
     cout << "May take a while... Please wait" << endl;
-    int generate_box_count = 50;
+    int generate_box_count = 10;
     for (int i = 0; i < generate_box_count; i++) {
         bm.set_box_info(
                 Box{
