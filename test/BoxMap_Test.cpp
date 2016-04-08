@@ -47,7 +47,7 @@ TEST(BoxMap, DefaultConstructor){
 */
 TEST(BoxMap, AddBox){
     r2d2::BoxMap bm{};
-    bm.set_box_info(Box{}, r2d2::BoxInfo{});
+    bm.set_box_info(r2d2::Box{}, r2d2::BoxInfo{});
     ASSERT_EQ(bm.get_map_size(), 1);
 }
 
@@ -66,7 +66,7 @@ TEST(BoxMap, GetBoxInfo1){
         };
 
         bm.set_box_info(
-            Box{
+            r2d2::Box{
             Coordinate{},
             Coordinate{
                 2 * Length::METER,
@@ -77,7 +77,7 @@ TEST(BoxMap, GetBoxInfo1){
 
         ASSERT_EQ(
             bm.get_box_info(
-            Box{
+            r2d2::Box{
             Coordinate{
                 0.5*Length::METER,
                 0.5*Length::METER,
@@ -104,7 +104,7 @@ TEST(BoxMap, GetBoxInfo2){
     r2d2::BoxMap bm{};
 
     bm.set_box_info(
-        Box{
+        r2d2::Box{
         Coordinate{
             rand() % 20 * Length::METER,
             rand() % 20 * Length::METER,
@@ -120,7 +120,7 @@ TEST(BoxMap, GetBoxInfo2){
                 );
 
     bm.set_box_info(
-        Box{
+        r2d2::Box{
         Coordinate{
             rand() % 20 * Length::METER,
             rand() % 20 * Length::METER,
@@ -137,7 +137,7 @@ TEST(BoxMap, GetBoxInfo2){
 
     ASSERT_EQ(
         bm.get_box_info(
-        Box{
+        r2d2::Box{
         Coordinate{
             0 * Length::METER,
             0 * Length::METER,
@@ -161,7 +161,7 @@ TEST(BoxMap, BoundingBox){
     r2d2::BoxMap bm{};
 
     bm.set_box_info(
-        Box{
+        r2d2::Box{
         Coordinate{
             10 * Length::METER,
             10 * Length::METER,
@@ -177,7 +177,7 @@ TEST(BoxMap, BoundingBox){
                 );
 
     bm.set_box_info(
-        Box{
+        r2d2::Box{
         Coordinate{
             15 * Length::METER,
             15 * Length::METER,
@@ -192,7 +192,7 @@ TEST(BoxMap, BoundingBox){
     r2d2::BoxInfo{ false, false, true }
                 );
 
-    Box bounding = bm.get_map_bounding_box();
+    r2d2::Box bounding = bm.get_map_bounding_box();
 
     ASSERT_TRUE(
         (bounding.get_bottom_left().get_x() / Length::METER == 10) &&
@@ -216,7 +216,7 @@ TEST(BoxMap, UsageExample){
 
     for (int i = 0; i < 20; i++){
         bm.set_box_info(
-            Box{
+            r2d2::Box{
             Coordinate{
                 random_real(re)*Length::METER,
                 random_real(re)*Length::METER,
@@ -237,7 +237,7 @@ TEST(BoxMap, UsageExample){
                     == r2d2::BoxInfo{ true, true, true })
     );
 
-    Box bounding = bm.get_map_bounding_box();
+    r2d2::Box bounding = bm.get_map_bounding_box();
     ASSERT_TRUE(
         (bounding.get_bottom_left().get_x() / Length::METER < 0) &&
         (bounding.get_bottom_left().get_y() / Length::METER < 0) &&

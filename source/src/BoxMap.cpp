@@ -40,7 +40,6 @@
 #include <string>
 #include <stdlib.h>
 #include <math.h>
-#include <unistd.h>
 
 
 namespace r2d2

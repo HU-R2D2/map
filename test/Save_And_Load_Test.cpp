@@ -46,7 +46,7 @@ TEST(BoxMap, saveAndLoad) {
     int generate_box_count = 10;
     for (int i = 0; i < generate_box_count; i++) {
         bm.set_box_info(
-                Box{
+                r2d2::Box{
                         Coordinate{
                                 random_real(re) * Length::METER,
                                 random_real(re) * Length::METER,
@@ -72,7 +72,7 @@ TEST(BoxMap, saveAndLoad) {
     cout << "Comparing with " << rounds << " rounds" << endl;
 
     while (rounds >= 0) {
-        Box temp{
+        r2d2::Box temp{
             Coordinate{
                     random_real(re) * Length::METER,
                     random_real(re) * Length::METER,
