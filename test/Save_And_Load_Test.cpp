@@ -47,15 +47,15 @@ TEST(BoxMap, saveAndLoad) {
     for (int i = 0; i < generate_box_count; i++) {
         bm.set_box_info(
                 r2d2::Box{
-                        Coordinate{
-                                random_real(re) * Length::METER,
-                                random_real(re) * Length::METER,
-                                random_real(re) * Length::METER
+                        r2d2::Coordinate{
+                                random_real(re) * r2d2::Length::METER,
+                                random_real(re) * r2d2::Length::METER,
+                                random_real(re) * r2d2::Length::METER
                         },
-                        Coordinate{
-                                random_real(re) * Length::METER,
-                                random_real(re) * Length::METER,
-                                random_real(re) * Length::METER
+                        r2d2::Coordinate{
+                                random_real(re) * r2d2::Length::METER,
+                                random_real(re) * r2d2::Length::METER,
+                                random_real(re) * r2d2::Length::METER
                         }
                 },
                 r2d2::BoxInfo{rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0}
@@ -73,15 +73,15 @@ TEST(BoxMap, saveAndLoad) {
 
     while (rounds >= 0) {
         r2d2::Box temp{
-            Coordinate{
-                    random_real(re) * Length::METER,
-                    random_real(re) * Length::METER,
-                    random_real(re) * Length::METER
+            r2d2::Coordinate{
+                    random_real(re) * r2d2::Length::METER,
+                    random_real(re) * r2d2::Length::METER,
+                    random_real(re) * r2d2::Length::METER
             },
-            Coordinate{
-                    random_real(re) * Length::METER,
-                    random_real(re) * Length::METER,
-                    random_real(re) * Length::METER
+            r2d2::Coordinate{
+                    random_real(re) * r2d2::Length::METER,
+                    random_real(re) * r2d2::Length::METER,
+                    random_real(re) * r2d2::Length::METER
             }
         };
 

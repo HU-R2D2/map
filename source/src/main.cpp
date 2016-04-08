@@ -39,7 +39,7 @@
 #include "../include/BoxMap.hpp"
 
 r2d2::Box random_box(){
-    return r2d2::Box{ Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER }, Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER } };
+    return r2d2::Box{ r2d2::Coordinate{ rand() % 100 * r2d2::Length::METER, rand() % 100 * r2d2::Length::METER, rand() % 100 * r2d2::Length::METER }, r2d2::Coordinate{ rand() % 100 * r2d2::Length::METER, rand() % 100 * r2d2::Length::METER, rand() % 100 * r2d2::Length::METER } };
 }
 
 //! [map_interface_example]
@@ -66,21 +66,21 @@ void load_map(){
 }
 //! [load_example]
 int main(int argc, char ** argv){
-    Length l1 = 200.43 * Length::METER;
+    r2d2::Length l1 = 200.43 * r2d2::Length::METER;
 
     r2d2::BoxMap testMap{};
     srand(time(NULL));
     int max = 5;
     if (argc > 1){max = atoi(argv[1]); }
     for (int i = 0; i < max; i++){
-        testMap.set_box_info(r2d2::Box{ Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER }, Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER } }, r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 });
+        testMap.set_box_info(r2d2::Box{ r2d2::Coordinate{ rand() % 100 * r2d2::Length::METER, rand() % 100 * r2d2::Length::METER, rand() % 100 * r2d2::Length::METER }, r2d2::Coordinate{ rand() % 100 * r2d2::Length::METER, rand() % 100 * r2d2::Length::METER, rand() % 100 * r2d2::Length::METER } }, r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 });
         //cout << "\n" << testMap.get_map_size() << "\n";
         //std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
     cout << testMap.get_map_size() << "\n";
     for (int i = 0; i < 10; i++){
-        cout << testMap.get_box_info(r2d2::Box{ Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER }, Coordinate{ rand() % 100 * Length::METER, rand() % 100 * Length::METER, rand() % 100 * Length::METER } }).get_has_obstacle();
+        cout << testMap.get_box_info(r2d2::Box{ r2d2::Coordinate{ rand() % 100 * r2d2::Length::METER, rand() % 100 * r2d2::Length::METER, rand() % 100 * r2d2::Length::METER }, r2d2::Coordinate{ rand() % 100 * r2d2::Length::METER, rand() % 100 * r2d2::Length::METER, rand() % 100 * r2d2::Length::METER } }).get_has_obstacle();
         cout << "\n";// << testMap.get_map_size() << "\n";
     }
     cout << "\n" << testMap.get_map_size() << "\n";
