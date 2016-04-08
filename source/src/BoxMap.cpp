@@ -8,7 +8,7 @@
 // @section LICENSE
 // License: newBSD
 //
-// Copyright © 2016, HU University of Applied Sciences Utrecht.
+// Copyright ï¿½ 2016, HU University of Applied Sciences Utrecht.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -39,6 +39,7 @@
 #include <string>
 #include <stdlib.h>
 #include <math.h>
+#include <unistd.h>
 
 
 namespace r2d2
@@ -348,11 +349,19 @@ namespace r2d2
         d.AddMember("rightCoordinates", rightCoordinates, d.GetAllocator());
         d.AddMember("boxInfo", boxInfos, d.GetAllocator());
 
-        FILE* fp = fopen(filename.c_str(), "wb");
+        FILE* pFILE = fopen(filename.c_str(), "wb");
         char writeBuffer[65536];
-        rapidjson::FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
+        rapidjson::FileWriteStream os(pFILE, writeBuffer, sizeof(writeBuffer));
         rapidjson::Writer<rapidjson::FileWriteStream> writer(os);
         d.Accept(writer);
+
+        writer.Reset(os);
+        fclose(pFILE);
+    }
+
+    inline bool exists (const std::string& name) {
+        struct stat buffer;
+        return (stat (name.c_str(), &buffer) == 0);
     }
 
 
@@ -364,13 +373,23 @@ namespace r2d2
         rapidjson::Document d;
         d.ParseStream<0, rapidjson::UTF8<>, rapidjson::FileReadStream>(is);
 
-        const rapidjson::Value& elementSize = d["leftCoordinates"];
+        rapidjson::Value& elementSize = d["leftCoordinates"];
 
         for(rapidjson::SizeType i = 0; i < elementSize.Size(); i++) {
-            Box mBox = Box(Coordinate((d["leftCoordinates"][i]["x"].GetDouble() * Length::METER), (d["leftCoordinates"][i]["y"].GetDouble() * Length::METER), (d["leftCoordinates"][i]["z"].GetDouble() * Length::METER)), Coordinate((d["rightCoordinates"][i]["x"].GetDouble() * Length::METER), (d["rightCoordinates"][i]["y"].GetDouble() * Length::METER), (d["rightCoordinates"][i]["z"].GetDouble() * Length::METER)));
-            BoxInfo mBoxInfo(d["boxInfo"][i]["has_obstacle"].GetBool(),d["boxInfo"][i]["has_unknown"].GetBool(),d["boxInfo"][i]["has_navigatable"].GetBool());
-            set_box_info(mBox, mBoxInfo);
+            Box mBox = Box(Coordinate((d["leftCoordinates"][i]["x"].GetDouble() * Length::METER),
+                                      (d["leftCoordinates"][i]["y"].GetDouble() * Length::METER),
+                                      (d["leftCoordinates"][i]["z"].GetDouble() * Length::METER)),
+                           Coordinate((d["rightCoordinates"][i]["x"].GetDouble() * Length::METER),
+                                      (d["rightCoordinates"][i]["y"].GetDouble() * Length::METER),
+                                      (d["rightCoordinates"][i]["z"].GetDouble() * Length::METER)));
+
+            BoxInfo mBoxInfo(d["boxInfo"][i]["has_obstacle"].GetBool(),
+                             d["boxInfo"][i]["has_unknown"].GetBool(),
+                             d["boxInfo"][i]["has_navigatable"].GetBool());
+            std::pair<Box, BoxInfo> psh(mBox, mBoxInfo);
+            map.push_back(psh);
         }
+        fclose(pFILE);
     }
 
     int BoxMap::get_map_size(){
