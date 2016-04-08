@@ -462,7 +462,7 @@ namespace r2d2
             BoxInfo map_BoxInfo(d["box_infos"][i]["has_obstacle"].GetBool(),
                              d["box_infos"][i]["has_unknown"].GetBool(),
                              d["box_infos"][i]["has_navigatable"].GetBool());
-            
+
             std::pair<Box, BoxInfo> psh(map_Box, map_BoxInfo);
             map.push_back(psh);
         }
