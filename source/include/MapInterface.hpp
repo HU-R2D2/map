@@ -65,18 +65,48 @@ namespace r2d2
 
     public:
 
-
+        //!
+        //! @brief  Constructor for BoxInfo.
+        //! @param  has_obstacle    bool describing if box has an obstacle, default: false.
+        //! @param  has_unknown     bool describing if box has an obstacle, default: false.
+        //! @param  has_navigatable bool describing if box has an obstacle, default: false.
+        //!
         BoxInfo(
             bool has_obstacle = false,
             bool has_unknown = false, 
             bool has_navigatable = false
         );
 
+        //!
+        //! @brief  Getter for obstacle bool.
+        //! @return const bool BoxInfo::has_obstacle
+        //!
         bool get_has_obstacle() const;
+
+        //!
+        //! @brief  Getter for unknown bool.
+        //! @return const bool BoxInfo::has_unknown
+        //!
         bool get_has_unknown() const;
+
+        //!
+        //! @brief  Getter for navigatable bool.
+        //! @return const bool BoxInfo::has_navigatable
+        //!
         bool get_has_navigatable() const;
 
+        //! The operator == (is equal)
+        //! 
+        //! Check if 2 BoxInfo's are completely equal.
+        //! @param  rhs const BoxInfo object.
+        //! @return bool, true if all internal bools are equal.
         bool operator==(const BoxInfo rhs) const;
+
+        //! The operator != (not equal)
+        //! 
+        //! Exact inverse of operator==().
+        //! @param  rhs const BoxInfo object.
+        //! @return bool, true if operator==() is false.
         bool operator!=(const BoxInfo rhs) const;
 
     private:
@@ -90,7 +120,23 @@ namespace r2d2
     {
 
     public:
+
+        //! Get Box Information.
+        //!
+        //! @brief  Get Box information about a certain area.
+        //!         All bools are false if no information is found,
+        //!         overwritten with true if true is found in the map.
+        //!
+        //! @param  box The area that is to be checked.
+        //! @return BoxInfo, the found information about the area.
+        //!
         virtual const BoxInfo get_box_info(const Box box) = 0;
+
+        //! Get the Box containing all boxes in the current map.
+        //! 
+        //! @brief  Scans all boxes in the map
+        //!         and makes a box precisely around all other boxes.
+        //! @return const Box, the box containing all other boxes.
         virtual const Box get_map_bounding_box() = 0;
     };
 
@@ -98,6 +144,13 @@ namespace r2d2
     {
 
     public:
+
+        //! Place new Box with BoxInfo in map.
+        //!
+        //! @brief  Places a new box in the map with BoxInfo.
+        //!
+        //! @param  box         the new Box to be added.
+        //! @param  box_info    the new BoxInfo thats found in that Box.
         virtual void set_box_info(const Box box, const BoxInfo box_info) = 0;
     };
 
