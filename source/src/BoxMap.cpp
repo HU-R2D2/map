@@ -409,6 +409,10 @@ namespace r2d2
 
         //! Write the file to given filename
         FILE* pFILE = fopen(filename.c_str(), "wb");
+        if(!pFILE) {
+            fclose(pFILE);
+            throw std::exception();
+        }
         char writeBuffer[65536];
         rapidjson::FileWriteStream os(pFILE, writeBuffer, sizeof(writeBuffer));
         rapidjson::Writer<rapidjson::FileWriteStream> writer(os);
@@ -427,7 +431,7 @@ namespace r2d2
             fclose(pFILE);
             throw std::exception();
         }
-        
+
         char buff[65536];
         rapidjson::FileReadStream frs(pFILE, buff, sizeof(buff));
         rapidjson::Document d;
