@@ -423,6 +423,11 @@ namespace r2d2
     {
         //! Open file
         FILE* pFILE = fopen(filename.c_str() , "rb");
+        if(!pFILE) {
+            fclose(pFILE);
+            throw std::exception();
+        }
+        
         char buff[65536];
         rapidjson::FileReadStream frs(pFILE, buff, sizeof(buff));
         rapidjson::Document d;
