@@ -1,0 +1,68 @@
+\hypertarget{classr2d2_1_1_read_only_map}{}\section{r2d2\+:\+:Read\+Only\+Map Class Reference}
+\label{classr2d2_1_1_read_only_map}\index{r2d2\+::\+Read\+Only\+Map@{r2d2\+::\+Read\+Only\+Map}}
+Inheritance diagram for r2d2\+:\+:Read\+Only\+Map\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=4.000000cm]{classr2d2_1_1_read_only_map}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual const \hyperlink{classr2d2_1_1_box_info}{Box\+Info} \hyperlink{classr2d2_1_1_read_only_map_ae088c8f8cea0870bf3db8bbf3a0821b8}{get\+\_\+box\+\_\+info} (const Box box)=0
+\begin{DoxyCompactList}\small\item\em Get Box information about a certain area. All bools are false if no information is found, overwritten with true if true is found in the map. \end{DoxyCompactList}\item 
+virtual const Box \hyperlink{classr2d2_1_1_read_only_map_a322efcf80b3f461769e69cbb60a87b72}{get\+\_\+map\+\_\+bounding\+\_\+box} ()=0
+\begin{DoxyCompactList}\small\item\em Scans all boxes in the map and makes a box precisely around all other boxes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classr2d2_1_1_read_only_map_ae088c8f8cea0870bf3db8bbf3a0821b8}{}\index{r2d2\+::\+Read\+Only\+Map@{r2d2\+::\+Read\+Only\+Map}!get\+\_\+box\+\_\+info@{get\+\_\+box\+\_\+info}}
+\index{get\+\_\+box\+\_\+info@{get\+\_\+box\+\_\+info}!r2d2\+::\+Read\+Only\+Map@{r2d2\+::\+Read\+Only\+Map}}
+\subsubsection[{get\+\_\+box\+\_\+info(const Box box)=0}]{\setlength{\rightskip}{0pt plus 5cm}virtual const {\bf Box\+Info} r2d2\+::\+Read\+Only\+Map\+::get\+\_\+box\+\_\+info (
+\begin{DoxyParamCaption}
+\item[{const Box}]{box}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}\label{classr2d2_1_1_read_only_map_ae088c8f8cea0870bf3db8bbf3a0821b8}
+
+
+Get Box information about a certain area. All bools are false if no information is found, overwritten with true if true is found in the map. 
+
+Get Box Information.
+
+
+\begin{DoxyParams}{Parameters}
+{\em box} & The area that is to be checked. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\hyperlink{classr2d2_1_1_box_info}{Box\+Info}, the found information about the area. 
+\end{DoxyReturn}
+
+
+Implemented in \hyperlink{classr2d2_1_1_box_map_aa6fd512737ad45da9bc46a516807f71e}{r2d2\+::\+Box\+Map}.
+
+\hypertarget{classr2d2_1_1_read_only_map_a322efcf80b3f461769e69cbb60a87b72}{}\index{r2d2\+::\+Read\+Only\+Map@{r2d2\+::\+Read\+Only\+Map}!get\+\_\+map\+\_\+bounding\+\_\+box@{get\+\_\+map\+\_\+bounding\+\_\+box}}
+\index{get\+\_\+map\+\_\+bounding\+\_\+box@{get\+\_\+map\+\_\+bounding\+\_\+box}!r2d2\+::\+Read\+Only\+Map@{r2d2\+::\+Read\+Only\+Map}}
+\subsubsection[{get\+\_\+map\+\_\+bounding\+\_\+box()=0}]{\setlength{\rightskip}{0pt plus 5cm}virtual const Box r2d2\+::\+Read\+Only\+Map\+::get\+\_\+map\+\_\+bounding\+\_\+box (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}\label{classr2d2_1_1_read_only_map_a322efcf80b3f461769e69cbb60a87b72}
+
+
+Scans all boxes in the map and makes a box precisely around all other boxes. 
+
+Get the Box containing all boxes in the current map.
+
+\begin{DoxyReturn}{Returns}
+const Box, the box containing all other boxes. 
+\end{DoxyReturn}
+
+
+Implemented in \hyperlink{classr2d2_1_1_box_map_ac1aea64a58cdb6916ecbcb0d2ea780c2}{r2d2\+::\+Box\+Map}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+source/include/Map\+Interface.\+hpp\end{DoxyCompactItemize}

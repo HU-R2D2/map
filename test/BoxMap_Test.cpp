@@ -47,7 +47,7 @@ TEST(BoxMap, DefaultConstructor){
 */
 TEST(BoxMap, AddBox){
     r2d2::BoxMap bm{};
-    bm.set_box_info(Box{}, r2d2::BoxInfo{});
+    bm.set_box_info(r2d2::Box{}, r2d2::BoxInfo{});
     ASSERT_EQ(bm.get_map_size(), 1);
 }
 
@@ -66,27 +66,27 @@ TEST(BoxMap, GetBoxInfo1){
         };
 
         bm.set_box_info(
-            Box{
-            Coordinate{},
-            Coordinate{
-                2 * Length::METER,
-                2 * Length::METER,
-                2 * Length::METER
+            r2d2::Box{
+            r2d2::Coordinate{},
+            r2d2::Coordinate{
+                2 * r2d2::Length::METER,
+                2 * r2d2::Length::METER,
+                2 * r2d2::Length::METER
             }
         }, temp);
 
         ASSERT_EQ(
             bm.get_box_info(
-            Box{
-            Coordinate{
-                0.5*Length::METER,
-                0.5*Length::METER,
-                0.5*Length::METER
+            r2d2::Box{
+            r2d2::Coordinate{
+                0.5*r2d2::Length::METER,
+                0.5*r2d2::Length::METER,
+                0.5*r2d2::Length::METER
             },
-            Coordinate{
-                    1.5*Length::METER,
-                    1.5*Length::METER,
-                    1.5*Length::METER
+            r2d2::Coordinate{
+                    1.5*r2d2::Length::METER,
+                    1.5*r2d2::Length::METER,
+                    1.5*r2d2::Length::METER
                 }
         }
         ),
@@ -104,32 +104,32 @@ TEST(BoxMap, GetBoxInfo2){
     r2d2::BoxMap bm{};
 
     bm.set_box_info(
-        Box{
-        Coordinate{
-            rand() % 20 * Length::METER,
-            rand() % 20 * Length::METER,
-            rand() % 20 * Length::METER
+        r2d2::Box{
+        r2d2::Coordinate{
+            rand() % 20 * r2d2::Length::METER,
+            rand() % 20 * r2d2::Length::METER,
+            rand() % 20 * r2d2::Length::METER
         },
-        Coordinate{
-                rand() % 20 * Length::METER,
-                rand() % 20 * Length::METER,
-                rand() % 20 * Length::METER
+        r2d2::Coordinate{
+                rand() % 20 * r2d2::Length::METER,
+                rand() % 20 * r2d2::Length::METER,
+                rand() % 20 * r2d2::Length::METER
             }
     },
     r2d2::BoxInfo{ false, true, false }
                 );
 
     bm.set_box_info(
-        Box{
-        Coordinate{
-            rand() % 20 * Length::METER,
-            rand() % 20 * Length::METER,
-            rand() % 20 * Length::METER
+        r2d2::Box{
+        r2d2::Coordinate{
+            rand() % 20 * r2d2::Length::METER,
+            rand() % 20 * r2d2::Length::METER,
+            rand() % 20 * r2d2::Length::METER
         },
-        Coordinate{
-                rand() % 20 * Length::METER,
-                rand() % 20 * Length::METER,
-                rand() % 20 * Length::METER
+        r2d2::Coordinate{
+                rand() % 20 * r2d2::Length::METER,
+                rand() % 20 * r2d2::Length::METER,
+                rand() % 20 * r2d2::Length::METER
             }
     },
     r2d2::BoxInfo{ false, false, true }
@@ -137,16 +137,16 @@ TEST(BoxMap, GetBoxInfo2){
 
     ASSERT_EQ(
         bm.get_box_info(
-        Box{
-        Coordinate{
-            0 * Length::METER,
-            0 * Length::METER,
-            0 * Length::METER
+        r2d2::Box{
+        r2d2::Coordinate{
+            0 * r2d2::Length::METER,
+            0 * r2d2::Length::METER,
+            0 * r2d2::Length::METER
         },
-        Coordinate{
-                20 * Length::METER,
-                20 * Length::METER,
-                20 * Length::METER
+        r2d2::Coordinate{
+                20 * r2d2::Length::METER,
+                20 * r2d2::Length::METER,
+                20 * r2d2::Length::METER
             }
     }
     ),
@@ -161,46 +161,46 @@ TEST(BoxMap, BoundingBox){
     r2d2::BoxMap bm{};
 
     bm.set_box_info(
-        Box{
-        Coordinate{
-            10 * Length::METER,
-            10 * Length::METER,
-            10 * Length::METER
+        r2d2::Box{
+        r2d2::Coordinate{
+            10 * r2d2::Length::METER,
+            10 * r2d2::Length::METER,
+            10 * r2d2::Length::METER
         },
-        Coordinate{
-                20 * Length::METER,
-                20 * Length::METER,
-                20 * Length::METER
+        r2d2::Coordinate{
+                20 * r2d2::Length::METER,
+                20 * r2d2::Length::METER,
+                20 * r2d2::Length::METER
             }
     },
     r2d2::BoxInfo{ false, true, true }
                 );
 
     bm.set_box_info(
-        Box{
-        Coordinate{
-            15 * Length::METER,
-            15 * Length::METER,
-            15 * Length::METER
+        r2d2::Box{
+        r2d2::Coordinate{
+            15 * r2d2::Length::METER,
+            15 * r2d2::Length::METER,
+            15 * r2d2::Length::METER
         },
-        Coordinate{
-                60 * Length::METER,
-                60 * Length::METER,
-                60 * Length::METER
+        r2d2::Coordinate{
+                60 * r2d2::Length::METER,
+                60 * r2d2::Length::METER,
+                60 * r2d2::Length::METER
             }
     },
     r2d2::BoxInfo{ false, false, true }
                 );
 
-    Box bounding = bm.get_map_bounding_box();
+    r2d2::Box bounding = bm.get_map_bounding_box();
 
     ASSERT_TRUE(
-        (bounding.get_bottom_left().get_x() / Length::METER == 10) &&
-        (bounding.get_bottom_left().get_y() / Length::METER == 10) &&
-        (bounding.get_bottom_left().get_z() / Length::METER == 10) &&
-        (bounding.get_top_right().get_x() / Length::METER == 60) &&
-        (bounding.get_top_right().get_y() / Length::METER == 60) &&
-        (bounding.get_top_right().get_z() / Length::METER == 60)
+        (bounding.get_bottom_left().get_x() / r2d2::Length::METER == 10) &&
+        (bounding.get_bottom_left().get_y() / r2d2::Length::METER == 10) &&
+        (bounding.get_bottom_left().get_z() / r2d2::Length::METER == 10) &&
+        (bounding.get_top_right().get_x() / r2d2::Length::METER == 60) &&
+        (bounding.get_top_right().get_y() / r2d2::Length::METER == 60) &&
+        (bounding.get_top_right().get_z() / r2d2::Length::METER == 60)
         );
 }
 
@@ -214,36 +214,36 @@ TEST(BoxMap, UsageExample){
     r2d2::BoxMap bm{};
     cout << "May take a minute or 2...\n";
 
-    for (int i = 0; i < 50; i++){
+    for (int i = 0; i < 20; i++){
         bm.set_box_info(
-            Box{
-            Coordinate{
-                random_real(re)*Length::METER,
-                random_real(re)*Length::METER,
-                random_real(re)*Length::METER
+            r2d2::Box{
+            r2d2::Coordinate{
+                random_real(re)*r2d2::Length::METER,
+                random_real(re)*r2d2::Length::METER,
+                random_real(re)*r2d2::Length::METER
             },
-            Coordinate{
-                    random_real(re)*Length::METER,
-                    random_real(re)*Length::METER,
-                    random_real(re)*Length::METER
+            r2d2::Coordinate{
+                    random_real(re)*r2d2::Length::METER,
+                    random_real(re)*r2d2::Length::METER,
+                    random_real(re)*r2d2::Length::METER
                 }
         },
         r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 }
-                    );
+        );
     }
     ASSERT_GT(bm.get_map_size(), 9);
     ASSERT_TRUE(
         (bm.get_box_info(bm.get_map_bounding_box())
-        == r2d2::BoxInfo{ true, true, true })
-        );
+                    == r2d2::BoxInfo{ true, true, true })
+    );
 
-    Box bounding = bm.get_map_bounding_box();
+    r2d2::Box bounding = bm.get_map_bounding_box();
     ASSERT_TRUE(
-        (bounding.get_bottom_left().get_x() / Length::METER < 0) &&
-        (bounding.get_bottom_left().get_y() / Length::METER < 0) &&
-        (bounding.get_bottom_left().get_z() / Length::METER < 0) &&
-        (bounding.get_top_right().get_x() / Length::METER > 0) &&
-        (bounding.get_top_right().get_y() / Length::METER > 0) &&
-        (bounding.get_top_right().get_z() / Length::METER > 0)
+        (bounding.get_bottom_left().get_x() / r2d2::Length::METER < 0) &&
+        (bounding.get_bottom_left().get_y() / r2d2::Length::METER < 0) &&
+        (bounding.get_bottom_left().get_z() / r2d2::Length::METER < 0) &&
+        (bounding.get_top_right().get_x() / r2d2::Length::METER > 0) &&
+        (bounding.get_top_right().get_y() / r2d2::Length::METER > 0) &&
+        (bounding.get_top_right().get_z() / r2d2::Length::METER > 0)
         );
 }
