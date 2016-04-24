@@ -1,4 +1,4 @@
-// ++--++
+                                              // ++--++
 // @file BoxMap.cpp
 // @date Created: <07-04-16>
 // @version <1.0.0>
@@ -48,7 +48,7 @@ namespace r2d2
     const BoxInfo BoxMap::get_box_info(const Box box)
     {
         bool temp_has_obstacle = false;
-        bool temp_has_unknown = false;
+        bool temp_has_unknown = true;
         bool temp_has_navigatable = false;
 
         for (std::pair<Box, BoxInfo> known_box : map){
@@ -94,7 +94,7 @@ namespace r2d2
         std::vector<int> to_be_removed;
         std::vector<std::pair<Box, BoxInfo>> new_boxes;
 
-        for (unsigned int j = 0; j < map.size(); j++){
+        for (int j = 0; j < map.size(); j++){
             if (box.intersects(map[j].first)){
 
                 to_be_removed.push_back(j);

@@ -58,13 +58,13 @@ namespace r2d2
     }
 
     bool BoxInfo::get_has_obstacle() const{
-        return BoxInfo::has_obstacle;
+        return has_obstacle;
     }
     bool BoxInfo::get_has_unknown() const{
-        return BoxInfo::has_unknown;
+        return has_unknown;
     }
     bool BoxInfo::get_has_navigatable() const{
-        return BoxInfo::has_navigatable;
+        return has_navigatable;
     }
 
 }

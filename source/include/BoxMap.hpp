@@ -28,6 +28,11 @@
 // OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // ++--++
 
+//! @author     Anas Shehata
+//! @date       22-04-16
+//! @version    1.0
+//! @brief      BoxMap is an implementation of MapInterface.cpp. a Box map type which retrieves and saves information about a certain area in a 3D Box map.
+//!
 #ifndef _BOXMAP_HPP
 #define _BOXMAP_HPP
 
@@ -40,55 +45,28 @@ namespace r2d2
     {
 
     public:
-        
-        //! Get Box Information.
-        //!
-        //! @brief  Get Box information about a certain area.
-        //!         All bools are false if no information is found,
-        //!         overwritten with true if true is found in the map.
-        //!
-        //! @param  box The area that is to be checked.
-        //! @return BoxInfo, the found information about the area.
-        //! @snippet    source/src/main.cpp map_interface_example
-        //!
+
+
+
+
         const BoxInfo get_box_info(const Box box) override;
-        
-        //! Get the Box containing all boxes in the current map.
-        //! 
-        //! @brief  Scans all boxes in the map
-        //!         and makes a box precisely around all other boxes.
-        //! @return const Box, the box containing all other boxes.
-        //!
+
         const Box get_map_bounding_box() override;
 
-        //! Place new Box with BoxInfo in map.
-        //!
-        //! @brief  Places a new box in the map with BoxInfo.
-        //!         If the box overlaps, the old boxes are cut away.
-        //!
-        //! @param  box         the new Box to be added.
-        //! @param  box_info    the new BoxInfo thats found in that Box.
-        //! @snippet    source/src/main.cpp map_interface_example
-        //!
         void set_box_info(const Box box, const BoxInfo box_info) override;
 
-        //! @brief Saves the data of a BoxMap to a json file
-        //!
-        //! @param filename the destination of the file
-        //! @snippet source/src/main.cpp save_example
         void save(std::string filename) override;
 
-        //! @brief Loads the data of a json file to a BoxMap
-        //!
-        //! @param filename the destination of the file that needs to be loaded
-        //! @snippet source/src/main.cpp load_example
         void load(std::string filename) override;
 
+        //! @brief  gets the size of map
+        //!         
+        //! @return int BoxMap::map.size()
         int get_map_size();
 
 
     private:
-        std::vector<std::pair<Box, BoxInfo>> map;
+        std::vector<std::pair<Box, BoxInfo>> map; // a map in which boxes and boxinfos are stored in as a pairs
 
     };
 }
