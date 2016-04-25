@@ -216,7 +216,7 @@ namespace r2d2
 
                     //Cut-away Front exterior
                     if (temp_box.get_top_right().get_z() 
-                                        < box.get_top_right().get_z()){
+                                        > box.get_top_right().get_z()){
 
                         //Make new box
                         new_boxes.push_back(std::pair<Box, BoxInfo>{
@@ -244,7 +244,7 @@ namespace r2d2
 
                     //Cut-away Back exterior
                     if (temp_box.get_bottom_left().get_z() 
-                                        > box.get_bottom_left().get_z()){
+                                        < box.get_bottom_left().get_z()){
                         
                         //Make new box
                         new_boxes.push_back(std::pair<Box, BoxInfo>{
