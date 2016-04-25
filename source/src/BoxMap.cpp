@@ -299,11 +299,10 @@ namespace r2d2
         //!   "right_coordinates":[{}],
         //!   "box_infos":[{}]
         //! }
-        rapidjson::Value left_coordinates(rapidjson::kArrayType);
-        rapidjson::Value right_coordinates(rapidjson::kArrayType);
-        rapidjson::Value box_infos(rapidjson::kArrayType);
+        rapidjson::Value boxes(rapidjson::kArrayType);
 
         for(int j = 0; j < map.size(); j++) {
+            rapidjson::Value box(rapidjson::kObjectType);
             //! Create coordinate placeholders
             //! "left_coordinates":
             //! [{
@@ -396,16 +395,14 @@ namespace r2d2
                     d.GetAllocator()
             );
 
-            //! Push object to their destination array
-            left_coordinates.PushBack(left_coordinate, d.GetAllocator());
-            right_coordinates.PushBack(right_coordinate, d.GetAllocator());
-            box_infos.PushBack(box_info, d.GetAllocator());
+            box.AddMember("left_coordinate", left_coordinate, d.GetAllocator());
+            box.AddMember("right_coordinate", right_coordinate, d.GetAllocator());
+            box.AddMember("box_info", box_info, d.GetAllocator());
+
+            boxes.PushBack(box, d.GetAllocator());
         }
 
-        //! Add destination arrays to DOM element
-        d.AddMember("left_coordinates", left_coordinates, d.GetAllocator());
-        d.AddMember("right_coordinates", right_coordinates, d.GetAllocator());
-        d.AddMember("box_infos", box_infos, d.GetAllocator());
+        d.AddMember("boxes", boxes, d.GetAllocator());
 
         //! Write the file to given filename
         FILE* pFILE = fopen(filename.c_str(), "wb");
@@ -439,31 +436,45 @@ namespace r2d2
         //! Push contents into DOM element
         d.ParseStream<0, rapidjson::UTF8<>, rapidjson::FileReadStream>(frs);
 
-        //! Allocate element_size
-        const rapidjson::Value& element_size = d["left_coordinates"];
+        if(!d.HasMember("boxes"))
+        {
+            fclose(pFILE);
+            throw rapidjson::ParseErrorCode::kParseErrorObjectMissName;
+        }
+
+        //! Allocate row_size
+        const rapidjson::Value& row_size = d["boxes"];
 
         //! Load values from DOM element
-        for(rapidjson::SizeType i = 0; i < element_size.Size(); i++) {
+        for(rapidjson::SizeType i = 0; i < row_size.Size(); i++) {
+            if(d["boxes"][i]["left_coordinate"] == NULL,
+                    d["boxes"][i]["right_coordinate"] == NULL,
+                    d["boxes"][i]["box_info"] == NULL)
+            {
+                fclose(pFILE);
+                throw rapidjson::ParseErrorCode::kParseErrorObjectMissName;
+            }
+
             Box map_Box =
                 Box(Coordinate(
-                        (d["left_coordinates"][i]["x"].GetDouble()
+                        (d["boxes"][i]["left_coordinate"]["x"].GetDouble()
                          * Length::METER),
-                        (d["left_coordinates"][i]["y"].GetDouble()
+                        (d["boxes"][i]["left_coordinate"]["y"].GetDouble()
                          * Length::METER),
-                        (d["left_coordinates"][i]["z"].GetDouble()
+                        (d["boxes"][i]["left_coordinate"]["z"].GetDouble()
                          * Length::METER)),
 
                     Coordinate(
-                        (d["right_coordinates"][i]["x"].GetDouble()
+                        (d["boxes"][i]["right_coordinate"]["x"].GetDouble()
                          * Length::METER),
-                        (d["right_coordinates"][i]["y"].GetDouble()
+                        (d["boxes"][i]["right_coordinate"]["y"].GetDouble()
                          * Length::METER),
-                        (d["right_coordinates"][i]["z"].GetDouble()
+                        (d["boxes"][i]["right_coordinate"]["z"].GetDouble()
                          * Length::METER)));
 
-            BoxInfo map_BoxInfo(d["box_infos"][i]["has_obstacle"].GetBool(),
-                             d["box_infos"][i]["has_unknown"].GetBool(),
-                             d["box_infos"][i]["has_navigatable"].GetBool());
+            BoxInfo map_BoxInfo(d["boxes"][i]["box_info"]["has_obstacle"].GetBool(),
+                             d["boxes"][i]["box_info"]["has_obstacle"].GetBool(),
+                             d["boxes"][i]["box_info"]["has_obstacle"].GetBool());
 
             std::pair<Box, BoxInfo> psh(map_Box, map_BoxInfo);
             map.push_back(psh);

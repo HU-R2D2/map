@@ -43,7 +43,7 @@ TEST(BoxMap, saveAndLoad) {
     srand(time(NULL));
     r2d2::BoxMap bm{};
     cout << "May take a while... Please wait" << endl;
-    int generate_box_count = 10;
+    int generate_box_count = 5;
     for (int i = 0; i < generate_box_count; i++) {
         bm.set_box_info(
                 r2d2::Box{
@@ -62,15 +62,13 @@ TEST(BoxMap, saveAndLoad) {
         );
     }
     cout << "Saving...";
-    bm.save("save_and_load_test");
+    bm.save("save_and_load_test.json");
 
     cout << "Loading..." << endl;
     r2d2::BoxMap bm2{};
-    bm2.load("save_and_load_test");
-
+    bm2.load("save_and_load_test.json");
     int rounds = 50;
     cout << "Comparing with " << rounds << " rounds" << endl;
-
     while (rounds >= 0) {
         r2d2::Box temp{
             r2d2::Coordinate{
