@@ -290,26 +290,26 @@ namespace r2d2
 
     void BoxMap::save(std::string filename)
     {
-        //! Create a DOM document
+        // Create a DOM document
         rapidjson::Document d;
         d.SetObject();
 
-        //! Create the first level of json
-        //! { "left_coordinates":[{}],
-        //!   "right_coordinates":[{}],
-        //!   "box_infos":[{}]
-        //! }
+        // Create the first level of json
+        // { "left_coordinates":[{}],
+        //   "right_coordinates":[{}],
+        //   "box_infos":[{}]
+        // }
         rapidjson::Value boxes(rapidjson::kArrayType);
 
         for(int j = 0; j < map.size(); j++) {
             rapidjson::Value box(rapidjson::kObjectType);
-            //! Create coordinate placeholders
-            //! "left_coordinates":
-            //! [{
-            //! "x":left_coordinate_x,
-            //! "y":left_coordinate_y,
-            //! "z":left_coordinate_z
-            //! }]
+            // Create coordinate placeholders
+            // "left_coordinates":
+            // [{
+            // "x":left_coordinate_x,
+            // "y":left_coordinate_y,
+            // "z":left_coordinate_z
+            // }]
             rapidjson::Value left_coordinate(rapidjson::kObjectType);
                 rapidjson::Value left_coordinate_x;
                 left_coordinate_x.SetDouble(
@@ -323,12 +323,12 @@ namespace r2d2
                 left_coordinate_z.SetDouble(
                         map[j].first.get_bottom_left().get_z() / Length::METER);
 
-            //! Create coordinate placeholders
-            //! "right_coordinates":[{
-            //! "x":right_coordinate_x,
-            //! "y":right_coordinate_y,
-            //! "z":right_coordinate_z
-            //! }]
+            // Create coordinate placeholders
+            // "right_coordinates":[{
+            // "x":right_coordinate_x,
+            // "y":right_coordinate_y,
+            // "z":right_coordinate_z
+            // }]
             rapidjson::Value right_coordinate(rapidjson::kObjectType);
                 rapidjson::Value right_coordinate_x;
                 right_coordinate_x.SetDouble(
@@ -342,12 +342,12 @@ namespace r2d2
                 right_coordinate_z.SetDouble(
                         map[j].first.get_top_right().get_z() / Length::METER);
 
-            //! Create box_info placeholders
-            //! "box_infos":[{
-            //! "has_obstacle":has_obstacle,
-            //! "has_unknown":has_unknown,
-            //! "has_navigatable":has_navigatable
-            //! }]
+            // Create box_info placeholders
+            // "box_infos":[{
+            // "has_obstacle":has_obstacle,
+            // "has_unknown":has_unknown,
+            // "has_navigatable":has_navigatable
+            // }]
             rapidjson::Value box_info(rapidjson::kObjectType);
                 rapidjson::Value has_obstacle;
                 has_obstacle.SetBool(map[j].second.get_has_obstacle());
@@ -443,10 +443,10 @@ namespace r2d2
         }
 
         //! Allocate row_size
-        const rapidjson::Value& row_size = d["boxes"];
+        const rapidjson::SizeType row_size = d["boxes"].Size();
 
         //! Load values from DOM element
-        for(rapidjson::SizeType i = 0; i < row_size.Size(); i++) {
+        for(rapidjson::SizeType i = 0; i < row_size; i++) {
             if(d["boxes"][i]["left_coordinate"] == NULL,
                     d["boxes"][i]["right_coordinate"] == NULL,
                     d["boxes"][i]["box_info"] == NULL)
