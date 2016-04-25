@@ -473,8 +473,8 @@ namespace r2d2
                          * Length::METER)));
 
             BoxInfo map_BoxInfo(d["boxes"][i]["box_info"]["has_obstacle"].GetBool(),
-                             d["boxes"][i]["box_info"]["has_obstacle"].GetBool(),
-                             d["boxes"][i]["box_info"]["has_obstacle"].GetBool());
+                             d["boxes"][i]["box_info"]["has_unknown"].GetBool(),
+                             d["boxes"][i]["box_info"]["has_navigatable"].GetBool());
 
             std::pair<Box, BoxInfo> psh(map_Box, map_BoxInfo);
             map.push_back(psh);
