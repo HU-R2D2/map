@@ -358,7 +358,7 @@ namespace r2d2
                 rapidjson::Value has_navigatable;
                 has_navigatable.SetBool(map[j].second.get_has_navigatable());
 
-            //! Add indexes to Objects
+            // Add indexes to Objects
             left_coordinate.AddMember("x", left_coordinate_x, d.GetAllocator());
             left_coordinate.AddMember("y", left_coordinate_y, d.GetAllocator());
             left_coordinate.AddMember("z", left_coordinate_z, d.GetAllocator());
@@ -404,7 +404,7 @@ namespace r2d2
 
         d.AddMember("boxes", boxes, d.GetAllocator());
 
-        //! Write the file to given filename
+        // Write the file to given filename
         FILE* pFILE = fopen(filename.c_str(), "wb");
         if(!pFILE) {
             fclose(pFILE);
@@ -415,14 +415,14 @@ namespace r2d2
         rapidjson::Writer<rapidjson::FileWriteStream> writer(os);
         d.Accept(writer);
 
-        //! Reset writer for re-use and close the file
+        // Reset writer for re-use and close the file
         writer.Reset(os);
         fclose(pFILE);
     }
 
     void BoxMap::load(std::string filename)
     {
-        //! Open file
+        // Open file
         FILE* pFILE = fopen(filename.c_str() , "rb");
         if(!pFILE) {
             fclose(pFILE);
@@ -433,7 +433,7 @@ namespace r2d2
         rapidjson::FileReadStream frs(pFILE, buff, sizeof(buff));
         rapidjson::Document d;
 
-        //! Push contents into DOM element
+        // Push contents into DOM element
         d.ParseStream<0, rapidjson::UTF8<>, rapidjson::FileReadStream>(frs);
 
         if(!d.HasMember("boxes"))
@@ -442,10 +442,10 @@ namespace r2d2
             throw rapidjson::ParseErrorCode::kParseErrorObjectMissName;
         }
 
-        //! Allocate row_size
+        // Allocate row_size
         const rapidjson::SizeType row_size = d["boxes"].Size();
 
-        //! Load values from DOM element
+        // Load values from DOM element
         for(rapidjson::SizeType i = 0; i < row_size; i++) {
             if(d["boxes"][i]["left_coordinate"] == NULL,
                     d["boxes"][i]["right_coordinate"] == NULL,
@@ -480,7 +480,7 @@ namespace r2d2
             map.push_back(psh);
         }
 
-        //! Close file
+        // Close file
         fclose(pFILE);
     }
 
