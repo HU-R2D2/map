@@ -8,7 +8,7 @@
 // @section LICENSE
 // License: newBSD
 //
-// Copyright © 2016, HU University of Applied Sciences Utrecht.
+// Copyright ï¿½ 2016, HU University of Applied Sciences Utrecht.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -204,32 +204,41 @@ TEST(BoxMap, BoundingBox){
         );
 }
 
+// defines the size of the grid of squares that will be inserted in the stress test
+#define MAP_TEST_SIZE 150
+
 /*
 * Real world test / stress test
 */
 TEST(BoxMap, UsageExample){
-    std::uniform_real_distribution<double> random_real(-100.0, 100.0);
-    std::default_random_engine re(time(NULL));
-    srand(time(NULL));
+//    std::uniform_real_distribution<double> random_real(-100.0, 100.0);
+//    std::default_random_engine re(time(NULL));
+//    srand(time(NULL));
     r2d2::BoxMap bm{};
     cout << "May take a minute or 2...\n";
 
-    for (int i = 0; i < 20; i++){
-        bm.set_box_info(
-            r2d2::Box{
-            r2d2::Coordinate{
-                random_real(re)*r2d2::Length::METER,
-                random_real(re)*r2d2::Length::METER,
-                random_real(re)*r2d2::Length::METER
-            },
-            r2d2::Coordinate{
-                    random_real(re)*r2d2::Length::METER,
-                    random_real(re)*r2d2::Length::METER,
-                    random_real(re)*r2d2::Length::METER
-                }
-        },
-        r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 }
-        );
+    for (int x = -MAP_TEST_SIZE; x < MAP_TEST_SIZE; ++x) {
+        for (int y = -MAP_TEST_SIZE; y < MAP_TEST_SIZE; ++y) {
+            r2d2::Coordinate new_pos{
+                    x*r2d2::Length::METER,
+                    y*r2d2::Length::METER,
+                    -1*r2d2::Length::METER
+            };
+
+            bm.set_box_info(
+                    r2d2::Box{
+                            new_pos,
+                            new_pos
+                            + r2d2::Translation{
+                                    2*r2d2::Length::METER,
+                                    2*r2d2::Length::METER,
+                                    2*r2d2::Length::METER
+                            }
+                    },
+                    r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 }
+            );
+
+        }
     }
     ASSERT_GT(bm.get_map_size(), 9);
     ASSERT_TRUE(
