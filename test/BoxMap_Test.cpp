@@ -205,7 +205,7 @@ TEST(BoxMap, BoundingBox){
 }
 
 // defines the size of the grid of squares that will be inserted in the stress test
-#define MAP_TEST_SIZE 150
+#define MAP_TEST_SIZE 100
 
 /*
 * Real world test / stress test
