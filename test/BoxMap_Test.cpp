@@ -8,7 +8,7 @@
 // @section LICENSE
 // License: newBSD
 //
-// Copyright © 2016, HU University of Applied Sciences Utrecht.
+// Copyright ï¿½ 2016, HU University of Applied Sciences Utrecht.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -208,42 +208,62 @@ TEST(BoxMap, BoundingBox){
 * Real world test / stress test
 */
 TEST(BoxMap, UsageExample){
-    std::uniform_real_distribution<double> random_real(-100.0, 100.0);
-    std::default_random_engine re(time(NULL));
-    srand(time(NULL));
     r2d2::BoxMap bm{};
-    cout << "May take a minute or 2...\n";
 
-    for (int i = 0; i < 20; i++){
-        bm.set_box_info(
-            r2d2::Box{
+    r2d2::Box box1 =  r2d2::Box{
             r2d2::Coordinate{
-                random_real(re)*r2d2::Length::METER,
-                random_real(re)*r2d2::Length::METER,
-                random_real(re)*r2d2::Length::METER
+                    -83.9178867229331 *r2d2::Length::METER,
+                    -50.005615540355247 *r2d2::Length::METER,
+                    52.06871684497102 *r2d2::Length::METER
             },
             r2d2::Coordinate{
-                    random_real(re)*r2d2::Length::METER,
-                    random_real(re)*r2d2::Length::METER,
-                    random_real(re)*r2d2::Length::METER
-                }
-        },
-        r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 }
-        );
-    }
-    ASSERT_GT(bm.get_map_size(), 9);
-    ASSERT_TRUE(
-        (bm.get_box_info(bm.get_map_bounding_box())
-                    == r2d2::BoxInfo{ true, true, true })
+                    32.52173379550348*r2d2::Length::METER,
+                    80.63101146674475*r2d2::Length::METER,
+                    57.487075248474159*r2d2::Length::METER
+            }
+    };
+
+    r2d2::Box box2 =  r2d2::Box{
+            r2d2::Coordinate{
+                    85*r2d2::Length::METER,
+                    55*r2d2::Length::METER,
+                    50*r2d2::Length::METER
+            },
+            r2d2::Coordinate{
+                    32*r2d2::Length::METER,
+                    80*r2d2::Length::METER,
+                    57*r2d2::Length::METER
+            }
+    };
+
+    bm.set_box_info(box1,
+            r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 }
     );
 
-    r2d2::Box bounding = bm.get_map_bounding_box();
-    ASSERT_TRUE(
-        (bounding.get_bottom_left().get_x() / r2d2::Length::METER < 0) &&
-        (bounding.get_bottom_left().get_y() / r2d2::Length::METER < 0) &&
-        (bounding.get_bottom_left().get_z() / r2d2::Length::METER < 0) &&
-        (bounding.get_top_right().get_x() / r2d2::Length::METER > 0) &&
-        (bounding.get_top_right().get_y() / r2d2::Length::METER > 0) &&
-        (bounding.get_top_right().get_z() / r2d2::Length::METER > 0)
-        );
+    bm.set_box_info(box2,
+            r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 }
+    );
+
+    ASSERT_TRUE(box1.intersects(box2));
+
+    bm.set_box_info(box1, r2d2::BoxInfo{ false, false, false} );
+
+    r2d2::BoxInfo gBox1 = bm.get_box_info(box1);
+
+    ASSERT_TRUE((!gBox1.get_has_navigatable()) &&
+                (!gBox1.get_has_obstacle()));
+
+    bm.set_box_info(box2, r2d2::BoxInfo{ true, false, true} );
+    r2d2::BoxInfo gBox2 = bm.get_box_info(box2);
+
+    ASSERT_TRUE((gBox2.get_has_navigatable()) &&
+                (gBox2.get_has_obstacle()));
+
+    r2d2::BoxInfo union_box = bm.get_box_info(box1.get_union_box(box2));
+
+    ASSERT_TRUE((union_box.get_has_navigatable() == 1) &&
+                (union_box.get_has_unknown() == 1) &&
+                (union_box.get_has_obstacle() == 1));
+
+
 }
