@@ -50,6 +50,8 @@ namespace r2d2
         bool temp_has_unknown = false;
         bool temp_has_navigatable = false;
 
+        Translation vol = box.get_axis_size();
+
         for (std::pair<Box, BoxInfo> known_box : map){
             if (known_box.first.intersects(box)){
 
@@ -67,17 +69,26 @@ namespace r2d2
                     temp_has_navigatable || 
                     known_box.second.get_has_navigatable()
                 );
+
+                vol -= known_box.first.get_intersection_box(box).get_axis_size();
             }
 
             if (temp_has_obstacle && temp_has_unknown && temp_has_navigatable) {
-                break;
+                return BoxInfo{
+                    temp_has_obstacle,
+                    temp_has_unknown,
+                    temp_has_navigatable
+                };
             }
         }
 
-        return BoxInfo{ 
-            temp_has_obstacle, 
-            temp_has_unknown, 
-            temp_has_navigatable 
+        static const Length significant = 0.0001 * Length::CENTIMETER;
+        if (vol.get_length() > significant) temp_has_unknown = true;
+
+        return BoxInfo{
+            temp_has_obstacle,
+            temp_has_unknown,
+            temp_has_navigatable
         };
     }
 
