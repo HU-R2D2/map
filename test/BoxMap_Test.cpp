@@ -209,7 +209,6 @@ TEST(BoxMap, BoundingBox){
 */
 TEST(BoxMap, UsageExample){
     r2d2::BoxMap bm{};
-
     r2d2::Box box1 =  r2d2::Box{
             r2d2::Coordinate{
                     -83.9178867229331 *r2d2::Length::METER,
@@ -235,14 +234,6 @@ TEST(BoxMap, UsageExample){
                     57*r2d2::Length::METER
             }
     };
-
-    bm.set_box_info(box1,
-            r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 }
-    );
-
-    bm.set_box_info(box2,
-            r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 }
-    );
 
     ASSERT_TRUE(box1.intersects(box2));
 
