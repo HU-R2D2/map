@@ -1,4 +1,4 @@
-                                              // ++--++
+// ++--++
 // @file BoxMap.cpp
 // @date Created: <07-04-16>
 // @version <1.0.0>
@@ -45,10 +45,9 @@
 namespace r2d2
 {
 
-    const BoxInfo BoxMap::get_box_info(const Box box)
-    {
+    const BoxInfo BoxMap::get_box_info(const Box box) {
         bool temp_has_obstacle = false;
-        bool temp_has_unknown = true;
+        bool temp_has_unknown = false;
         bool temp_has_navigatable = false;
 
         for (std::pair<Box, BoxInfo> known_box : map){
@@ -68,6 +67,10 @@ namespace r2d2
                     temp_has_navigatable || 
                     known_box.second.get_has_navigatable()
                 );
+            }
+
+            if (temp_has_obstacle && temp_has_unknown && temp_has_navigatable) {
+                break;
             }
         }
 
@@ -90,194 +93,135 @@ namespace r2d2
 
     void BoxMap::set_box_info(const Box box, const BoxInfo box_info)
     {
-
-        std::vector<int> to_be_removed;
         std::vector<std::pair<Box, BoxInfo>> new_boxes;
 
-        for (int j = 0; j < map.size(); j++){
-            if (box.intersects(map[j].first)){
+        for (auto it = map.begin(); it != map.end();) {
+            // iterator used instead of int to be able to remove elements efficiently
 
-                to_be_removed.push_back(j);
-                if (!box.contains(map[j].first)){
-                    Box temp_box = map[j].first;
-                    r2d2::BoxInfo temp_info = map[j].second;
+            if (box.intersects(it->first)) {
+                // current box has to be cut because of intersecting with the insertion box
+                
+                if (!box.contains(it->first)) {
+                    // the box has edges that are outside the new box
 
-                    //Cut-away Left exterior
-                    if (temp_box.get_bottom_left().get_x()
-                                        < box.get_bottom_left().get_x()){
+                    // temporary objects are removed as they diminish performance
 
-                        //Make new box
-                        new_boxes.push_back(std::pair<Box, BoxInfo>{
-                            Box{
-                                temp_box.get_bottom_left(), 
-                                Coordinate{ 
-                                    box.get_bottom_left().get_x(), 
-                                    temp_box.get_top_right().get_y(), 
-                                    temp_box.get_top_right().get_z() 
-                                } 
-                            }, 
-                            temp_info
-                        });
+                    if (it->first.get_bottom_left().get_x()
+                        < box.get_bottom_left().get_x()) {
+                        // the current box extends the new box in the -x direction
 
-                        //Cut-away old
-                        temp_box = Box{
-                            Coordinate{ 
-                                box.get_bottom_left().get_x(), 
-                                temp_box.get_bottom_left().get_y(), 
-                                temp_box.get_bottom_left().get_z() 
-                            },
-                            temp_box.get_top_right()
+                        // insert the extension
+                        new_boxes.push_back(
+                                {Box{it->first.get_bottom_left(), Coordinate{
+                                        box.get_bottom_left().get_x(),
+                                        it->first.get_top_right().get_y(),
+                                        it->first.get_top_right().get_z()
+                                }},
+                                 it->second}
+                        );
+
+                        // resize the current box as to not include the newly made box
+                        it->first.get_bottom_left() = Coordinate{
+                                box.get_bottom_left().get_x(),
+                                it->first.get_bottom_left().get_y(),
+                                it->first.get_bottom_left().get_z()
                         };
                     }
 
-                    //Cut-away Right exterior
-                    if (temp_box.get_top_right().get_x() 
-                                        > box.get_bottom_left().get_x()){
+                    if (it->first.get_top_right().get_x()
+                        > box.get_top_right().get_x()) {
 
                         //Make new box
-                        new_boxes.push_back(std::pair<Box, BoxInfo>{
-                            Box{ 
-                                Coordinate{ 
-                                    box.get_top_right().get_x(), 
-                                    temp_box.get_bottom_left().get_y(), 
-                                    temp_box.get_bottom_left().get_z() 
-                                }, 
-                                temp_box.get_top_right() 
-                            }, 
-                            temp_info
+                        new_boxes.push_back(
+                                {Box{Coordinate{
+                                        box.get_top_right().get_x(),
+                                        it->first.get_bottom_left().get_y(),
+                                        it->first.get_bottom_left().get_z()
+                                }, it->first.get_top_right()},
+                                 it->second
                         });
 
                         //Cut-away old
-                        temp_box = Box{ 
-                            temp_box.get_bottom_left(), 
-                            Coordinate{ 
-                                box.get_top_right().get_x(), 
-                                temp_box.get_top_right().get_y(), 
-                                temp_box.get_top_right().get_z() 
-                            } 
+                        it->first.get_top_right() = Coordinate{
+                                box.get_top_right().get_x(),
+                                it->first.get_top_right().get_y(),
+                                it->first.get_top_right().get_z()
                         };
                     }
 
-                    //Cut-away Bottom exterior
-                    if (temp_box.get_bottom_left().get_y() 
-                                        < box.get_bottom_left().get_y()){
-
-                        //Make new box
-                        new_boxes.push_back(std::pair<Box, BoxInfo>{
-                            Box{ 
-                                temp_box.get_bottom_left(), 
-                                Coordinate{ 
-                                    temp_box.get_top_right().get_x(), 
-                                    box.get_bottom_left().get_y(), 
-                                    temp_box.get_top_right().get_z() 
-                                } 
-                            }, 
-                            temp_info
+                    if (it->first.get_bottom_left().get_y()
+                        < box.get_bottom_left().get_y()) {
+                        new_boxes.push_back(
+                                {Box{it->first.get_bottom_left(), Coordinate{
+                                        it->first.get_top_right().get_x(),
+                                        box.get_bottom_left().get_y(),
+                                        it->first.get_top_right().get_z()
+                                }},
+                                 it->second
                         });
-                        
-                        //Cut-away old
-                        temp_box = Box{ 
-                            Coordinate{ 
-                                temp_box.get_bottom_left().get_x(), 
-                                box.get_bottom_left().get_y(), 
-                                temp_box.get_bottom_left().get_z() 
-                            }, 
-                            temp_box.get_top_right() 
+
+                        it->first.get_bottom_left() = Coordinate{
+                                it->first.get_bottom_left().get_x(),
+                                box.get_bottom_left().get_y(),
+                                it->first.get_bottom_left().get_z()
                         };
                     }
 
-                    //Cut-away Top exterior
-                    if (temp_box.get_top_right().get_y() 
-                                        > box.get_top_right().get_y()){
-
-                        //Make new box
-                        new_boxes.push_back(std::pair<Box, BoxInfo>{
-                            Box{ 
-                                Coordinate{ 
-                                    temp_box.get_bottom_left().get_x(), 
-                                    box.get_top_right().get_y(), 
-                                    temp_box.get_bottom_left().get_z() 
-                                }, 
-                                temp_box.get_top_right() 
-                            }, 
-                            temp_info
+                    if (it->first.get_top_right().get_y()
+                        > box.get_top_right().get_y()) {
+                        new_boxes.push_back(
+                                {Box{Coordinate{
+                                        it->first.get_bottom_left().get_x(),
+                                        box.get_top_right().get_y(),
+                                        it->first.get_bottom_left().get_z()
+                                }, it->first.get_top_right()},
+                                 it->second
                         });
 
-                        //Cut-away old
-                        temp_box = Box{ 
-                            temp_box.get_bottom_left(), 
-                            Coordinate{ 
-                                temp_box.get_top_right().get_x(), 
-                                box.get_top_right().get_y(), 
-                                temp_box.get_top_right().get_z() 
-                            } 
+                        it->first.get_top_right() = Coordinate{
+                                it->first.get_top_right().get_x(),
+                                box.get_top_right().get_y(),
+                                it->first.get_top_right().get_z()
                         };
                     }
 
-                    //Cut-away Front exterior
-                    if (temp_box.get_top_right().get_z() 
-                                        > box.get_top_right().get_z()){
-
-                        //Make new box
-                        new_boxes.push_back(std::pair<Box, BoxInfo>{
-                            Box{ 
-                                Coordinate{ 
-                                    temp_box.get_bottom_left().get_x(), 
-                                    temp_box.get_bottom_left().get_y(), 
-                                    box.get_top_right().get_z() 
-                                }, 
-                                temp_box.get_top_right() 
-                            }, 
-                            temp_info
+                    if (it->first.get_top_right().get_z()
+                        > box.get_top_right().get_z()) {
+                        new_boxes.push_back(
+                                {Box{Coordinate{
+                                        it->first.get_bottom_left().get_x(),
+                                        it->first.get_bottom_left().get_y(),
+                                        box.get_top_right().get_z()
+                                }, it->first.get_top_right()},
+                                 it->second
                         });
 
-                        //Cut-away old
-                        temp_box = Box{ 
-                            temp_box.get_bottom_left(), 
-                            Coordinate{ 
-                                temp_box.get_top_right().get_x(), 
-                                temp_box.get_top_right().get_y(), 
-                                box.get_top_right().get_z() 
-                            } 
-                        };
+                        // last box cutaway removed
                     }
 
-                    //Cut-away Back exterior
-                    if (temp_box.get_bottom_left().get_z() 
-                                        < box.get_bottom_left().get_z()){
-                        
-                        //Make new box
-                        new_boxes.push_back(std::pair<Box, BoxInfo>{
-                            Box{ 
-                                temp_box.get_bottom_left(), 
-                                Coordinate{ 
-                                    temp_box.get_top_right().get_x(), 
-                                    temp_box.get_top_right().get_y(), 
-                                    box.get_bottom_left().get_z() 
-                                } 
-                            }, 
-                            temp_info
+                    if (it->first.get_bottom_left().get_z()
+                        < box.get_bottom_left().get_z()) {
+                        new_boxes.push_back(
+                                {Box{it->first.get_bottom_left(), Coordinate{
+                                        it->first.get_top_right().get_x(),
+                                        it->first.get_top_right().get_y(),
+                                        box.get_bottom_left().get_z()
+                                }},
+                                 it->second
                         });
 
-                        //Cut-away old
-                        temp_box = Box{ 
-                            Coordinate{ 
-                                temp_box.get_bottom_left().get_x(), 
-                                temp_box.get_bottom_left().get_y(), 
-                                box.get_top_right().get_z() 
-                            }, 
-                            temp_box.get_top_right() 
-                        };
+                        // last box cutaway removed
                     }
                 }
+                
+                // remove the old box as it will be split into multiple
+                it = map.erase(it);
+            } else {
+                ++it;
             }
         }
-
-        //Remove old boxes
-        for (int i : to_be_removed){
-            map.erase(map.begin() + i);
-        }
-        map.shrink_to_fit();
+        // shrink to fit decreases performance substantially
+        // map.shrink_to_fit();
 
         //Add newly cut boxes
         for (std::pair<Box, BoxInfo> box_cut : new_boxes){
