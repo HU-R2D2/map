@@ -442,6 +442,9 @@ namespace r2d2
             throw rapidjson::ParseErrorCode::kParseErrorObjectMissName;
         }
 
+        // Clear current map
+        map.clear();
+
         // Allocate row_size
         const rapidjson::SizeType row_size = d["boxes"].Size();
 
