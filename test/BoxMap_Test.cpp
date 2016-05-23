@@ -250,11 +250,4 @@ TEST(BoxMap, UsageExample){
     ASSERT_TRUE((gBox2.get_has_navigatable()) &&
                 (gBox2.get_has_obstacle()));
 
-    r2d2::BoxInfo union_box = bm.get_box_info(box1.get_union_box(box2));
-
-    ASSERT_TRUE((union_box.get_has_navigatable() == 1) &&
-                (union_box.get_has_unknown() == 1) &&
-                (union_box.get_has_obstacle() == 1));
-
-
 }
