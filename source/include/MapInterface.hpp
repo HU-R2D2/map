@@ -64,28 +64,15 @@
 
 namespace r2d2
 {
-
-    //! @author     Sander Kolman
-    //! @date       08-04-16
-    //! @version    1.0
-    //! @brief      MapInterface is a interface for maps to retrieve and save information about a certain area.
-    //!             The interface makes sure, no matter what type of map is created,
-    //!             the info about that map is given in the same format.
-    //!
-    //!             The interface is split up in 3 different classes.
-    //!             These classes are meant for more structured and safe usage.
-    //!                 - ReadOnlyMap is the simplest interface, only allowing read functionality.
-    //!                 - ReadWriteMap inherits the functionality of the above,
-    //!                   it also adds a write function to fill a map with data.
-    //!                 - SaveLoadMap inherits the functionality of the above,
-    //!                   it also adds functions to save and load a map respectivly to and from file I/O.
-    //!
-    //!             The fourth class defined is the data that will actually be captured about a certain area.
-    //!             It contains 3 boolean attributes for different information about an area.
-    //!
-    //!             For example:
-    //!             @snippet source/src/main.cpp map_interface_example
-    //!
+	//! @author     Sander Kolman
+	//! @date       08-04-16
+	//! @version    1.0
+	//! @brief      The BoxInfo class is the data that will actually be captured about a certain area.
+	//!             It contains 3 boolean attributes for different information about an area.
+	//!
+	//!             For example:
+	//!             @snippet source/src/main.cpp map_interface_example
+	//!
     class BoxInfo
     {
 
@@ -93,9 +80,9 @@ namespace r2d2
 
         //!
         //! @brief  Constructor for BoxInfo.
-        //! @param  has_obstacle    bool describing if box has an obstacle, default: false.
-        //! @param  has_unknown     bool describing if box has an obstacle, default: false.
-        //! @param  has_navigatable bool describing if box has an obstacle, default: false.
+        //! @param  has_obstacle    bool describing if a box contains an obstacle, default: false.
+        //! @param  has_unknown     bool describing if a box has an unknown, default: false.
+        //! @param  has_navigatable bool describing if a box has an navigatable, default: false.
         //!
         BoxInfo(
             bool has_obstacle = false,
@@ -141,28 +128,15 @@ namespace r2d2
         bool has_navigatable;
 
     };
-
-    //! @author     Sander Kolman
-    //! @date       08-04-16
-    //! @version    1.0
-    //! @brief      MapInterface is a interface for maps to retrieve and save information about a certain area.
-    //!             The interface makes sure, no matter what type of map is created,
-    //!             the info about that map is given in the same format.
-    //!
-    //!             The interface is split up in 3 different classes.
-    //!             These classes are meant for more structured and safe usage.
-    //!                 - ReadOnlyMap is the simplest interface, only allowing read functionality.
-    //!                 - ReadWriteMap inherits the functionality of the above,
-    //!                   it also adds a write function to fill a map with data.
-    //!                 - SaveLoadMap inherits the functionality of the above,
-    //!                   it also adds functions to save and load a map respectivly to and from file I/O.
-    //!
-    //!             The fourth class defined is the data that will actually be captured about a certain area.
-    //!             It contains 3 boolean attributes for different information about an area.
-    //!
-    //!             For example:
-    //!             @snippet source/src/main.cpp map_interface_example
-    //!
+	//! @author     Sander Kolman
+	//! @date       08-04-16
+	//! @version    1.0
+	//! @brief      The ReadOnlyMap class is the simplest interface,
+	//!				only allowing read functionality.
+	//!
+	//!             For example:
+	//!             @snippet source/src/main.cpp map_interface_example
+	//!
     class ReadOnlyMap
     {
 
@@ -180,7 +154,7 @@ namespace r2d2
         //!
         virtual const BoxInfo get_box_info(const Box box) = 0;
 
-        //! Get the Box containing all boxes in the current map.
+        //! Get the Box around all objects in a map implementation.
         //! 
         //! @brief  Scans all boxes in the map
         //!         and makes a box precisely around all other boxes.
@@ -189,28 +163,15 @@ namespace r2d2
         virtual const Box get_map_bounding_box() = 0;
     };
 
-
-    //! @author     Sander Kolman
-    //! @date       08-04-16
-    //! @version    1.0
-    //! @brief      MapInterface is a interface for maps to retrieve and save information about a certain area.
-    //!             The interface makes sure, no matter what type of map is created,
-    //!             the info about that map is given in the same format.
-    //!
-    //!             The interface is split up in 3 different classes.
-    //!             These classes are meant for more structured and safe usage.
-    //!                 - ReadOnlyMap is the simplest interface, only allowing read functionality.
-    //!                 - ReadWriteMap inherits the functionality of the above,
-    //!                   it also adds a write function to fill a map with data.
-    //!                 - SaveLoadMap inherits the functionality of the above,
-    //!                   it also adds functions to save and load a map respectivly to and from file I/O.
-    //!
-    //!             The fourth class defined is the data that will actually be captured about a certain area.
-    //!             It contains 3 boolean attributes for different information about an area.
-    //!
-    //!             For example:
-    //!             @snippet source/src/main.cpp map_interface_example
-    //!
+	//! @author     Sander Kolman
+	//! @date       08-04-16
+	//! @version    1.0
+	//! @brief      The ReadWriteMap class inherits the ReadOnlyMap, 
+	//!				it also adds a write function to fill a map with data.  
+	//!
+	//!             For example:
+	//!             @snippet source/src/main.cpp map_interface_example
+	//!
     class ReadWriteMap : public ReadOnlyMap
     {
 
@@ -227,27 +188,16 @@ namespace r2d2
         virtual void set_box_info(const Box box, const BoxInfo box_info) = 0;
     };
 
-    //! @author     Sander Kolman
-    //! @date       08-04-16
-    //! @version    1.0
-    //! @brief      MapInterface is a interface for maps to retrieve and save information about a certain area.
-    //!             The interface makes sure, no matter what type of map is created,
-    //!             the info about that map is given in the same format.
-    //!
-    //!             The interface is split up in 3 different classes.
-    //!             These classes are meant for more structured and safe usage.
-    //!                 - ReadOnlyMap is the simplest interface, only allowing read functionality.
-    //!                 - ReadWriteMap inherits the functionality of the above,
-    //!                   it also adds a write function to fill a map with data.
-    //!                 - SaveLoadMap inherits the functionality of the above,
-    //!                   it also adds functions to save and load a map respectivly to and from file I/O.
-    //!
-    //!             The fourth class defined is the data that will actually be captured about a certain area.
-    //!             It contains 3 boolean attributes for different information about an area.
-    //!
-    //!             For example:
-    //!             @snippet source/src/main.cpp map_interface_example
-    //!
+	//! @author     Sander Kolman
+	//! @date       08-04-16
+	//! @version    1.0
+	//! @brief      The SaveLoadMap class inherits the functionality,
+	//!				of the ReadWriteMap class, it also adds functions to save,
+	//!				and load a map respectivly to and from file I/O.
+	//!
+	//!             For example:
+	//!             @snippet source/src/main.cpp map_interface_example
+	//!
     class SaveLoadMap : public ReadWriteMap
     {
 
@@ -263,6 +213,6 @@ namespace r2d2
         //! @param filename the destination of the file
         virtual void load(std::string filename) = 0;
     };
-}
+};
 
 #endif //_MAPINTERFACE_HPP
