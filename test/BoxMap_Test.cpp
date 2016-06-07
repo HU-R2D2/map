@@ -30,9 +30,7 @@
 
 #include "../source/include/ArrayBoxMap.hpp"
 #include "gtest/gtest.h"
-#include <iostream>
 #include <random>
-#include <time.h>
 
 /*
 * Constructor
@@ -55,7 +53,7 @@ TEST(BoxMap, AddBox){
 * BoxMap::get_box_info() test
 */
 TEST(BoxMap, GetBoxInfo1){
-    srand(time(NULL));
+    srand((unsigned int)(time(NULL)));
     r2d2::ArrayBoxMap bm{};
     for (int i = 0; i < 8; i++){
 
@@ -96,44 +94,43 @@ TEST(BoxMap, GetBoxInfo1){
     }
 }
 
-
 /*
 * BoxMap::get_box_info() test
 */
 TEST(BoxMap, GetBoxInfo2){
-    srand(time(NULL));
+    srand((unsigned int)(time(NULL)));
     r2d2::ArrayBoxMap bm{};
 
     bm.set_box_info(
         r2d2::Box{
         r2d2::Coordinate{
-            rand() % 20 * r2d2::Length::METER,
-            rand() % 20 * r2d2::Length::METER,
-            rand() % 20 * r2d2::Length::METER
+            0 * r2d2::Length::METER,
+            0 * r2d2::Length::METER,
+            0 * r2d2::Length::METER
         },
         r2d2::Coordinate{
-                rand() % 20 * r2d2::Length::METER,
-                rand() % 20 * r2d2::Length::METER,
-                rand() % 20 * r2d2::Length::METER
+                15 * r2d2::Length::METER,
+                15 * r2d2::Length::METER,
+                15 * r2d2::Length::METER
             }
     },
-    r2d2::BoxInfo{ false, true, false }
+    r2d2::BoxInfo{ false, false, true }
                 );
 
     bm.set_box_info(
         r2d2::Box{
         r2d2::Coordinate{
-            rand() % 20 * r2d2::Length::METER,
-            rand() % 20 * r2d2::Length::METER,
-            rand() % 20 * r2d2::Length::METER
+            5 * r2d2::Length::METER,
+            5 * r2d2::Length::METER,
+            5 * r2d2::Length::METER
         },
         r2d2::Coordinate{
-                rand() % 20 * r2d2::Length::METER,
-                rand() % 20 * r2d2::Length::METER,
-                rand() % 20 * r2d2::Length::METER
+                20 * r2d2::Length::METER,
+                20 * r2d2::Length::METER,
+                20 * r2d2::Length::METER
             }
     },
-    r2d2::BoxInfo{ false, false, true }
+    r2d2::BoxInfo{ false, true, false }
                 );
 
     ASSERT_EQ((r2d2::BoxInfo{ false, true, true }),
@@ -203,8 +200,45 @@ TEST(BoxMap, BoundingBox){
         );
 }
 
+// defines the size of the grid of squares that will be inserted in the stress test
+#define MAP_TEST_SIZE 100
+
+TEST(ArrayBoxMap, StressTest) {
+    r2d2::ArrayBoxMap bm{};
+    cout << "May take a minute or 2...\n";
+
+    for (int x = -MAP_TEST_SIZE; x < MAP_TEST_SIZE; ++x) {
+        for (int y = -MAP_TEST_SIZE; y < MAP_TEST_SIZE; ++y) {
+            r2d2::Coordinate new_pos{
+                    x*r2d2::Length::METER,
+                    y*r2d2::Length::METER,
+                    -1*r2d2::Length::METER
+            };
+
+            bm.set_box_info(
+                    r2d2::Box{
+                            new_pos,
+                            new_pos
+                            + r2d2::Translation{
+                                    2*r2d2::Length::METER,
+                                    2*r2d2::Length::METER,
+                                    2*r2d2::Length::METER
+                            }
+                    },
+                    r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 }
+            );
+
+        }
+    }
+    ASSERT_GT(bm.get_map_size(), 9);
+    ASSERT_TRUE(
+            (bm.get_box_info(bm.get_map_bounding_box())
+             == r2d2::BoxInfo{ true, true, true })
+    );
+}
+
 /*
-* Real world test / stress test
+* Real world test
 */
 TEST(BoxMap, UsageExample){
     r2d2::ArrayBoxMap bm{};
