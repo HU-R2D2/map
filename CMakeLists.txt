@@ -5,7 +5,7 @@ project(map)
 find_package (Threads)
 
 set(SOURCES
-		source/src/BoxMap.cpp
+		source/src/ArrayBoxMap.cpp
 		source/src/MapInterface.cpp
 		source/src/main.cpp
 		../adt/source/include/ADT_Base.hpp
@@ -20,7 +20,7 @@ set(SOURCES
 		source/include/RTreeRoot.hpp)
 
 set(SOURCES_GTEST
-		source/src/BoxMap.cpp
+		source/src/ArrayBoxMap.cpp
 		source/src/MapInterface.cpp
 		test/BoxInfoTest.cpp
 		test/BoxMap_Test.cpp

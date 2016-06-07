@@ -28,42 +28,41 @@
 // OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // ++--++
 
-#include "../source/include/BoxMap.hpp"
-#include "gtest/gtest.h"
+#include "../source/include/ArrayBoxMap.hpp"
 #include "../source/include/RStarMap.hpp"
+#include "gtest/gtest.h"
 #include <iostream>
 #include <random>
-#include <time.h>
 
 /*
 * Constructor
 */
 TEST(BoxMap, DefaultConstructor){
-    r2d2::BoxMap bm{};
-    ASSERT_EQ(bm.get_map_size(), 0);
+    r2d2::ArrayBoxMap bm{};
+    ASSERT_EQ(0, bm.get_map_size());
 }
 
 /*
 * BoxMap::set_box_info() test
 */
 TEST(BoxMap, AddBox){
-    r2d2::BoxMap bm{};
-    bm.set_box_info(r2d2::Box{}, r2d2::BoxInfo{});
-    ASSERT_EQ(bm.get_map_size(), 1);
+    r2d2::ArrayBoxMap bm{};
+    bm.set_box_info(r2d2::Box{}, r2d2::BoxInfo{true, false, false});
+    ASSERT_EQ(1, bm.get_map_size());
 }
 
 /*
 * BoxMap::get_box_info() test
 */
 TEST(BoxMap, GetBoxInfo1){
-    srand(time(NULL));
-    r2d2::BoxMap bm{};
-    for (int i = 0; i < 5; i++){
+    srand((unsigned int)(time(NULL)));
+    r2d2::ArrayBoxMap bm{};
+    for (int i = 0; i < 8; i++){
 
         r2d2::BoxInfo temp{
-            rand() % 2 == 0,
-            rand() % 2 == 0,
-            rand() % 2 == 0
+            i % 2 == 0,
+            (i / 2) % 2 == 0,
+            (i / 4) % 2 == 0
         };
 
         bm.set_box_info(
@@ -76,7 +75,11 @@ TEST(BoxMap, GetBoxInfo1){
             }
         }, temp);
 
-        ASSERT_EQ(
+        if (!(temp.get_has_obstacle() || temp.get_has_navigatable())) {
+            temp = {temp.get_has_obstacle(), temp.get_has_navigatable(), true};
+        }
+
+        ASSERT_EQ(temp,
             bm.get_box_info(
             r2d2::Box{
             r2d2::Coordinate{
@@ -89,55 +92,18 @@ TEST(BoxMap, GetBoxInfo1){
                     1.5*r2d2::Length::METER,
                     1.5*r2d2::Length::METER
                 }
-        }
-        ),
-        temp
-        );
+        }));
     }
 }
-
 
 /*
 * BoxMap::get_box_info() test
 */
 TEST(BoxMap, GetBoxInfo2){
-    srand(time(NULL));
-    r2d2::BoxMap bm{};
+    srand((unsigned int)(time(NULL)));
+    r2d2::ArrayBoxMap bm{};
 
     bm.set_box_info(
-        r2d2::Box{
-        r2d2::Coordinate{
-            rand() % 20 * r2d2::Length::METER,
-            rand() % 20 * r2d2::Length::METER,
-            rand() % 20 * r2d2::Length::METER
-        },
-        r2d2::Coordinate{
-                rand() % 20 * r2d2::Length::METER,
-                rand() % 20 * r2d2::Length::METER,
-                rand() % 20 * r2d2::Length::METER
-            }
-    },
-    r2d2::BoxInfo{ false, true, false }
-                );
-
-    bm.set_box_info(
-        r2d2::Box{
-        r2d2::Coordinate{
-            rand() % 20 * r2d2::Length::METER,
-            rand() % 20 * r2d2::Length::METER,
-            rand() % 20 * r2d2::Length::METER
-        },
-        r2d2::Coordinate{
-                rand() % 20 * r2d2::Length::METER,
-                rand() % 20 * r2d2::Length::METER,
-                rand() % 20 * r2d2::Length::METER
-            }
-    },
-    r2d2::BoxInfo{ false, false, true }
-                );
-
-    ASSERT_EQ(
-        bm.get_box_info(
         r2d2::Box{
         r2d2::Coordinate{
             0 * r2d2::Length::METER,
@@ -145,21 +111,52 @@ TEST(BoxMap, GetBoxInfo2){
             0 * r2d2::Length::METER
         },
         r2d2::Coordinate{
+                15 * r2d2::Length::METER,
+                15 * r2d2::Length::METER,
+                15 * r2d2::Length::METER
+            }
+    },
+    r2d2::BoxInfo{ false, false, true }
+                );
+
+    bm.set_box_info(
+        r2d2::Box{
+        r2d2::Coordinate{
+            5 * r2d2::Length::METER,
+            5 * r2d2::Length::METER,
+            5 * r2d2::Length::METER
+        },
+        r2d2::Coordinate{
                 20 * r2d2::Length::METER,
                 20 * r2d2::Length::METER,
                 20 * r2d2::Length::METER
             }
-    }
-    ),
-    (r2d2::BoxInfo{ false, true, true })
-    );
+    },
+    r2d2::BoxInfo{ false, true, false }
+                );
+
+    ASSERT_EQ((r2d2::BoxInfo{ false, true, true }),
+              bm.get_box_info(
+                      r2d2::Box{
+                              r2d2::Coordinate{
+                                      0 * r2d2::Length::METER,
+                                      0 * r2d2::Length::METER,
+                                      0 * r2d2::Length::METER
+                              },
+                              r2d2::Coordinate{
+                                      20 * r2d2::Length::METER,
+                                      20 * r2d2::Length::METER,
+                                      20 * r2d2::Length::METER
+                              }
+                      }
+              ));
 }
 
 /*
 * BoxMap::get_bounding_box() test
 */
 TEST(BoxMap, BoundingBox){
-    r2d2::BoxMap bm{};
+    r2d2::ArrayBoxMap bm{};
 
     bm.set_box_info(
         r2d2::Box{
@@ -207,13 +204,8 @@ TEST(BoxMap, BoundingBox){
 
 // defines the size of the grid of squares that will be inserted in the stress test
 #define MAP_TEST_SIZE 85
-/*
-* Real world test / stress test
-*/
+
 TEST(BoxMap, UsageExample){
-//    std::uniform_real_distribution<double> random_real(-100.0, 100.0);
-//    std::default_random_engine re(time(NULL));
-//    srand(time(NULL));
     r2d2::RStarMap bm{};
     cout << "May take a minute or 2...\n";
 
@@ -235,7 +227,8 @@ TEST(BoxMap, UsageExample){
                                     2 * r2d2::Length::METER
                             }
                     },
-                    r2d2::BoxInfo{rand() % 2 == 0, rand() % 2 == 0,
+                    r2d2::BoxInfo{rand() % 2 == 0,
+                                  rand() % 2 == 0,
                                   rand() % 2 == 0}
             );
 
@@ -247,17 +240,54 @@ TEST(BoxMap, UsageExample){
     ASSERT_GT(bm.get_map_size(), 9);
     ASSERT_TRUE(
             (bm.get_box_info(bm.get_map_bounding_box())
-             == r2d2::BoxInfo{true, true, true})
+             == r2d2::BoxInfo{ true, true, true })
     );
-//    std::cout << bm.get_map_size() << std::endl << bm << std::endl;
+}
 
-    r2d2::Box bounding = bm.get_map_bounding_box();
-    ASSERT_TRUE(
-        (bounding.get_bottom_left().get_x() / r2d2::Length::METER < 0) &&
-        (bounding.get_bottom_left().get_y() / r2d2::Length::METER < 0) &&
-        (bounding.get_bottom_left().get_z() / r2d2::Length::METER < 0) &&
-        (bounding.get_top_right().get_x() / r2d2::Length::METER > 0) &&
-        (bounding.get_top_right().get_y() / r2d2::Length::METER > 0) &&
-        (bounding.get_top_right().get_z() / r2d2::Length::METER > 0)
-        );
+/*
+* Real world test
+*/
+TEST(BoxMap, UsageExample){
+    r2d2::ArrayBoxMap bm{};
+    r2d2::Box box1 =  r2d2::Box{
+            r2d2::Coordinate{
+                    -83.9178867229331 *r2d2::Length::METER,
+                    -50.005615540355247 *r2d2::Length::METER,
+                    52.06871684497102 *r2d2::Length::METER
+            },
+            r2d2::Coordinate{
+                    32.52173379550348*r2d2::Length::METER,
+                    80.63101146674475*r2d2::Length::METER,
+                    57.487075248474159*r2d2::Length::METER
+            }
+    };
+
+    r2d2::Box box2 =  r2d2::Box{
+            r2d2::Coordinate{
+                    85*r2d2::Length::METER,
+                    55*r2d2::Length::METER,
+                    50*r2d2::Length::METER
+            },
+            r2d2::Coordinate{
+                    32*r2d2::Length::METER,
+                    80*r2d2::Length::METER,
+                    57*r2d2::Length::METER
+            }
+    };
+
+    ASSERT_TRUE(box1.intersects(box2));
+
+    bm.set_box_info(box1, r2d2::BoxInfo{ false, false, false} );
+
+    r2d2::BoxInfo gBox1 = bm.get_box_info(box1);
+
+    ASSERT_TRUE((!gBox1.get_has_navigatable()) &&
+                (!gBox1.get_has_obstacle()));
+
+    bm.set_box_info(box2, r2d2::BoxInfo{ true, true, false} );
+    r2d2::BoxInfo gBox2 = bm.get_box_info(box2);
+
+    ASSERT_TRUE((gBox2.get_has_navigatable()) &&
+                (gBox2.get_has_obstacle()));
+
 }

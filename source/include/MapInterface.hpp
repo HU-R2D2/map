@@ -12,7 +12,7 @@
 // @section LICENSE
 // License: newBSD
 //
-// Copyright © 2016, HU University of Applied Sciences Utrecht.
+// Copyright ï¿½ 2016, HU University of Applied Sciences Utrecht.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -81,13 +81,13 @@ namespace r2d2
         //!
         //! @brief  Constructor for BoxInfo.
         //! @param  has_obstacle    bool describing if a box contains an obstacle, default: false.
-        //! @param  has_unknown     bool describing if a box has an unknown, default: false.
         //! @param  has_navigatable bool describing if a box has an navigatable, default: false.
+        //! @param  has_unknown     bool describing if a box has an unknown, default: false.
         //!
         BoxInfo(
             bool has_obstacle = false,
-            bool has_unknown = false, 
-            bool has_navigatable = false
+            bool has_navigatable = false,
+            bool has_unknown = false
         );
 
         //!
@@ -124,8 +124,8 @@ namespace r2d2
 
     private:
         bool has_obstacle;
-        bool has_unknown;
         bool has_navigatable;
+        bool has_unknown;
 
     };
 	//! @author     Sander Kolman
@@ -147,6 +147,8 @@ namespace r2d2
         //! @brief  Get Box information about a certain area.
         //!         All bools are false if no information is found,
         //!         overwritten with true if true is found in the map.
+        //!         when there is empty area within the queried box
+        //!         unknown will be true
         //!
         //! @param  box The area that is to be checked.
         //! @return BoxInfo, the found information about the area.
@@ -179,10 +181,11 @@ namespace r2d2
 
         //! Place new Box with BoxInfo in map.
         //!
-        //! @brief  Places a new box in the map with BoxInfo.
+        //! @brief  writes new data about this box in the map.
+        //!         all data previously within this area is discarded
         //!
         //! @param  box         the new Box to be added.
-        //! @param  box_info    the new BoxInfo thats found in that Box.
+        //! @param  box_info    the new BoxInfo that's found in that Box.
         //! @snippet    source/src/main.cpp map_interface_example
         //!
         virtual void set_box_info(const Box box, const BoxInfo box_info) = 0;
@@ -193,7 +196,7 @@ namespace r2d2
 	//! @version    1.0
 	//! @brief      The SaveLoadMap class inherits the functionality,
 	//!				of the ReadWriteMap class, it also adds functions to save,
-	//!				and load a map respectivly to and from file I/O.
+	//!				and load a map respectively to and from file I/O.
 	//!
 	//!             For example:
 	//!             @snippet source/src/main.cpp map_interface_example
