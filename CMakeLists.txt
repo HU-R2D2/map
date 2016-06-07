@@ -4,13 +4,38 @@ project(map)
 
 find_package (Threads)
 
-file(GLOB SOURCES "source/src/*.cpp" "source/include/*.hpp" "../adt/source/src/*.cpp" "../adt/source/include/*.hpp")
+set(SOURCES
+		source/src/BoxMap.cpp
+		source/src/MapInterface.cpp
+		source/src/main.cpp
+		../adt/source/include/ADT_Base.hpp
+		../adt/source/src/Length.cpp
+		../adt/source/src/Box.cpp
+		../adt/source/src/Coordinate.cpp
+		../adt/source/src/Translation.cpp
+		source/include/RTree.hpp
+		source/include/RTreeLeaf.hpp
+		source/include/RTreeBranch.hpp
+		source/src/RStarMap.cpp source/include/RStarMap.hpp
+		source/include/RTreeRoot.hpp)
 
-file(GLOB SOURCES_GTEST "source/src/*.cpp" "source/include/*.hpp" "test/*.cpp" "../adt/source/src/*.cpp" "../adt/source/include/*.hpp")
-
-list(REMOVE_ITEM SOURCES_GTEST ${CMAKE_CURRENT_SOURCE_DIR}/source/src/main.cpp)
-
-
+set(SOURCES_GTEST
+		source/src/BoxMap.cpp
+		source/src/MapInterface.cpp
+		test/BoxInfoTest.cpp
+		test/BoxMap_Test.cpp
+		test/Main_TestAll.cpp
+		test/Save_And_Load_Test
+		../adt/source/include/ADT_Base.hpp
+		../adt/source/src/Length.cpp
+		../adt/source/src/Box.cpp
+		../adt/source/src/Coordinate.cpp
+		../adt/source/src/Translation.cpp
+		source/include/RTree.hpp
+		source/include/RTreeLeaf.hpp
+		source/include/RTreeBranch.hpp
+		source/src/RStarMap.cpp source/include/RStarMap.hpp
+		source/include/RTreeRoot.hpp)
 
 
 
@@ -36,6 +61,6 @@ ADD_LIBRARY(gtest_main ../deps/gtest-1.7.0/src/gtest_main.cc)
 
 add_executable(map ${SOURCES})
 
-add_executable(map_test ${GTEST} ${SOURCES_GTEST})
+add_executable(map_test ${SOURCES_GTEST})
 
 target_link_libraries(map_test gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})

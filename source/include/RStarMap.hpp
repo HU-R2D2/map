@@ -6,14 +6,19 @@
 #define MAP_RSTARMAP_HPP
 
 #include "MapInterface.hpp"
-#include "RTree.hpp"
+#include "RTreeRoot.hpp"
+
+#define MIN_NODES 3
+#define MAX_NODES 6
 
 namespace r2d2
 {
-	class BoxMap : public SaveLoadMap
+	class RStarMap : public SaveLoadMap
 	{
 
 	public:
+		RStarMap();
+
 		virtual const BoxInfo get_box_info(const Box box) override;
 
 		virtual const Box get_map_bounding_box() override;
@@ -29,9 +34,12 @@ namespace r2d2
 		//! @return int BoxMap::map.size()
 		int get_map_size();
 
+		friend std::ostream &operator<<(std::ostream &lhs, const RStarMap &rhs) {
+			return lhs << rhs.map;
+		}
 
 	private:
-		RTree<BoxInfo> map; // a map in which boxes and boxinfos are stored in as a pairs
+		RTreeRoot<MIN_NODES, MAX_NODES, const BoxInfo> map;
 
 	};
 }

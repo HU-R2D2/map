@@ -30,6 +30,7 @@
 
 #include "../source/include/BoxMap.hpp"
 #include "gtest/gtest.h"
+#include "../source/include/RStarMap.hpp"
 #include <iostream>
 #include <random>
 #include <time.h>
@@ -205,8 +206,7 @@ TEST(BoxMap, BoundingBox){
 }
 
 // defines the size of the grid of squares that will be inserted in the stress test
-#define MAP_TEST_SIZE 100
-
+#define MAP_TEST_SIZE 85
 /*
 * Real world test / stress test
 */
@@ -214,15 +214,15 @@ TEST(BoxMap, UsageExample){
 //    std::uniform_real_distribution<double> random_real(-100.0, 100.0);
 //    std::default_random_engine re(time(NULL));
 //    srand(time(NULL));
-    r2d2::BoxMap bm{};
+    r2d2::RStarMap bm{};
     cout << "May take a minute or 2...\n";
 
-    for (int x = -MAP_TEST_SIZE; x < MAP_TEST_SIZE; ++x) {
-        for (int y = -MAP_TEST_SIZE; y < MAP_TEST_SIZE; ++y) {
+    for (int y = -MAP_TEST_SIZE; y < MAP_TEST_SIZE; ++y) {
+        for (int x = -MAP_TEST_SIZE; x < MAP_TEST_SIZE; ++x) {
             r2d2::Coordinate new_pos{
-                    x*r2d2::Length::METER,
-                    y*r2d2::Length::METER,
-                    -1*r2d2::Length::METER
+                    x * r2d2::Length::METER,
+                    y * r2d2::Length::METER,
+                    -1 * r2d2::Length::METER
             };
 
             bm.set_box_info(
@@ -230,21 +230,26 @@ TEST(BoxMap, UsageExample){
                             new_pos,
                             new_pos
                             + r2d2::Translation{
-                                    2*r2d2::Length::METER,
-                                    2*r2d2::Length::METER,
-                                    2*r2d2::Length::METER
+                                    2 * r2d2::Length::METER,
+                                    2 * r2d2::Length::METER,
+                                    2 * r2d2::Length::METER
                             }
                     },
-                    r2d2::BoxInfo{ rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0 }
+                    r2d2::BoxInfo{rand() % 2 == 0, rand() % 2 == 0,
+                                  rand() % 2 == 0}
             );
 
+            if (x >= 38 && y >= -42) {
+                std::cout << bm << std::endl << std::endl;
+            }
         }
     }
     ASSERT_GT(bm.get_map_size(), 9);
     ASSERT_TRUE(
-        (bm.get_box_info(bm.get_map_bounding_box())
-                    == r2d2::BoxInfo{ true, true, true })
+            (bm.get_box_info(bm.get_map_bounding_box())
+             == r2d2::BoxInfo{true, true, true})
     );
+//    std::cout << bm.get_map_size() << std::endl << bm << std::endl;
 
     r2d2::Box bounding = bm.get_map_bounding_box();
     ASSERT_TRUE(
