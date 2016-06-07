@@ -31,6 +31,7 @@
 #include "../source/include/BoxMap.hpp"
 #include "../source/include/MapInterface.hpp"
 #include "gtest/gtest.h"
+#include "../source/include/ArrayBoxMap.hpp"
 #include <iostream>
 #include <random>
 #include <time.h>
@@ -41,7 +42,7 @@ TEST(BoxMap, saveAndLoad) {
     std::uniform_real_distribution<double> random_real(-100.0, 100.0);
     std::default_random_engine re(time(NULL));
     srand(time(NULL));
-    r2d2::BoxMap bm{};
+    r2d2::ArrayBoxMap bm{};
     cout << "May take a while... Please wait" << endl;
     int generate_box_count = 5;
     for (int i = 0; i < generate_box_count; i++) {
@@ -65,7 +66,7 @@ TEST(BoxMap, saveAndLoad) {
     bm.save("save_and_load_test.json");
 
     cout << "Loading..." << endl;
-    r2d2::BoxMap bm2{};
+    r2d2::ArrayBoxMap bm2{};
     bm2.load("save_and_load_test.json");
     int rounds = 50;
     cout << "Comparing with " << rounds << " rounds" << endl;

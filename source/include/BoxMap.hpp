@@ -41,32 +41,14 @@
 
 namespace r2d2
 {
-    class BoxMap : public SaveLoadMap
-    {
-
+    class BoxMap : public SaveLoadMap {
     public:
-
-
-
-
-        const BoxInfo get_box_info(const Box box) override;
-
-        const Box get_map_bounding_box() override;
-
-        void set_box_info(const Box box, const BoxInfo box_info) override;
-
-        void save(std::string filename) override;
-
-        void load(std::string filename) override;
-
-        //! @brief  gets the size of map
+        //! @brief  gets the amount of boxes within this map
         //!         
         //! @return int BoxMap::map.size()
-        int get_map_size();
+        virtual int get_map_size() const = 0;
 
-
-    private:
-        std::vector<std::pair<Box, BoxInfo>> map; // a map in which boxes and boxinfos are stored in as a pairs
+        virtual std::vector<std::pair<Box, BoxInfo>> get_intersecting(const Box &bounds) const = 0;
 
     };
 }

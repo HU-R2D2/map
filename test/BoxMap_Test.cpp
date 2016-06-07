@@ -28,7 +28,7 @@
 // OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // ++--++
 
-#include "../source/include/BoxMap.hpp"
+#include "../source/include/ArrayBoxMap.hpp"
 #include "gtest/gtest.h"
 #include <iostream>
 #include <random>
@@ -38,17 +38,17 @@
 * Constructor
 */
 TEST(BoxMap, DefaultConstructor){
-    r2d2::BoxMap bm{};
-    ASSERT_EQ(bm.get_map_size(), 0);
+    r2d2::ArrayBoxMap bm{};
+    ASSERT_EQ(0, bm.get_map_size());
 }
 
 /*
 * BoxMap::set_box_info() test
 */
 TEST(BoxMap, AddBox){
-    r2d2::BoxMap bm{};
-    bm.set_box_info(r2d2::Box{}, r2d2::BoxInfo{});
-    ASSERT_EQ(bm.get_map_size(), 1);
+    r2d2::ArrayBoxMap bm{};
+    bm.set_box_info(r2d2::Box{}, r2d2::BoxInfo{true, false, false});
+    ASSERT_EQ(1, bm.get_map_size());
 }
 
 /*
@@ -56,13 +56,13 @@ TEST(BoxMap, AddBox){
 */
 TEST(BoxMap, GetBoxInfo1){
     srand(time(NULL));
-    r2d2::BoxMap bm{};
-    for (int i = 0; i < 5; i++){
+    r2d2::ArrayBoxMap bm{};
+    for (int i = 0; i < 8; i++){
 
         r2d2::BoxInfo temp{
-            rand() % 2 == 0,
-            rand() % 2 == 0,
-            rand() % 2 == 0
+            i % 2 == 0,
+            (i / 2) % 2 == 0,
+            (i / 4) % 2 == 0
         };
 
         bm.set_box_info(
@@ -75,7 +75,11 @@ TEST(BoxMap, GetBoxInfo1){
             }
         }, temp);
 
-        ASSERT_EQ(
+        if (!(temp.get_has_obstacle() || temp.get_has_navigatable())) {
+            temp = {temp.get_has_obstacle(), temp.get_has_navigatable(), true};
+        }
+
+        ASSERT_EQ(temp,
             bm.get_box_info(
             r2d2::Box{
             r2d2::Coordinate{
@@ -88,10 +92,7 @@ TEST(BoxMap, GetBoxInfo1){
                     1.5*r2d2::Length::METER,
                     1.5*r2d2::Length::METER
                 }
-        }
-        ),
-        temp
-        );
+        }));
     }
 }
 
@@ -101,7 +102,7 @@ TEST(BoxMap, GetBoxInfo1){
 */
 TEST(BoxMap, GetBoxInfo2){
     srand(time(NULL));
-    r2d2::BoxMap bm{};
+    r2d2::ArrayBoxMap bm{};
 
     bm.set_box_info(
         r2d2::Box{
@@ -135,30 +136,28 @@ TEST(BoxMap, GetBoxInfo2){
     r2d2::BoxInfo{ false, false, true }
                 );
 
-    ASSERT_EQ(
-        bm.get_box_info(
-        r2d2::Box{
-        r2d2::Coordinate{
-            0 * r2d2::Length::METER,
-            0 * r2d2::Length::METER,
-            0 * r2d2::Length::METER
-        },
-        r2d2::Coordinate{
-                20 * r2d2::Length::METER,
-                20 * r2d2::Length::METER,
-                20 * r2d2::Length::METER
-            }
-    }
-    ),
-    (r2d2::BoxInfo{ false, true, true })
-    );
+    ASSERT_EQ((r2d2::BoxInfo{ false, true, true }),
+              bm.get_box_info(
+                      r2d2::Box{
+                              r2d2::Coordinate{
+                                      0 * r2d2::Length::METER,
+                                      0 * r2d2::Length::METER,
+                                      0 * r2d2::Length::METER
+                              },
+                              r2d2::Coordinate{
+                                      20 * r2d2::Length::METER,
+                                      20 * r2d2::Length::METER,
+                                      20 * r2d2::Length::METER
+                              }
+                      }
+              ));
 }
 
 /*
 * BoxMap::get_bounding_box() test
 */
 TEST(BoxMap, BoundingBox){
-    r2d2::BoxMap bm{};
+    r2d2::ArrayBoxMap bm{};
 
     bm.set_box_info(
         r2d2::Box{
@@ -208,7 +207,7 @@ TEST(BoxMap, BoundingBox){
 * Real world test / stress test
 */
 TEST(BoxMap, UsageExample){
-    r2d2::BoxMap bm{};
+    r2d2::ArrayBoxMap bm{};
     r2d2::Box box1 =  r2d2::Box{
             r2d2::Coordinate{
                     -83.9178867229331 *r2d2::Length::METER,
@@ -244,7 +243,7 @@ TEST(BoxMap, UsageExample){
     ASSERT_TRUE((!gBox1.get_has_navigatable()) &&
                 (!gBox1.get_has_obstacle()));
 
-    bm.set_box_info(box2, r2d2::BoxInfo{ true, false, true} );
+    bm.set_box_info(box2, r2d2::BoxInfo{ true, true, false} );
     r2d2::BoxInfo gBox2 = bm.get_box_info(box2);
 
     ASSERT_TRUE((gBox2.get_has_navigatable()) &&

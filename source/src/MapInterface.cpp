@@ -8,7 +8,7 @@
 // @section LICENSE
 // License: newBSD
 //
-// Copyright © 2016, HU University of Applied Sciences Utrecht.
+// Copyright ï¿½ 2016, HU University of Applied Sciences Utrecht.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -35,12 +35,12 @@ namespace r2d2
 {
     BoxInfo::BoxInfo(
         bool has_obstacle,
-        bool has_unknown,
-        bool has_navigatable
+        bool has_navigatable,
+        bool has_unknown
     ):
         has_obstacle{ has_obstacle },
-        has_unknown{ has_unknown },
-        has_navigatable{ has_navigatable }
+        has_navigatable{ has_navigatable },
+        has_unknown{ has_unknown }
     {}
 
     bool BoxInfo::operator==(const BoxInfo rhs) const
@@ -60,11 +60,11 @@ namespace r2d2
     bool BoxInfo::get_has_obstacle() const{
         return has_obstacle;
     }
-    bool BoxInfo::get_has_unknown() const{
-        return has_unknown;
-    }
     bool BoxInfo::get_has_navigatable() const{
         return has_navigatable;
+    }
+    bool BoxInfo::get_has_unknown() const{
+        return has_unknown;
     }
 
 }
