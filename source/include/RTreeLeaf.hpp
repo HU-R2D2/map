@@ -12,6 +12,7 @@ namespace r2d2 {
 	template<int MIN, int MAX, typename T>
 	class RTreeLeaf : public RTree<MIN, MAX, T> {
 		using RTree<MIN, MAX, T>::bounds;
+		using RTree<MIN, MAX, T>::parent;
 	public:
 		RTreeLeaf(Box bounds, std::shared_ptr<T> data) :
 				RTree<MIN, MAX, T>{bounds},
@@ -25,7 +26,9 @@ namespace r2d2 {
 			return {};
 		}
 
-		virtual shared_ptr<r2d2::RTree<MIN, MAX, T>> find_leaf(shared_ptr<r2d2::RTree<MIN, MAX, T>> node, shared_ptr<r2d2::RTree<MIN, MAX, T>> this_ptr) override {
+		virtual shared_ptr<r2d2::RTree<MIN, MAX, T>> find_leaf(shared_ptr<r2d2::RTree<MIN, MAX, T>> node,
+		                                                       shared_ptr<r2d2::RTree<MIN, MAX, T>> this_ptr,
+		                                                       int max_depth = -1) override {
 			return this_ptr;
 		}
 

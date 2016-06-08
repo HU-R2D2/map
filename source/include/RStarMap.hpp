@@ -7,14 +7,15 @@
 
 #include "MapInterface.hpp"
 #include "RTreeRoot.hpp"
+#include "BoxMap.hpp"
 
-#define MIN_NODES 3
-#define MAX_NODES 6
+namespace r2d2 {
+	#define MIN_NODES 2
+	#define MAX_NODES 4
+	typedef RTreeRoot<MIN_NODES, MAX_NODES, const BoxInfo> root_type;
+	typedef RTree<MIN_NODES, MAX_NODES, const BoxInfo> node_type;
 
-namespace r2d2
-{
-	class RStarMap : public SaveLoadMap
-	{
+	class RStarMap : public BoxMap {
 
 	public:
 		RStarMap();
@@ -29,17 +30,18 @@ namespace r2d2
 
 		virtual void load(std::string filename) override;
 
-		//! @brief  gets the size of map
-		//!
-		//! @return int BoxMap::map.size()
-		int get_map_size();
+		virtual int get_map_size() const override;
 
-		friend std::ostream &operator<<(std::ostream &lhs, const RStarMap &rhs) {
-			return lhs << rhs.map;
+		virtual std::vector<std::pair<Box, BoxInfo>> get_intersecting(const Box &bounds) const override;
+
+		virtual std::ostream &print(std::ostream &lhs) {
+			return lhs << *map;
 		}
 
 	private:
-		RTreeRoot<MIN_NODES, MAX_NODES, const BoxInfo> map;
+		void insert(std::shared_ptr<node_type> node);
+
+		std::shared_ptr<root_type> map;
 
 	};
 }

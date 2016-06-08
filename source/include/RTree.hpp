@@ -24,7 +24,7 @@ namespace r2d2 {
 		}
 
 		virtual ~RTree() {
-			std::cout << "rtree destruct " << this << std::endl;
+//			std::cout << "rtree destruct " << this << std::endl;
 		}
 
 		const r2d2::Box &get_bounds() const {
@@ -35,7 +35,8 @@ namespace r2d2 {
 				r2d2::Box box, std::shared_ptr<RTree<MIN, MAX, T>> this_ptr) const = 0;
 
 		virtual std::shared_ptr<RTree<MIN, MAX, T>> find_leaf(std::shared_ptr<RTree<MIN, MAX, T>> node,
-		                                                      std::shared_ptr<RTree<MIN, MAX, T>> this_ptr) = 0;
+		                                                      std::shared_ptr<RTree<MIN, MAX, T>> this_ptr,
+		                                                      int max_depth = -1) = 0;
 
 		virtual void insert(std::shared_ptr<RTree<MIN, MAX, T>> node) = 0;
 

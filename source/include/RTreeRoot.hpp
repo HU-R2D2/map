@@ -12,6 +12,8 @@ namespace r2d2 {
 	template<int MIN, int MAX, typename T>
 	class RTreeRoot : public RTreeBranch<MIN, MAX, T> {
 		using RTree<MIN, MAX, T>::bounds;
+		using RTreeBranch<MIN, MAX, T>::has_edge;
+		using RTreeBranch<MIN, MAX, T>::split;
 		using RTreeBranch<MIN, MAX, T>::children;
 		using RTreeBranch<MIN, MAX, T>::num_children;
 
@@ -20,20 +22,26 @@ namespace r2d2 {
 				RTreeRoot::RTreeBranch{{}} {
 		}
 
-		virtual vector<shared_ptr<RTree<MIN, MAX, T>>> search(r2d2::Box box,
-				shared_ptr<RTree<MIN, MAX, T>> this_ptr = {nullptr}) const override {
-			return RTreeBranch<MIN, MAX, T>::search(box, this_ptr);
+		virtual shared_ptr<RTree<MIN, MAX, T>> find_leaf(shared_ptr<RTree<MIN, MAX, T>> node,
+		                                                 shared_ptr<RTree<MIN, MAX, T>> this_ptr,
+		                                                 int max_depth = -1) override {
+			if (num_children > 0 || max_depth == 0) {
+				return RTreeBranch<MIN, MAX, T>::find_leaf(node, this_ptr, max_depth);
+			} else {
+				return this_ptr;
+			}
 		}
 
 		// O(log(N))
-		virtual std::shared_ptr<RTree<MIN, MAX, T>> insert(std::shared_ptr<RTree<MIN, MAX, T>> &node, int max_depth = -1) override {
-			if (num_children == 0) {
-				children[num_children++] = node;
-				node->set_parent(this);
+		virtual void insert(std::shared_ptr<RTree<MIN, MAX, T>> node) override {
+			children[num_children++] = node;
+			node->set_parent(this);
+			if (num_children <= 1) {
 				bounds = node->get_bounds();
 			} else {
-				auto overflow = RTreeBranch<MIN, MAX, T>::insert(node, max_depth);
-				if (overflow != nullptr) {
+				if (num_children >= MAX) {
+					auto splitNode = split();
+					// make the root two new nodes
 					children[0] = std::shared_ptr<RTree<MIN, MAX, T>>{
 							new RTreeBranch<MIN, MAX, T>{
 									std::vector<std::shared_ptr<RTree<MIN, MAX, T>>>{
@@ -43,14 +51,16 @@ namespace r2d2 {
 							}
 					};
 					children[0]->set_parent(this);
-					children[1] = overflow;
+					children[1] = splitNode;
 					children[1]->set_parent(this);
 					num_children = 2;
+					bounds = children[0]->get_bounds().get_union_box(children[1]->get_bounds());
+					// TODO recursive insert virtual root
 				} else {
+					// add bounds as the inner children could not have been removed
 					bounds = bounds.get_union_box(node->get_bounds());
 				}
 			}
-			return {};
 		}
 
 //		virtual void remove(const RTree<MIN, MAX, T> *node, std::vector<std::shared_ptr<RTree<MIN, MAX, T>>> raise_nodes = {}) override {
@@ -66,6 +76,9 @@ namespace r2d2 {
 
 	private:
 		virtual void underflow_treatment() override {
+			if (num_children == 0) {
+				bounds = {};
+			}
 			/*if (num_children == 1 && ) { // here should be something with type detection and stuff
 				// inherit all the child's children as the node is superfluous
 				auto child = children[0];
@@ -81,6 +94,31 @@ namespace r2d2 {
 		template<long unsigned int S>
 		RTreeRoot(std::array<std::shared_ptr<RTree<MIN, MAX, T>>, S> children) :
 				RTreeRoot::RTreeBranch(children) {
+		}
+
+	protected:
+		virtual void add_bound(const Box box) {
+			if (has_edge(box)) {
+				bounds = bounds.get_union_box(box);
+			}
+		}
+
+		virtual void remove_bound(const Box box) {
+			// if the removed node made up part of this node's edges
+			if (has_edge(box)) {
+				// shrink the bounds to fit the leftover nodes
+				bounds = children[0]->get_bounds();
+				for (int i = 1; i < num_children; ++i) {
+					bounds = bounds.get_union_box(children[i]->get_bounds());
+				}
+			}
+		}
+
+		virtual void recompute_bounds() {
+			bounds = children[0]->get_bounds();
+			for (int i = 1; i < num_children; ++i) {
+				bounds = bounds.get_union_box(children[i]->get_bounds());
+			}
 		}
 
 	};

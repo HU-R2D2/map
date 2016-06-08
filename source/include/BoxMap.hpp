@@ -50,6 +50,8 @@ namespace r2d2
 
         virtual std::vector<std::pair<Box, BoxInfo>> get_intersecting(const Box &bounds) const = 0;
 
+        virtual std::ostream &print(std::ostream &lhs) = 0;
+
     };
 }
 #endif //_BOXMAP_HPP

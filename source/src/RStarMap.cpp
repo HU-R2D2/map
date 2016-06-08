@@ -8,7 +8,7 @@
 namespace r2d2 {
 
 	RStarMap::RStarMap():
-			map{} {
+			map{new root_type{}} {
 	}
 	
 	const BoxInfo RStarMap::get_box_info(const Box box) {
@@ -16,7 +16,7 @@ namespace r2d2 {
 		bool temp_has_unknown = false;
 		bool temp_has_navigatable = false;
 
-		for (auto &known_box : map.search(box)){
+		for (auto &known_box : map->search(box, map)){
 			auto info = known_box->get_data();
 
 			temp_has_obstacle = (
@@ -47,13 +47,13 @@ namespace r2d2 {
 	}
 
 	const Box RStarMap::get_map_bounding_box() {
-		return map.get_bounds();
+		return map->get_bounds();
 	}
 
 	void RStarMap::set_box_info(const Box box, const BoxInfo box_info) {
 		std::vector<std::pair<Box, BoxInfo>> new_boxes;
 
-		std::vector<std::shared_ptr<RTree<MIN_NODES, MAX_NODES, const BoxInfo>>> found{map.search(box)};
+		std::vector<std::shared_ptr<node_type>> found{map->search(box, map)};
 		for (auto leaf : found) {
 			auto data = leaf->get_data();
 			Box bounds = leaf->get_bounds();
@@ -168,6 +168,8 @@ namespace r2d2 {
 
 				// last box cutaway removed
 			}
+
+//			std::cout << "remove" << std::endl << *leaf << *map;
 			leaf->remove();
 		}
 		// shrink to fit decreases performance substantially
@@ -175,21 +177,21 @@ namespace r2d2 {
 
 		//Add newly cut boxes
 		for (std::pair<Box, BoxInfo> box_cut : new_boxes){
-			std::shared_ptr<RTree<MIN_NODES, MAX_NODES, const BoxInfo>> newLeaf{
+			std::shared_ptr<node_type> newLeaf{
 					new RTreeLeaf<MIN_NODES, MAX_NODES, const BoxInfo>{
 							box_cut.first, std::make_shared<const BoxInfo>(box_cut.second)
 					}
 			};
-			map.insert(newLeaf);
+			insert(newLeaf);
 		}
 
 		//Add the actual new box
-		std::shared_ptr<RTree<MIN_NODES, MAX_NODES, const BoxInfo>> origLeaf{
+		std::shared_ptr<node_type> origLeaf{
 				new RTreeLeaf<MIN_NODES, MAX_NODES, const BoxInfo>{
 						box, std::make_shared<const BoxInfo>(box_info)
 				}
 		};
-		map.insert(origLeaf);
+		insert(origLeaf);
 	}
 
 	void RStarMap::save(std::string filename) {
@@ -200,7 +202,23 @@ namespace r2d2 {
 		// TODO
 	}
 
-	int RStarMap::get_map_size() {
-		return int(map.search(map.get_bounds()).size());
+	int RStarMap::get_map_size() const {
+		return int(map->search(map->get_bounds(), map).size());
 	}
+
+	std::vector<std::pair<Box, BoxInfo>> RStarMap::get_intersecting(const Box &bounds) const {
+		std::vector<std::shared_ptr<r2d2::node_type>> found{map->search(bounds, map)};
+		std::vector<std::pair<Box, BoxInfo>> pair_vector{};
+		for (auto item : found) {
+			pair_vector.push_back({item->get_bounds(), *item->get_data()});
+		}
+		return pair_vector;
+	}
+
+	void RStarMap::insert(std::shared_ptr<node_type> node) {
+		// first find the correct leaf to insert to, then insert it into that node
+		map->find_leaf(node, map)->insert(node);
+//		std::cout << "insert" << std::endl << *node << *map;
+	}
+
 }

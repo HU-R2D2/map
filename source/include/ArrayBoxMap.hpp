@@ -38,6 +38,10 @@ namespace r2d2 {
 
 		virtual std::vector<std::pair<Box, BoxInfo>> get_intersecting(const Box &bounds) const override;
 
+		virtual std::ostream &print(std::ostream &rhs) {
+			return rhs;
+		}
+
 	private:
 		std::vector<std::pair<Box, BoxInfo>> map; // a map in which boxes and boxinfos are stored in as a pairs
 

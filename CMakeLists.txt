@@ -4,21 +4,6 @@ project(map)
 
 find_package (Threads)
 
-set(SOURCES
-		source/src/ArrayBoxMap.cpp
-		source/src/MapInterface.cpp
-		source/src/main.cpp
-		../adt/source/include/ADT_Base.hpp
-		../adt/source/src/Length.cpp
-		../adt/source/src/Box.cpp
-		../adt/source/src/Coordinate.cpp
-		../adt/source/src/Translation.cpp
-		source/include/RTree.hpp
-		source/include/RTreeLeaf.hpp
-		source/include/RTreeBranch.hpp
-		source/src/RStarMap.cpp source/include/RStarMap.hpp
-		source/include/RTreeRoot.hpp)
-
 set(SOURCES_GTEST
 		source/src/ArrayBoxMap.cpp
 		source/src/MapInterface.cpp
@@ -57,9 +42,6 @@ ADD_LIBRARY(gtest ../deps/gtest-1.7.0/src/gtest-all.cc)
 
 ADD_LIBRARY(gtest_main ../deps/gtest-1.7.0/src/gtest_main.cc)
 
-
-
-add_executable(map ${SOURCES})
 
 add_executable(map_test ${SOURCES_GTEST})
 
