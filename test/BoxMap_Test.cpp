@@ -53,7 +53,6 @@ TEST(BoxMap, AddBox) {
 * BoxMap::get_box_info() test, automatic loop over possible values
 */
 TEST(BoxMap, GetBoxInfo1) {
-	srand((unsigned int) (time(NULL)));
 	r2d2::ArrayBoxMap bm{};
 	for (int i = 0; i < 8; i++) {
 
@@ -75,7 +74,8 @@ TEST(BoxMap, GetBoxInfo1) {
 								3 * r2d2::Length::METER,
 								4 * r2d2::Length::METER
 						}
-				}, temp);
+				}, temp
+		);
 
 		// if the temp has neither obstacle or navigable, then set unknown to true
 		if (!(temp.get_has_obstacle() || temp.get_has_navigatable())) {
@@ -103,7 +103,6 @@ TEST(BoxMap, GetBoxInfo1) {
 * BoxMap::get_box_info() test, manual creation
 */
 TEST(BoxMap, GetBoxInfo2) {
-	srand((unsigned int) (time(NULL)));
 	r2d2::ArrayBoxMap bm{};
 
 	bm.set_box_info(
@@ -119,7 +118,7 @@ TEST(BoxMap, GetBoxInfo2) {
 							17 * r2d2::Length::METER
 					}
 			},
-			r2d2::BoxInfo{false, false, true}
+			r2d2::BoxInfo{true, false, false}
 	);
 
 	bm.set_box_info(
@@ -138,7 +137,7 @@ TEST(BoxMap, GetBoxInfo2) {
 			r2d2::BoxInfo{false, true, false}
 	);
 
-	ASSERT_EQ((r2d2::BoxInfo{false, true, true}),
+	ASSERT_EQ((r2d2::BoxInfo{true, true, true}),
 	          bm.get_box_info(
 			          r2d2::Box{
 					          r2d2::Coordinate{

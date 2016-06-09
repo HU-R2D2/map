@@ -28,23 +28,19 @@
 // OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // ++--++
 
-#include "../source/include/BoxMap.hpp"
-#include "../source/include/MapInterface.hpp"
-#include "gtest/gtest.h"
 #include "../source/include/ArrayBoxMap.hpp"
-#include <iostream>
+#include "gtest/gtest.h"
 #include <random>
-#include <time.h>
 
 //! Tests saving and loading to its full extends
 //! Generates a map, saves it and then loads and compares the saved map and currently loaded map with eachother if they are equal
-TEST(BoxMap, saveAndLoad) {
+TEST(SaveLoad, ArrayBoxMap) {
     std::uniform_real_distribution<double> random_real(-100.0, 100.0);
-    std::default_random_engine re(time(NULL));
-    srand(time(NULL));
+    std::default_random_engine re((unsigned int)(time(NULL)));
+    srand((unsigned int)(time(NULL)));
     r2d2::ArrayBoxMap bm{};
     cout << "May take a while... Please wait" << endl;
-    int generate_box_count = 1;
+    int generate_box_count = 10;
     for (int i = 0; i < generate_box_count; i++) {
         bm.set_box_info(
                 r2d2::Box{
@@ -87,4 +83,5 @@ TEST(BoxMap, saveAndLoad) {
         ASSERT_EQ(bm.get_box_info(temp), bm2.get_box_info(temp));
         --rounds;
     }
+    ASSERT_EQ(bm.get_map_size(), bm2.get_map_size());
 }

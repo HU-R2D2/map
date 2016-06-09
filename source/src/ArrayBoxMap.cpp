@@ -51,14 +51,14 @@ namespace r2d2 {
 					known_box.second.get_has_obstacle()
 			);
 
-			temp_has_unknown = (
-					temp_has_unknown ||
-					known_box.second.get_has_unknown()
-			);
-
 			temp_has_navigatable = (
 					temp_has_navigatable ||
 					known_box.second.get_has_navigatable()
+			);
+
+			temp_has_unknown = (
+					temp_has_unknown ||
+					known_box.second.get_has_unknown()
 			);
 
 			// subtract the volume that this box takes in from the total box area
@@ -109,7 +109,14 @@ namespace r2d2 {
 			// iterator used instead of int to be able to remove elements efficiently
 			// this implementation is separate from the get_intersecting one,
 			// as it does not support returning iterators
-			if (box.intersects(it->first)) {
+
+			// use the old version of the intersection detection, as otherwise there will be boxes of length zero
+			if (it->first.get_top_right().get_x() > box.get_bottom_left().get_x() &&
+			    it->first.get_bottom_left().get_x() < box.get_top_right().get_x() &&
+			    it->first.get_top_right().get_y() > box.get_bottom_left().get_y() &&
+			    it->first.get_bottom_left().get_y() < box.get_top_right().get_y() &&
+			    it->first.get_top_right().get_z() > box.get_bottom_left().get_z() &&
+			    it->first.get_bottom_left().get_z() < box.get_top_right().get_z()) {
 				// current box has to be cut because of intersecting with the insertion box
 
 				if (it->first.get_bottom_left().get_x()

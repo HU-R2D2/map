@@ -54,6 +54,8 @@ TEST(BoxInfo, IsEqual) {
 	r2d2::BoxInfo b1{ true, true, true };
 	r2d2::BoxInfo b2{ true, true, true };
 	ASSERT_TRUE(b1 == b2) << "failed, should return true but did not";
+	r2d2::BoxInfo b3{ false, false, false };
+	ASSERT_FALSE(b1 == b3);
 }
 
 //Operator!=
@@ -62,7 +64,8 @@ TEST(BoxInfo, NotEqual) {
 	r2d2::BoxInfo b1{ true, true, true };
 	r2d2::BoxInfo b2{ false, false, false };
 	ASSERT_TRUE(b1 != b2);
-	
+	r2d2::BoxInfo b3{ true, true, true };
+	ASSERT_FALSE(b1 != b3);
 }
 
 //has_navigatable getter
