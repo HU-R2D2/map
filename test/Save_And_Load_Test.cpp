@@ -44,7 +44,7 @@ TEST(BoxMap, saveAndLoad) {
     srand(time(NULL));
     r2d2::ArrayBoxMap bm{};
     cout << "May take a while... Please wait" << endl;
-    int generate_box_count = 5;
+    int generate_box_count = 1;
     for (int i = 0; i < generate_box_count; i++) {
         bm.set_box_info(
                 r2d2::Box{
@@ -63,11 +63,11 @@ TEST(BoxMap, saveAndLoad) {
         );
     }
     cout << "Saving...";
-    bm.save("save_and_load_test.json");
+    bm.save("save_and_load_test.map");
 
     cout << "Loading..." << endl;
     r2d2::ArrayBoxMap bm2{};
-    bm2.load("save_and_load_test.json");
+    bm2.load("save_and_load_test.map");
     int rounds = 50;
     cout << "Comparing with " << rounds << " rounds" << endl;
     while (rounds >= 0) {
@@ -84,7 +84,7 @@ TEST(BoxMap, saveAndLoad) {
             }
         };
 
-        ASSERT_TRUE((bm.get_box_info(temp) == bm2.get_box_info(temp)));
+        ASSERT_EQ(bm.get_box_info(temp), bm2.get_box_info(temp));
         --rounds;
     }
 }

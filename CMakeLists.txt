@@ -6,6 +6,7 @@ find_package (Threads)
 
 set(SOURCES_GTEST
 		source/src/ArrayBoxMap.cpp
+		source/src/BoxMap.cpp
 		source/src/MapInterface.cpp
 		test/BoxInfoTest.cpp
 		test/BoxMap_Test.cpp
