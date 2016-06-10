@@ -33,6 +33,8 @@ namespace r2d2 {
 		}
 
 	private:
+		virtual void add_box(Box box, BoxInfo info) override;
+
 		void insert(std::shared_ptr<node_type> node);
 
 		std::shared_ptr<root_type> map;

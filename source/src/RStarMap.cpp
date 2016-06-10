@@ -168,25 +168,15 @@ namespace r2d2 {
 		// map.shrink_to_fit();
 
 		//Add newly cut boxes
-		for (std::pair<Box, BoxInfo> box_cut : new_boxes){
-			std::shared_ptr<node_type> newLeaf{
-					new RTreeLeaf<MIN_NODES, MAX_NODES, const BoxInfo>{
-							box_cut.first, std::make_shared<const BoxInfo>(box_cut.second)
-					}
-			};
-			insert(newLeaf);
+		for (std::pair<Box, BoxInfo> box_cut : new_boxes) {
+			add_box(box_cut.first, box_cut.second);
 		}
 
 		// if the new box has neither navigable or an obstacle
 		// then don't bother adding it as the empty area is unknown by default
 		if (box_info.get_has_navigatable() || box_info.get_has_obstacle()) {
 			//Add the actual new box
-			std::shared_ptr<node_type> origLeaf{
-					new RTreeLeaf<MIN_NODES, MAX_NODES, const BoxInfo>{
-							box, std::make_shared<const BoxInfo>(box_info)
-					}
-			};
-			insert(origLeaf);
+			add_box(box, box_info);
 		}
 	}
 
@@ -201,6 +191,15 @@ namespace r2d2 {
 			pair_vector.push_back({item->get_bounds(), *item->get_data()});
 		}
 		return pair_vector;
+	}
+
+	void RStarMap::add_box(Box box, BoxInfo info) {
+		std::shared_ptr<node_type> newLeaf{
+				new RTreeLeaf<MIN_NODES, MAX_NODES, const BoxInfo>{
+						box, std::make_shared<const BoxInfo>(info)
+				}
+		};
+		insert(newLeaf);
 	}
 
 	void RStarMap::insert(std::shared_ptr<node_type> node) {
