@@ -48,10 +48,6 @@ namespace r2d2 {
 			num_children = int(S);
 		}
 
-		virtual ~RTreeBranch() override {
-//			std::cout << "branch destruct" << std::endl;
-		}
-
 		virtual std::vector<std::shared_ptr<RTree<MIN, MAX, T>>> search(r2d2::Box box, std::shared_ptr<RTree<MIN, MAX, T>> this_ptr) const override {
 			std::vector<std::shared_ptr<RTree<MIN, MAX, T>>> found;
 			if (bounds.intersects(box)) {
@@ -283,12 +279,8 @@ namespace r2d2 {
 					}
 				}
 			}
-			// update the bounds of the parent(s)
-			recompute_bounds();
-			// the best spilt has been found, now extract if from the array
-			// bounds = bestSplitBounds;
-			// we already know the bounds here, but it's not very elegant to use them
 
+			// the best spilt has been found, now extract if from the array
 			if (bestAxis != NUM_AXES - 1) {
 				// the last axis sorted can be skipped
 				sort(bestAxis);
@@ -301,6 +293,10 @@ namespace r2d2 {
 				// test if it causes any problems with shared_ptr deconstruction
 			}
 			num_children = bestSpilt + 1;
+			// update the bounds of the parent(s)
+			recompute_bounds();
+			// bounds = bestSplitBounds;
+			// we already know the bounds here, but it's not very elegant to use them
 
 			return std::shared_ptr<RTree<MIN, MAX, T>>{new RTreeBranch<MIN, MAX, T>{newTree}};
 		}
