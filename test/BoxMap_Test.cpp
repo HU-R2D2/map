@@ -45,7 +45,13 @@ TEST(BoxMap, DefaultConstructor) {
 */
 TEST(BoxMap, AddBox) {
 	r2d2::ArrayBoxMap bm{};
-	bm.set_box_info(r2d2::Box{}, r2d2::BoxInfo{true, false, false});
+	bm.set_box_info(r2d2::Box{r2d2::Coordinate{-1 * r2d2::Length::METER,
+	                                           -1 * r2d2::Length::METER,
+	                                           -1 * r2d2::Length::METER},
+	                          r2d2::Coordinate{1 * r2d2::Length::METER,
+	                                           1 * r2d2::Length::METER,
+	                                           1 * r2d2::Length::METER}},
+	                r2d2::BoxInfo{true, false, false});
 	ASSERT_EQ(1, bm.get_map_size());
 }
 
@@ -202,6 +208,69 @@ TEST(BoxMap, BoundingBox) {
 			(bounding.get_top_right().get_y() / r2d2::Length::METER == 61) &&
 			(bounding.get_top_right().get_z() / r2d2::Length::METER == 62)
 	);
+}
+
+TEST(BoxMap, ZeroSizeUnknownTest) {
+	r2d2::ArrayBoxMap bm{};
+
+	bm.set_box_info(
+			r2d2::Box{
+					r2d2::Coordinate{
+							10 * r2d2::Length::METER,
+							11 * r2d2::Length::METER,
+							0 * r2d2::Length::METER
+					},
+					r2d2::Coordinate{
+							20 * r2d2::Length::METER,
+							21 * r2d2::Length::METER,
+							0 * r2d2::Length::METER
+					}
+			},
+			r2d2::BoxInfo{true, true, false}
+	);
+	ASSERT_EQ((r2d2::BoxInfo{true, true, true}),
+	          (bm.get_box_info(
+			          r2d2::Box{
+					          r2d2::Coordinate{
+							          0 * r2d2::Length::METER,
+							          0 * r2d2::Length::METER,
+							          0 * r2d2::Length::METER
+					          }, r2d2::Coordinate{
+							          30 * r2d2::Length::METER,
+							          30 * r2d2::Length::METER,
+							          0 * r2d2::Length::METER
+					          }
+			          }
+	          )));
+	bm.set_box_info(
+			r2d2::Box{
+					r2d2::Coordinate{
+							10 * r2d2::Length::METER,
+							11 * r2d2::Length::METER,
+							0 * r2d2::Length::METER
+					},
+					r2d2::Coordinate{
+							20 * r2d2::Length::METER,
+							21 * r2d2::Length::METER,
+							1 * r2d2::Length::METER
+					}
+			},
+			r2d2::BoxInfo{false, true, false}
+	);
+	ASSERT_EQ((r2d2::BoxInfo{false, true, true}),
+	          (bm.get_box_info(
+			          r2d2::Box{
+					          r2d2::Coordinate{
+							          0 * r2d2::Length::METER,
+							          0 * r2d2::Length::METER,
+							          0.5 * r2d2::Length::METER
+					          }, r2d2::Coordinate{
+							          30 * r2d2::Length::METER,
+							          30 * r2d2::Length::METER,
+							          0.5 * r2d2::Length::METER
+					          }
+			          }
+	          )));
 }
 
 // defines the size of the grid of squares that will be inserted in the stress test

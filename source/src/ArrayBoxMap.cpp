@@ -38,12 +38,18 @@ namespace r2d2 {
 		bool temp_has_navigatable = false;
 		bool temp_has_unknown = false;
 
-		// calculate the total area of the requested box
 		Translation axis_size = box.get_axis_size();
+		double xlen = axis_size.get_x() / Length::METER,
+				ylen = axis_size.get_y() / Length::METER,
+				zlen = axis_size.get_z() / Length::METER;
+		// calculate the total area of the requested box
+		// if one of the axes is length zero then it won't be counted
+		// in the volume, as it will in result in zero volume
+		bool has_x = xlen > 0, has_y = ylen > 0, has_z = zlen > 0;
 		// adt has no unit for volume, we'll have to use a double for now
-		double vol = axis_size.get_x() / Length::METER
-		             * axis_size.get_y() / Length::METER
-		             * axis_size.get_z() / Length::METER;
+		double vol = (has_x ? xlen : 1) *
+				(has_x ? xlen : 1) *
+				(has_x ? xlen : 1);
 
 		for (std::pair<Box, BoxInfo> known_box : get_intersecting(box)){
 			temp_has_obstacle = (
@@ -63,9 +69,9 @@ namespace r2d2 {
 
 			// subtract the volume that this box takes in from the total box area
 			axis_size = known_box.first.get_intersection_box(box).get_axis_size();
-			vol -= axis_size.get_x() / Length::METER
-			       * axis_size.get_y() / Length::METER
-			       * axis_size.get_z() / Length::METER;
+			vol -= (has_x ? axis_size.get_x() / Length::METER : 1)
+			       * (has_x ? axis_size.get_y() / Length::METER : 1)
+			       * (has_x ? axis_size.get_z() / Length::METER : 1);
 
 			if (temp_has_obstacle && temp_has_unknown && temp_has_navigatable) {
 				// if all three are true then the result must be as such
@@ -103,6 +109,8 @@ namespace r2d2 {
 	}
 
 	void ArrayBoxMap::set_box_info(const Box box, const BoxInfo box_info) {
+		Translation axis_size = box.get_axis_size();
+		// boxes of size zero should not be a problem here because
 		std::vector<std::pair<Box, BoxInfo>> new_boxes;
 
 		for (auto it = map.begin(); it != map.end();) {
