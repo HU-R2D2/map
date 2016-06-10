@@ -38,12 +38,18 @@ namespace r2d2 {
 		bool temp_has_navigatable = false;
 		bool temp_has_unknown = false;
 
-		// calculate the total area of the requested box
 		Translation axis_size = box.get_axis_size();
+		double xlen = axis_size.get_x() / Length::METER,
+				ylen = axis_size.get_y() / Length::METER,
+				zlen = axis_size.get_z() / Length::METER;
+		// calculate the total area of the requested box
+		// if one of the axes is length zero then it won't be counted
+		// in the volume, as it will in result in zero volume
+		bool has_x = xlen > 0, has_y = ylen > 0, has_z = zlen > 0;
 		// adt has no unit for volume, we'll have to use a double for now
-		double vol = axis_size.get_x() / Length::METER
-		             * axis_size.get_y() / Length::METER
-		             * axis_size.get_z() / Length::METER;
+		double vol = (has_x ? xlen : 1) *
+				(has_x ? xlen : 1) *
+				(has_x ? xlen : 1);
 
 		for (std::pair<Box, BoxInfo> known_box : get_intersecting(box)){
 			temp_has_obstacle = (
@@ -51,21 +57,21 @@ namespace r2d2 {
 					known_box.second.get_has_obstacle()
 			);
 
-			temp_has_unknown = (
-					temp_has_unknown ||
-					known_box.second.get_has_unknown()
-			);
-
 			temp_has_navigatable = (
 					temp_has_navigatable ||
 					known_box.second.get_has_navigatable()
 			);
 
+			temp_has_unknown = (
+					temp_has_unknown ||
+					known_box.second.get_has_unknown()
+			);
+
 			// subtract the volume that this box takes in from the total box area
 			axis_size = known_box.first.get_intersection_box(box).get_axis_size();
-			vol -= axis_size.get_x() / Length::METER
-			       * axis_size.get_y() / Length::METER
-			       * axis_size.get_z() / Length::METER;
+			vol -= (has_x ? axis_size.get_x() / Length::METER : 1)
+			       * (has_x ? axis_size.get_y() / Length::METER : 1)
+			       * (has_x ? axis_size.get_z() / Length::METER : 1);
 
 			if (temp_has_obstacle && temp_has_unknown && temp_has_navigatable) {
 				// if all three are true then the result must be as such
@@ -91,8 +97,7 @@ namespace r2d2 {
 		};
 	}
 
-	const Box ArrayBoxMap::get_map_bounding_box()
-	{
+	const Box ArrayBoxMap::get_map_bounding_box() {
 		if (map.empty()) {
 			return Box{};
 		}
@@ -104,13 +109,22 @@ namespace r2d2 {
 	}
 
 	void ArrayBoxMap::set_box_info(const Box box, const BoxInfo box_info) {
+		Translation axis_size = box.get_axis_size();
+		// boxes of size zero should not be a problem here because
 		std::vector<std::pair<Box, BoxInfo>> new_boxes;
 
 		for (auto it = map.begin(); it != map.end();) {
 			// iterator used instead of int to be able to remove elements efficiently
 			// this implementation is separate from the get_intersecting one,
 			// as it does not support returning iterators
-			if (box.intersects(it->first)) {
+
+			// use the old version of the intersection detection, as otherwise there will be boxes of length zero
+			if (it->first.get_top_right().get_x() > box.get_bottom_left().get_x() &&
+			    it->first.get_bottom_left().get_x() < box.get_top_right().get_x() &&
+			    it->first.get_top_right().get_y() > box.get_bottom_left().get_y() &&
+			    it->first.get_bottom_left().get_y() < box.get_top_right().get_y() &&
+			    it->first.get_top_right().get_z() > box.get_bottom_left().get_z() &&
+			    it->first.get_bottom_left().get_z() < box.get_top_right().get_z()) {
 				// current box has to be cut because of intersecting with the insertion box
 
 				if (it->first.get_bottom_left().get_x()
@@ -234,209 +248,10 @@ namespace r2d2 {
 
 		// if the new box has neither navigable or an obstacle
 		// then don't bother adding it as the empty area is unknown by default
-//		if (box_info.get_has_navigatable() || box_info.get_has_obstacle()) {
+		if (box_info.get_has_navigatable() || box_info.get_has_obstacle()) {
 			//Add the actual new box
 			map.push_back(std::pair<Box, BoxInfo>{box, box_info});
-//		}
-	}
-
-	void ArrayBoxMap::save(std::string filename)
-	{
-		// Create a DOM document
-		rapidjson::Document d;
-		d.SetObject();
-
-		// Create the first level of json
-		// { "left_coordinates":[{}],
-		//   "right_coordinates":[{}],
-		//   "box_infos":[{}]
-		// }
-		rapidjson::Value boxes(rapidjson::kArrayType);
-
-		for(int j = 0; j < map.size(); j++) {
-			rapidjson::Value box(rapidjson::kObjectType);
-			// Create coordinate placeholders
-			// "left_coordinates":
-			// [{
-			// "x":left_coordinate_x,
-			// "y":left_coordinate_y,
-			// "z":left_coordinate_z
-			// }]
-			rapidjson::Value left_coordinate(rapidjson::kObjectType);
-			rapidjson::Value left_coordinate_x;
-			left_coordinate_x.SetDouble(
-					map[j].first.get_bottom_left().get_x() / Length::METER);
-
-			rapidjson::Value left_coordinate_y(rapidjson::kStringType);
-			left_coordinate_y.SetDouble(
-					map[j].first.get_bottom_left().get_y() / Length::METER);
-
-			rapidjson::Value left_coordinate_z(rapidjson::kStringType);
-			left_coordinate_z.SetDouble(
-					map[j].first.get_bottom_left().get_z() / Length::METER);
-
-			// Create coordinate placeholders
-			// "right_coordinates":[{
-			// "x":right_coordinate_x,
-			// "y":right_coordinate_y,
-			// "z":right_coordinate_z
-			// }]
-			rapidjson::Value right_coordinate(rapidjson::kObjectType);
-			rapidjson::Value right_coordinate_x;
-			right_coordinate_x.SetDouble(
-					map[j].first.get_top_right().get_x() / Length::METER);
-
-			rapidjson::Value right_coordinate_y(rapidjson::kStringType);
-			right_coordinate_y.SetDouble(
-					map[j].first.get_top_right().get_y() / Length::METER);
-
-			rapidjson::Value right_coordinate_z(rapidjson::kStringType);
-			right_coordinate_z.SetDouble(
-					map[j].first.get_top_right().get_z() / Length::METER);
-
-			// Create box_info placeholders
-			// "box_infos":[{
-			// "has_obstacle":has_obstacle,
-			// "has_unknown":has_unknown,
-			// "has_navigatable":has_navigatable
-			// }]
-			rapidjson::Value box_info(rapidjson::kObjectType);
-			rapidjson::Value has_obstacle;
-			has_obstacle.SetBool(map[j].second.get_has_obstacle());
-
-			rapidjson::Value has_navigatable;
-			has_navigatable.SetBool(map[j].second.get_has_navigatable());
-
-			rapidjson::Value has_unknown;
-			has_unknown.SetBool(map[j].second.get_has_unknown());
-
-			// Add indexes to Objects
-			left_coordinate.AddMember("x", left_coordinate_x, d.GetAllocator());
-			left_coordinate.AddMember("y", left_coordinate_y, d.GetAllocator());
-			left_coordinate.AddMember("z", left_coordinate_z, d.GetAllocator());
-
-			right_coordinate.AddMember(
-					"x",
-					right_coordinate_x,
-					d.GetAllocator()
-			);
-			right_coordinate.AddMember(
-					"y",
-					right_coordinate_y,
-					d.GetAllocator()
-			);
-			right_coordinate.AddMember(
-					"z",
-					right_coordinate_z,
-					d.GetAllocator()
-			);
-
-			box_info.AddMember(
-					"has_obstacle",
-					has_obstacle,
-					d.GetAllocator()
-			);
-			box_info.AddMember(
-					"has_navigatable",
-					has_navigatable,
-					d.GetAllocator()
-			);
-			box_info.AddMember(
-					"has_unknown",
-					has_unknown,
-					d.GetAllocator()
-			);
-
-			box.AddMember("left_coordinate", left_coordinate, d.GetAllocator());
-			box.AddMember("right_coordinate", right_coordinate, d.GetAllocator());
-			box.AddMember("box_info", box_info, d.GetAllocator());
-
-			boxes.PushBack(box, d.GetAllocator());
 		}
-
-		d.AddMember("boxes", boxes, d.GetAllocator());
-
-		// Write the file to given filename
-		FILE* pFILE = fopen(filename.c_str(), "wb");
-		if(!pFILE) {
-			fclose(pFILE);
-			throw std::exception();
-		}
-		char writeBuffer[65536];
-		rapidjson::FileWriteStream os(pFILE, writeBuffer, sizeof(writeBuffer));
-		rapidjson::Writer<rapidjson::FileWriteStream> writer(os);
-		d.Accept(writer);
-
-		// Reset writer for re-use and close the file
-		writer.Reset(os);
-		fclose(pFILE);
-	}
-
-	void ArrayBoxMap::load(std::string filename)
-	{
-		// Open file
-		FILE* pFILE = fopen(filename.c_str() , "rb");
-		if(!pFILE) {
-			fclose(pFILE);
-			throw std::exception();
-		}
-
-		char buff[65536];
-		rapidjson::FileReadStream frs(pFILE, buff, sizeof(buff));
-		rapidjson::Document d;
-
-		// Push contents into DOM element
-		d.ParseStream<0, rapidjson::UTF8<>, rapidjson::FileReadStream>(frs);
-
-		if(!d.HasMember("boxes"))
-		{
-			fclose(pFILE);
-			throw rapidjson::ParseErrorCode::kParseErrorObjectMissName;
-		}
-
-		// Clear current map
-		map.clear();
-
-		// Allocate row_size
-		const rapidjson::SizeType row_size = d["boxes"].Size();
-
-		// Load values from DOM element
-		for(rapidjson::SizeType i = 0; i < row_size; i++) {
-			if(d["boxes"][i]["left_coordinate"] == NULL,
-					d["boxes"][i]["right_coordinate"] == NULL,
-					d["boxes"][i]["box_info"] == NULL)
-			{
-				fclose(pFILE);
-				throw rapidjson::ParseErrorCode::kParseErrorObjectMissName;
-			}
-
-			Box map_Box =
-					Box(Coordinate(
-							(d["boxes"][i]["left_coordinate"]["x"].GetDouble()
-							 * Length::METER),
-							(d["boxes"][i]["left_coordinate"]["y"].GetDouble()
-							 * Length::METER),
-							(d["boxes"][i]["left_coordinate"]["z"].GetDouble()
-							 * Length::METER)),
-
-					    Coordinate(
-							    (d["boxes"][i]["right_coordinate"]["x"].GetDouble()
-							     * Length::METER),
-							    (d["boxes"][i]["right_coordinate"]["y"].GetDouble()
-							     * Length::METER),
-							    (d["boxes"][i]["right_coordinate"]["z"].GetDouble()
-							     * Length::METER)));
-
-			BoxInfo map_BoxInfo(d["boxes"][i]["box_info"]["has_obstacle"].GetBool(),
-			                    d["boxes"][i]["box_info"]["has_navigatable"].GetBool(),
-			                    d["boxes"][i]["box_info"]["has_unknown"].GetBool());
-
-			std::pair<Box, BoxInfo> psh(map_Box, map_BoxInfo);
-			map.push_back(psh);
-		}
-
-		// Close file
-		fclose(pFILE);
 	}
 
 	int ArrayBoxMap::get_map_size() const {

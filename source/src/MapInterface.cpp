@@ -28,11 +28,9 @@
 // OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // ++--++
 
-#include "../../../adt/source/include/Box.hpp"
 #include "../include/MapInterface.hpp"
 
-namespace r2d2
-{
+namespace r2d2 {
     BoxInfo::BoxInfo(
         bool has_obstacle,
         bool has_navigatable,
@@ -43,8 +41,7 @@ namespace r2d2
         has_unknown{ has_unknown }
     {}
 
-    bool BoxInfo::operator==(const BoxInfo rhs) const
-    {
+    bool BoxInfo::operator==(const BoxInfo rhs) const {
         return (
             has_obstacle == rhs.has_obstacle && 
             has_unknown == rhs.has_unknown && 
@@ -52,18 +49,17 @@ namespace r2d2
         );
     }
 
-    bool BoxInfo::operator!=(const BoxInfo rhs) const
-    {
+    bool BoxInfo::operator!=(const BoxInfo rhs) const {
         return !operator==(rhs);
     }
 
-    bool BoxInfo::get_has_obstacle() const{
+    bool BoxInfo::get_has_obstacle() const {
         return has_obstacle;
     }
-    bool BoxInfo::get_has_navigatable() const{
+    bool BoxInfo::get_has_navigatable() const {
         return has_navigatable;
     }
-    bool BoxInfo::get_has_unknown() const{
+    bool BoxInfo::get_has_unknown() const {
         return has_unknown;
     }
 

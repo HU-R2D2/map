@@ -1,9 +1,9 @@
 // ++--++
 // @file BoxMap.hpp
-// @date Created: <07-04-16>
+// @date Created: <07-06-16>
 // @version <1.0.0>
 //
-// @author Sander Kolman
+// @author Chiel Douwes
 //
 // @section LICENSE
 // License: newBSD
@@ -28,21 +28,20 @@
 // OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // ++--++
 
-//! @author     Anas Shehata
-//! @date       22-04-16
-//! @version    1.0
-//! @brief      BoxMap is an implementation of MapInterface.cpp. a Box map type which retrieves and saves information about a certain area in a 3D Box map.
-//!
 #ifndef _BOXMAP_HPP
 #define _BOXMAP_HPP
 
+#include <fstream>
 #include "Box.hpp"
 #include "MapInterface.hpp"
 
-namespace r2d2
-{
+namespace r2d2 {
+
     class BoxMap : public SaveLoadMap {
     public:
+        virtual void save(std::string filename) override;
+        virtual void load(std::string filename) override;
+
         //! @brief  gets the amount of boxes within this map
         //!         
         //! @return int BoxMap::map.size()

@@ -8,7 +8,7 @@
 // @section LICENSE
 // License: newBSD
 //
-// Copyright © 2016, HU University of Applied Sciences Utrecht.
+// Copyright ï¿½ 2016, HU University of Applied Sciences Utrecht.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -37,11 +37,10 @@
 */
 //BoxInfo(bool has_obstacle = false, bool has_unknown = false, bool has_navigatable = false);
 
-TEST(BoxInfo, Constructor)
-{
+TEST(BoxInfo, Constructor) {
 	r2d2::BoxInfo b1{false, false, false};
 	r2d2::BoxInfo b2(true, true, true);
-	ASSERT_FALSE(b1.get_has_obstacle() && b1.get_has_unknown() && b1.get_has_navigatable()) << "failed, should return false";
+	ASSERT_FALSE(b1.get_has_obstacle() || b1.get_has_unknown() || b1.get_has_navigatable()) << "failed, should return false";
 	ASSERT_TRUE(b2.get_has_obstacle() && b2.get_has_unknown() && b2.get_has_navigatable()) << "failed, should return true";
 }
 
@@ -51,39 +50,44 @@ TEST(BoxInfo, Constructor)
 //Operator==
 //bool operator==(const BoxInfo rhs) const;
 
-TEST(BoxInfo, IsEqual)
-{
+TEST(BoxInfo, IsEqual) {
 	r2d2::BoxInfo b1{ true, true, true };
 	r2d2::BoxInfo b2{ true, true, true };
-	ASSERT_EQ(b1, b2) << "failed, should return true but did not";
+	ASSERT_TRUE(b1 == b2) << "failed, should return true but did not";
+	r2d2::BoxInfo b3{ false, false, false };
+	ASSERT_FALSE(b1 == b3);
 }
 
 //Operator!=
 //bool operator!=(const BoxInfo rhs) const;
-TEST(BoxInfo, NotEqual)
-{
+TEST(BoxInfo, NotEqual) {
 	r2d2::BoxInfo b1{ true, true, true };
 	r2d2::BoxInfo b2{ false, false, false };
-	ASSERT_NE(b1, b2);
-	
+	ASSERT_TRUE(b1 != b2);
+	r2d2::BoxInfo b3{ true, true, true };
+	ASSERT_FALSE(b1 != b3);
 }
 
-TEST(BoxInfo, GetHasNavigatable1)
-{
+//has_navigatable getter
+TEST(BoxInfo, GetHasNavigatable1) {
 	r2d2::BoxInfo ghn{};
 	ASSERT_FALSE(ghn.get_has_navigatable()) << "failed, should return false";
+	r2d2::BoxInfo ghn2{true, true, true};
+	ASSERT_TRUE(ghn2.get_has_navigatable()) << "failed, should return true";
 }
 
-
-TEST(BoxInfo, GetHasObstacle1)
-{
+//has_obstacle getter
+TEST(BoxInfo, GetHasObstacle1) {
 	r2d2::BoxInfo gho{};
 	ASSERT_FALSE(gho.get_has_obstacle()) << "failed, should return false";
+	r2d2::BoxInfo gho2{true, true, true};
+	ASSERT_TRUE(gho2.get_has_obstacle()) << "failed, should return true";
 }
 
-
-TEST(BoxInfo, GetHasUnknown1)
-{
+//has_unknown getter
+TEST(BoxInfo, GetHasUnknown1) {
 	r2d2::BoxInfo ghu{};
 	ASSERT_FALSE(ghu.get_has_unknown()) << "failed, should return false";
+	r2d2::BoxInfo ghu2{true, true, true};
+	ASSERT_TRUE(ghu2.get_has_unknown()) << "failed, should return true";
 }

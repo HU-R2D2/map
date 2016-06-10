@@ -62,8 +62,7 @@
 
 #include "Box.hpp"
 
-namespace r2d2
-{
+namespace r2d2 {
 	//! @author     Sander Kolman
 	//! @date       08-04-16
 	//! @version    1.0
@@ -73,16 +72,14 @@ namespace r2d2
 	//!             For example:
 	//!             @snippet source/src/main.cpp map_interface_example
 	//!
-    class BoxInfo
-    {
-
+    class BoxInfo {
     public:
 
         //!
-        //! @brief  Constructor for BoxInfo.
+        //! @brief  Create a BoxInfo with the specified information.
         //! @param  has_obstacle    bool describing if a box contains an obstacle, default: false.
-        //! @param  has_navigatable bool describing if a box has an navigatable, default: false.
-        //! @param  has_unknown     bool describing if a box has an unknown, default: false.
+        //! @param  has_navigatable bool describing if a box has navigatable area, default: false.
+        //! @param  has_unknown     bool describing if a box has unknown area, default: false.
         //!
         BoxInfo(
             bool has_obstacle = false,
@@ -97,27 +94,25 @@ namespace r2d2
         bool get_has_obstacle() const;
 
         //!
-        //! @brief  Getter for unknown bool.
-        //! @return const bool BoxInfo::has_unknown
-        //!
-        bool get_has_unknown() const;
-
-        //!
         //! @brief  Getter for navigatable bool.
         //! @return const bool BoxInfo::has_navigatable
         //!
         bool get_has_navigatable() const;
 
-        //! The operator == (is equal)
-        //! 
+        //!
+        //! @brief  Getter for unknown bool.
+        //! @return const bool BoxInfo::has_unknown
+        //!
+        bool get_has_unknown() const;
+
         //! Check if 2 BoxInfo's are completely equal.
+        //!
         //! @param  rhs const BoxInfo object.
         //! @return bool, true if all internal bools are equal.
         bool operator==(const BoxInfo rhs) const;
 
-        //! The operator != (not equal)
-        //! 
-        //! Exact inverse of operator==().
+        //! Check if two boxes differ in some way.
+        //!
         //! @param  rhs const BoxInfo object.
         //! @return bool, true if operator==() is false.
         bool operator!=(const BoxInfo rhs) const;
@@ -137,9 +132,7 @@ namespace r2d2
 	//!             For example:
 	//!             @snippet source/src/main.cpp map_interface_example
 	//!
-    class ReadOnlyMap
-    {
-
+    class ReadOnlyMap {
     public:
 
         //! Get Box Information.
@@ -174,9 +167,7 @@ namespace r2d2
 	//!             For example:
 	//!             @snippet source/src/main.cpp map_interface_example
 	//!
-    class ReadWriteMap : public ReadOnlyMap
-    {
-
+    class ReadWriteMap : public ReadOnlyMap {
     public:
 
         //! Place new Box with BoxInfo in map.
@@ -201,9 +192,7 @@ namespace r2d2
 	//!             For example:
 	//!             @snippet source/src/main.cpp map_interface_example
 	//!
-    class SaveLoadMap : public ReadWriteMap
-    {
-
+    class SaveLoadMap : public ReadWriteMap {
     public:
 
         //! @brief Saves a map to file I/O
