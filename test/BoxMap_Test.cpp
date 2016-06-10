@@ -254,6 +254,35 @@ TEST(BoxMap, ZeroSizeUnknownTest) {
 					r2d2::Coordinate{
 							20 * r2d2::Length::METER,
 							21 * r2d2::Length::METER,
+							0 * r2d2::Length::METER
+					}
+			},
+			r2d2::BoxInfo{false, true, false}
+	);
+	ASSERT_EQ((r2d2::BoxInfo{false, true, true}),
+	          (bm.get_box_info(
+			          r2d2::Box{
+					          r2d2::Coordinate{
+							          0 * r2d2::Length::METER,
+							          0 * r2d2::Length::METER,
+							          0 * r2d2::Length::METER
+					          }, r2d2::Coordinate{
+							          30 * r2d2::Length::METER,
+							          30 * r2d2::Length::METER,
+							          0 * r2d2::Length::METER
+					          }
+			          }
+	          )));
+	bm.set_box_info(
+			r2d2::Box{
+					r2d2::Coordinate{
+							10 * r2d2::Length::METER,
+							11 * r2d2::Length::METER,
+							0 * r2d2::Length::METER
+					},
+					r2d2::Coordinate{
+							20 * r2d2::Length::METER,
+							21 * r2d2::Length::METER,
 							1 * r2d2::Length::METER
 					}
 			},
@@ -279,13 +308,18 @@ TEST(BoxMap, ZeroSizeUnknownTest) {
 #define MAP_TEST_SIZE 100
 
 void test_map(r2d2::BoxMap &bm) {
-	for (int x = 0; x < MAP_TEST_SIZE; ++x) {
-		for (int y = 0; y < MAP_TEST_SIZE; ++y) {
+	for (int y = 0; y < MAP_TEST_SIZE; ++y) {
+		for (int x = 0; x < MAP_TEST_SIZE; ++x) {
 			r2d2::Coordinate new_pos{
 					x * r2d2::Length::METER,
 					y * r2d2::Length::METER,
 					-1 * r2d2::Length::METER
 			};
+
+			r2d2::BoxInfo info{
+					rand() % 2 == 0,
+					rand() % 2 == 0,
+					rand() % 2 == 0};
 
 			bm.set_box_info(
 					r2d2::Box{
@@ -297,7 +331,11 @@ void test_map(r2d2::BoxMap &bm) {
 									2 * r2d2::Length::METER
 							}
 					},
-					r2d2::BoxInfo{rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0}
+					info.get_has_obstacle() || info.get_has_navigatable() ? info : r2d2::BoxInfo{
+							(x ^ y) % 2 == 0,
+							(x ^ y) % 2 == 1,
+							info.get_has_unknown()
+					}
 			);
 		}
 	}
@@ -305,8 +343,8 @@ void test_map(r2d2::BoxMap &bm) {
 
 	ASSERT_EQ(((MAP_TEST_SIZE + 1) * MAP_TEST_SIZE) - 1, bm.get_map_size());
 	ASSERT_TRUE(
-            (bm.get_box_info(bm.get_map_bounding_box())
-             == r2d2::BoxInfo{true, true, true})
+			(bm.get_box_info(bm.get_map_bounding_box())
+			 == r2d2::BoxInfo{true, true, true})
 	);
 }
 
@@ -316,8 +354,8 @@ TEST(RTreeBoxMap, PerformanceTest) {
 }
 
 TEST(ArrayBoxMap, PerformanceTest) {
-//    r2d2::ArrayBoxMap bm{};
-//    test_map(bm);
+    r2d2::ArrayBoxMap bm{};
+    test_map(bm);
 }
 
 /*

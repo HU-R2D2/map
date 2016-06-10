@@ -33,70 +33,6 @@
 
 namespace r2d2 {
 
-	const BoxInfo ArrayBoxMap::get_box_info(const Box box) {
-		bool temp_has_obstacle = false;
-		bool temp_has_navigatable = false;
-		bool temp_has_unknown = false;
-
-		Translation axis_size = box.get_axis_size();
-		double xlen = axis_size.get_x() / Length::METER,
-				ylen = axis_size.get_y() / Length::METER,
-				zlen = axis_size.get_z() / Length::METER;
-		// calculate the total area of the requested box
-		// if one of the axes is length zero then it won't be counted
-		// in the volume, as it will in result in zero volume
-		bool has_x = xlen > 0, has_y = ylen > 0, has_z = zlen > 0;
-		// adt has no unit for volume, we'll have to use a double for now
-		double vol = (has_x ? xlen : 1) *
-				(has_x ? xlen : 1) *
-				(has_x ? xlen : 1);
-
-		for (std::pair<Box, BoxInfo> known_box : get_intersecting(box)){
-			temp_has_obstacle = (
-					temp_has_obstacle ||
-					known_box.second.get_has_obstacle()
-			);
-
-			temp_has_navigatable = (
-					temp_has_navigatable ||
-					known_box.second.get_has_navigatable()
-			);
-
-			temp_has_unknown = (
-					temp_has_unknown ||
-					known_box.second.get_has_unknown()
-			);
-
-			// subtract the volume that this box takes in from the total box area
-			axis_size = known_box.first.get_intersection_box(box).get_axis_size();
-			vol -= (has_x ? axis_size.get_x() / Length::METER : 1)
-			       * (has_x ? axis_size.get_y() / Length::METER : 1)
-			       * (has_x ? axis_size.get_z() / Length::METER : 1);
-
-			if (temp_has_obstacle && temp_has_unknown && temp_has_navigatable) {
-				// if all three are true then the result must be as such
-				return BoxInfo{
-						temp_has_obstacle,
-						temp_has_unknown,
-						temp_has_navigatable
-				};
-			}
-		}
-
-		static const double significant = 0.0001;
-		// if there is some amount of uncovered area within the requested box
-		// then there is unknown in the area
-		if (vol > significant || !(temp_has_obstacle || temp_has_navigatable)) {
-			temp_has_unknown = true;
-		}
-
-		return BoxInfo{
-				temp_has_obstacle,
-				temp_has_navigatable,
-				temp_has_unknown
-		};
-	}
-
 	const Box ArrayBoxMap::get_map_bounding_box() {
 		if (map.empty()) {
 			return Box{};
@@ -109,22 +45,38 @@ namespace r2d2 {
 	}
 
 	void ArrayBoxMap::set_box_info(const Box box, const BoxInfo box_info) {
-		Translation axis_size = box.get_axis_size();
-		// boxes of size zero should not be a problem here because
 		std::vector<std::pair<Box, BoxInfo>> new_boxes;
+
+		r2d2::Translation axis_size{box.get_axis_size()};
+		bool has_x = axis_size.get_x() > 0 * r2d2::Length::METER,
+				has_y = axis_size.get_y() > 0 * r2d2::Length::METER,
+				has_z = axis_size.get_z() > 0 * r2d2::Length::METER;
 
 		for (auto it = map.begin(); it != map.end();) {
 			// iterator used instead of int to be able to remove elements efficiently
 			// this implementation is separate from the get_intersecting one,
 			// as it does not support returning iterators
 
-			// use the old version of the intersection detection, as otherwise there will be boxes of length zero
-			if (it->first.get_top_right().get_x() > box.get_bottom_left().get_x() &&
-			    it->first.get_bottom_left().get_x() < box.get_top_right().get_x() &&
-			    it->first.get_top_right().get_y() > box.get_bottom_left().get_y() &&
-			    it->first.get_bottom_left().get_y() < box.get_top_right().get_y() &&
-			    it->first.get_top_right().get_z() > box.get_bottom_left().get_z() &&
-			    it->first.get_bottom_left().get_z() < box.get_top_right().get_z()) {
+			// do some wizzardry with length zero detection and stuff to circumvent some bugs
+			if ((   (it->first.get_top_right().get_x() > box.get_bottom_left().get_x() &&
+			         it->first.get_bottom_left().get_x() < box.get_top_right().get_x())
+			        || (!has_x &&
+			            (it->first.get_bottom_left().get_x() / r2d2::Length::METER) ==
+			            (box.get_bottom_left().get_x() / r2d2::Length::METER))
+			    )
+			    &&
+			    (   (it->first.get_top_right().get_y() > box.get_bottom_left().get_y() &&
+			         it->first.get_bottom_left().get_y() < box.get_top_right().get_y())
+			        || (!has_y &&
+			            (it->first.get_bottom_left().get_y() / r2d2::Length::METER) ==
+			            (box.get_bottom_left().get_y() / r2d2::Length::METER))
+			    )
+			    &&
+			    (   (it->first.get_top_right().get_z() > box.get_bottom_left().get_z() &&
+			         it->first.get_bottom_left().get_z() < box.get_top_right().get_z())
+			        || (!has_z &&
+			            (it->first.get_bottom_left().get_z() / r2d2::Length::METER) ==
+			            (box.get_bottom_left().get_z() / r2d2::Length::METER)))) {
 				// current box has to be cut because of intersecting with the insertion box
 
 				if (it->first.get_bottom_left().get_x()
@@ -242,7 +194,7 @@ namespace r2d2 {
 		}
 
 		//Add newly cut boxes
-		for (std::pair<Box, BoxInfo> box_cut : new_boxes){
+		for (std::pair<Box, BoxInfo> box_cut : new_boxes) {
 			map.push_back(box_cut);
 		}
 

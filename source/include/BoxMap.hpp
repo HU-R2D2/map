@@ -32,13 +32,15 @@
 #define _BOXMAP_HPP
 
 #include <fstream>
-#include "Box.hpp"
+#include <Box.hpp>
 #include "MapInterface.hpp"
 
 namespace r2d2 {
 
     class BoxMap : public SaveLoadMap {
     public:
+        virtual const BoxInfo get_box_info(const Box box) override;
+
         virtual void save(std::string filename) override;
         virtual void load(std::string filename) override;
 
