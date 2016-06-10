@@ -47,8 +47,8 @@ namespace r2d2 {
 		bool has_x = xlen > 0, has_y = ylen > 0, has_z = zlen > 0;
 		// adt has no unit for volume, we'll have to use a double for now
 		double vol = (has_x ? xlen : 1) *
-		             (has_x ? xlen : 1) *
-		             (has_x ? xlen : 1);
+		             (has_y ? ylen : 1) *
+		             (has_z ? zlen : 1);
 
 		for (auto &found_box : get_intersecting(box)) {
 			if (found_box.second.get_has_obstacle()) {
