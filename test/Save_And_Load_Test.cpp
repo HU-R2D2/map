@@ -30,6 +30,7 @@
 
 #include "../source/include/ArrayBoxMap.hpp"
 #include "gtest/gtest.h"
+#include "../source/include/RStarMap.hpp"
 #include <random>
 
 //! Tests saving and loading to its full extends
@@ -62,7 +63,7 @@ TEST(SaveLoad, ArrayBoxMap) {
     bm.save("save_and_load_test.map");
 
     cout << "Loading..." << endl;
-    r2d2::ArrayBoxMap bm2{};
+    r2d2::RStarMap bm2{}; // loading and unloading in different maps show compatibility
     bm2.load("save_and_load_test.map");
     int rounds = 50;
     cout << "Comparing with " << rounds << " rounds" << endl;

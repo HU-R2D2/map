@@ -10,8 +10,8 @@
 #include "BoxMap.hpp"
 
 namespace r2d2 {
-	#define MIN_NODES 2
-	#define MAX_NODES 4
+	#define MIN_NODES 3
+	#define MAX_NODES 8
 	typedef RTreeRoot<MIN_NODES, MAX_NODES, const BoxInfo> root_type;
 	typedef RTree<MIN_NODES, MAX_NODES, const BoxInfo> node_type;
 
@@ -20,15 +20,9 @@ namespace r2d2 {
 	public:
 		RStarMap();
 
-		virtual const BoxInfo get_box_info(const Box box) override;
-
 		virtual const Box get_map_bounding_box() override;
 
 		virtual void set_box_info(const Box box, const BoxInfo box_info) override;
-
-		virtual void save(std::string filename) override;
-
-		virtual void load(std::string filename) override;
 
 		virtual int get_map_size() const override;
 

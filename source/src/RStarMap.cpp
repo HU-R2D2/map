@@ -10,41 +10,6 @@ namespace r2d2 {
 	RStarMap::RStarMap():
 			map{new root_type{}} {
 	}
-	
-	const BoxInfo RStarMap::get_box_info(const Box box) {
-		bool temp_has_obstacle = false;
-		bool temp_has_unknown = false;
-		bool temp_has_navigatable = false;
-
-		for (auto &known_box : map->search(box, map)){
-			auto info = known_box->get_data();
-
-			temp_has_obstacle = (
-					temp_has_obstacle ||
-					info->get_has_obstacle()
-			);
-
-			temp_has_unknown = (
-					temp_has_unknown ||
-					info->get_has_unknown()
-			);
-
-			temp_has_navigatable = (
-					temp_has_navigatable ||
-					info->get_has_navigatable()
-			);
-
-			if (temp_has_obstacle && temp_has_unknown && temp_has_navigatable) {
-				break;
-			}
-		}
-
-		return BoxInfo{
-				temp_has_obstacle,
-				temp_has_unknown,
-				temp_has_navigatable
-		};
-	}
 
 	const Box RStarMap::get_map_bounding_box() {
 		return map->get_bounds();
@@ -53,124 +18,151 @@ namespace r2d2 {
 	void RStarMap::set_box_info(const Box box, const BoxInfo box_info) {
 		std::vector<std::pair<Box, BoxInfo>> new_boxes;
 
+		r2d2::Translation axis_size{box.get_axis_size()};
+		bool has_x = axis_size.get_x() > 0 * r2d2::Length::METER,
+				has_y = axis_size.get_y() > 0 * r2d2::Length::METER,
+				has_z = axis_size.get_z() > 0 * r2d2::Length::METER;
+
 		std::vector<std::shared_ptr<node_type>> found{map->search(box, map)};
 		for (auto leaf : found) {
 			auto data = leaf->get_data();
 			Box bounds = leaf->get_bounds();
-			// the box has edges that are outside the new box
 
-			// temporary objects are removed as they diminish performance
+			// at least two of the three axes must actually intersect for proper areas to be formed
+			// use the old version of the intersection detection, as otherwise there will be boxes of length zero
+			// do some wizzardry with length zero detection and stuff to circumvent some bugs
+			if ((   (bounds.get_top_right().get_x() > box.get_bottom_left().get_x() &&
+			         bounds.get_bottom_left().get_x() < box.get_top_right().get_x())
+			        || (!has_x &&
+			            (bounds.get_bottom_left().get_x() / r2d2::Length::METER) ==
+			            (box.get_bottom_left().get_x() / r2d2::Length::METER))
+			    )
+			    &&
+			    (   (bounds.get_top_right().get_y() > box.get_bottom_left().get_y() &&
+			         bounds.get_bottom_left().get_y() < box.get_top_right().get_y())
+			        || (!has_y &&
+			            (bounds.get_bottom_left().get_y() / r2d2::Length::METER) ==
+			            (box.get_bottom_left().get_y() / r2d2::Length::METER))
+			    )
+			    &&
+			    (   (bounds.get_top_right().get_z() > box.get_bottom_left().get_z() &&
+			         bounds.get_bottom_left().get_z() < box.get_top_right().get_z())
+			        || (!has_z &&
+			            (bounds.get_bottom_left().get_z() / r2d2::Length::METER) ==
+			            (box.get_bottom_left().get_z() / r2d2::Length::METER)))) {
 
-			if (bounds.get_bottom_left().get_x()
-			    < box.get_bottom_left().get_x()) {
-				// the current box extends the new box in the -x direction
+				// temporary objects are removed as they diminish performance
 
-				// insert the extension
-				new_boxes.push_back(
-						{Box{bounds.get_bottom_left(), Coordinate{
-								box.get_bottom_left().get_x(),
-								bounds.get_top_right().get_y(),
-								bounds.get_top_right().get_z()
-						}},
-						 *data
-						}
-				);
+				if (bounds.get_bottom_left().get_x()
+				    < box.get_bottom_left().get_x()) {
+					// the current box extends the new box in the -x direction
 
-				// resize the current box as to not include the newly made box
-				bounds = Box{Coordinate{
-						box.get_bottom_left().get_x(),
-						bounds.get_bottom_left().get_y(),
-						bounds.get_bottom_left().get_z()
-				}, bounds.get_top_right()};
+					// insert the extension
+					new_boxes.push_back(
+							{Box{bounds.get_bottom_left(), Coordinate{
+									box.get_bottom_left().get_x(),
+									bounds.get_top_right().get_y(),
+									bounds.get_top_right().get_z()
+							}},
+							 *data
+							}
+					);
+
+					// resize the current box as to not include the newly made box
+					bounds = Box{Coordinate{
+							box.get_bottom_left().get_x(),
+							bounds.get_bottom_left().get_y(),
+							bounds.get_bottom_left().get_z()
+					}, bounds.get_top_right()};
+				}
+
+				if (bounds.get_top_right().get_x()
+				    > box.get_top_right().get_x()) {
+
+					//Make new box
+					new_boxes.push_back(
+							{Box{Coordinate{
+									box.get_top_right().get_x(),
+									bounds.get_bottom_left().get_y(),
+									bounds.get_bottom_left().get_z()
+							}, bounds.get_top_right()},
+							 *data
+							});
+
+					//Cut-away old
+					bounds = Box{bounds.get_bottom_left(), Coordinate{
+							box.get_top_right().get_x(),
+							bounds.get_top_right().get_y(),
+							bounds.get_top_right().get_z()
+					}};
+				}
+
+				if (bounds.get_bottom_left().get_y()
+				    < box.get_bottom_left().get_y()) {
+					new_boxes.push_back(
+							{Box{bounds.get_bottom_left(), Coordinate{
+									bounds.get_top_right().get_x(),
+									box.get_bottom_left().get_y(),
+									bounds.get_top_right().get_z()
+							}},
+							 *data
+							});
+
+					bounds = Box{Coordinate{
+							bounds.get_bottom_left().get_x(),
+							box.get_bottom_left().get_y(),
+							bounds.get_bottom_left().get_z()
+					}, bounds.get_top_right()};
+				}
+
+				if (bounds.get_top_right().get_y()
+				    > box.get_top_right().get_y()) {
+					new_boxes.push_back(
+							{Box{Coordinate{
+									bounds.get_bottom_left().get_x(),
+									box.get_top_right().get_y(),
+									bounds.get_bottom_left().get_z()
+							}, bounds.get_top_right()},
+							 *data
+							});
+
+					bounds = Box{bounds.get_bottom_left(), Coordinate{
+							bounds.get_top_right().get_x(),
+							box.get_top_right().get_y(),
+							bounds.get_top_right().get_z()
+					}};
+				}
+
+				if (bounds.get_top_right().get_z()
+				    > box.get_top_right().get_z()) {
+					new_boxes.push_back(
+							{Box{Coordinate{
+									bounds.get_bottom_left().get_x(),
+									bounds.get_bottom_left().get_y(),
+									box.get_top_right().get_z()
+							}, bounds.get_top_right()},
+							 *data
+							});
+
+					// last box cutaway removed
+				}
+
+				if (bounds.get_bottom_left().get_z()
+				    < box.get_bottom_left().get_z()) {
+					new_boxes.push_back(
+							{Box{bounds.get_bottom_left(), Coordinate{
+									bounds.get_top_right().get_x(),
+									bounds.get_top_right().get_y(),
+									box.get_bottom_left().get_z()
+							}},
+							 *data
+							});
+
+					// last box cutaway removed
+				}
+
+				leaf->remove();
 			}
-
-			if (bounds.get_top_right().get_x()
-			    > box.get_top_right().get_x()) {
-
-				//Make new box
-				new_boxes.push_back(
-						{Box{Coordinate{
-								box.get_top_right().get_x(),
-								bounds.get_bottom_left().get_y(),
-								bounds.get_bottom_left().get_z()
-						}, bounds.get_top_right()},
-						 *data
-						});
-
-				//Cut-away old
-				bounds = Box{bounds.get_bottom_left(), Coordinate{
-						box.get_top_right().get_x(),
-						bounds.get_top_right().get_y(),
-						bounds.get_top_right().get_z()
-				}};
-			}
-
-			if (bounds.get_bottom_left().get_y()
-			    < box.get_bottom_left().get_y()) {
-				new_boxes.push_back(
-						{Box{bounds.get_bottom_left(), Coordinate{
-								bounds.get_top_right().get_x(),
-								box.get_bottom_left().get_y(),
-								bounds.get_top_right().get_z()
-						}},
-						 *data
-						});
-
-				bounds = Box{Coordinate{
-						bounds.get_bottom_left().get_x(),
-						box.get_bottom_left().get_y(),
-						bounds.get_bottom_left().get_z()
-				}, bounds.get_top_right()};
-			}
-
-			if (bounds.get_top_right().get_y()
-			    > box.get_top_right().get_y()) {
-				new_boxes.push_back(
-						{Box{Coordinate{
-								bounds.get_bottom_left().get_x(),
-								box.get_top_right().get_y(),
-								bounds.get_bottom_left().get_z()
-						}, bounds.get_top_right()},
-						 *data
-						});
-
-				bounds = Box{bounds.get_bottom_left(), Coordinate{
-						bounds.get_top_right().get_x(),
-						box.get_top_right().get_y(),
-						bounds.get_top_right().get_z()
-				}};
-			}
-
-			if (bounds.get_top_right().get_z()
-			    > box.get_top_right().get_z()) {
-				new_boxes.push_back(
-						{Box{Coordinate{
-								bounds.get_bottom_left().get_x(),
-								bounds.get_bottom_left().get_y(),
-								box.get_top_right().get_z()
-						}, bounds.get_top_right()},
-						 *data
-						});
-
-				// last box cutaway removed
-			}
-
-			if (bounds.get_bottom_left().get_z()
-			    < box.get_bottom_left().get_z()) {
-				new_boxes.push_back(
-						{Box{bounds.get_bottom_left(), Coordinate{
-								bounds.get_top_right().get_x(),
-								bounds.get_top_right().get_y(),
-								box.get_bottom_left().get_z()
-						}},
-						 *data
-						});
-
-				// last box cutaway removed
-			}
-
-//			std::cout << "remove" << std::endl << *leaf << *map;
-			leaf->remove();
 		}
 		// shrink to fit decreases performance substantially
 		// map.shrink_to_fit();
@@ -185,21 +177,17 @@ namespace r2d2 {
 			insert(newLeaf);
 		}
 
-		//Add the actual new box
-		std::shared_ptr<node_type> origLeaf{
-				new RTreeLeaf<MIN_NODES, MAX_NODES, const BoxInfo>{
-						box, std::make_shared<const BoxInfo>(box_info)
-				}
-		};
-		insert(origLeaf);
-	}
-
-	void RStarMap::save(std::string filename) {
-		// TODO
-	}
-
-	void RStarMap::load(std::string filename) {
-		// TODO
+		// if the new box has neither navigable or an obstacle
+		// then don't bother adding it as the empty area is unknown by default
+		if (box_info.get_has_navigatable() || box_info.get_has_obstacle()) {
+			//Add the actual new box
+			std::shared_ptr<node_type> origLeaf{
+					new RTreeLeaf<MIN_NODES, MAX_NODES, const BoxInfo>{
+							box, std::make_shared<const BoxInfo>(box_info)
+					}
+			};
+			insert(origLeaf);
+		}
 	}
 
 	int RStarMap::get_map_size() const {
