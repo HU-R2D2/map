@@ -53,8 +53,6 @@ namespace r2d2 {
 
 	class ArrayBoxMap : public BoxMap {
 	public:
-		virtual const BoxInfo get_box_info(const Box box) override;
-
 		virtual const Box get_map_bounding_box() override;
 
 		virtual void set_box_info(const Box box, const BoxInfo box_info) override;
