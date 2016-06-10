@@ -51,6 +51,10 @@ namespace r2d2 {
 
         virtual std::vector<std::pair<Box, BoxInfo>> get_intersecting(const Box &bounds) const = 0;
 
+    private:
+        // add a box without doing any checks for overlapping
+        virtual void add_box(Box box, BoxInfo info) = 0;
+
     };
 }
 #endif //_BOXMAP_HPP

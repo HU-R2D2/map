@@ -137,7 +137,7 @@ namespace r2d2 {
 
 		BoxInfoByte info;
 		while (ifs.read(buf, sizeof(buf)) >> info.byte) {
-			set_box_info({Coordinate{dvals[0] * r2d2::Length::METER,
+			add_box({Coordinate{dvals[0] * r2d2::Length::METER,
 			                         dvals[1] * r2d2::Length::METER,
 			                         dvals[2] * r2d2::Length::METER},
 			              Coordinate{dvals[3] * r2d2::Length::METER,

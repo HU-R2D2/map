@@ -221,4 +221,8 @@ namespace r2d2 {
 		return intersecting;
 	}
 
+	void ArrayBoxMap::add_box(Box box, BoxInfo info) {
+		map.push_back({box, info});
+	}
+
 }

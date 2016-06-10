@@ -18,7 +18,7 @@ set(SOURCES_GTEST
 		../adt/source/src/Coordinate.cpp
 		../adt/source/src/Translation.cpp)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -Wall")
 
 
 include_directories(
