@@ -47,8 +47,8 @@ namespace r2d2 {
 		bool has_x = xlen > 0, has_y = ylen > 0, has_z = zlen > 0;
 		// adt has no unit for volume, we'll have to use a double for now
 		double vol = (has_x ? xlen : 1) *
-		             (has_x ? xlen : 1) *
-		             (has_x ? xlen : 1);
+		             (has_y ? ylen : 1) *
+		             (has_z ? zlen : 1);
 
 		for (auto &found_box : get_intersecting(box)) {
 			if (found_box.second.get_has_obstacle()) {
@@ -137,7 +137,7 @@ namespace r2d2 {
 
 		BoxInfoByte info;
 		while (ifs.read(buf, sizeof(buf)) >> info.byte) {
-			set_box_info({Coordinate{dvals[0] * r2d2::Length::METER,
+			add_box({Coordinate{dvals[0] * r2d2::Length::METER,
 			                         dvals[1] * r2d2::Length::METER,
 			                         dvals[2] * r2d2::Length::METER},
 			              Coordinate{dvals[3] * r2d2::Length::METER,

@@ -69,6 +69,8 @@ namespace r2d2 {
 		}
 
 	private:
+		virtual void add_box(Box box, BoxInfo info) override;
+
 		std::vector<std::pair<Box, BoxInfo>> map; // a map in which boxes and boxinfos are stored in as a pairs
 
 	};

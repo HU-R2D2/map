@@ -53,6 +53,10 @@ namespace r2d2 {
 
         virtual std::ostream &print(std::ostream &lhs) = 0;
 
+    private:
+        // add a box without doing any checks for overlapping
+        virtual void add_box(Box box, BoxInfo info) = 0;
+
     };
 }
 #endif //_BOXMAP_HPP
