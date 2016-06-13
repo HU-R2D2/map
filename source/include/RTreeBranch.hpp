@@ -25,7 +25,7 @@ namespace r2d2 {
 			static_assert(MIN >= 2, "MIN must be >= 2");
 			static_assert(MAX >= MIN * 2, "MAX must be >= MIN*2");
 			assert(children.size() <= MAX);
-			for (int i = 0; i < children.size(); ++i) {
+			for (unsigned int i = 0; i < children.size(); ++i) {
 				this->children[i] = children[i];
 				children[i]->set_parent(this);
 				bounds = i == 0 ? children[0]->get_bounds() : bounds.get_union_box(children[i]->get_bounds());
@@ -71,7 +71,7 @@ namespace r2d2 {
 				std::tuple<r2d2::Box, double> bestBox{
 						get_union_score(children[0]->get_bounds(), node->get_bounds())
 				};
-				for (unsigned long i = 1; i < num_children; ++i) {
+				for (int i = 1; i < num_children; ++i) {
 					// find the node with the least area plus enlargement
 					std::tuple<r2d2::Box, double> newBox = get_union_score(
 							children[i]->get_bounds(), node->get_bounds());
@@ -89,8 +89,6 @@ namespace r2d2 {
 		// amortized O(log(n))
 		// best case O(log(n))
 		virtual void insert(std::shared_ptr<RTree<MIN, MAX, T>> node) override {
-//			std::cout << "branch insert" << std::endl;
-
 			children[num_children++] = node;
 			node->set_parent(this);
 			if (num_children >= MAX) {
@@ -99,7 +97,6 @@ namespace r2d2 {
 
 				// propagate split recursively upward
 				parent->insert(splitNode);
-				// TODO recursive insert virtual root
 			} else {
 				// spit stopped propagating
 				// add bounds as the inner children could not have been removed
@@ -118,7 +115,6 @@ namespace r2d2 {
 
 		// O(log(n)*MAX) worst case
 		virtual void remove(const RTree<MIN, MAX, T> *node, const std::vector<std::shared_ptr<RTree<MIN, MAX, T>>> raise_nodes = {}) {
-//			std::cout << "branch remove" << std::endl;
 			std::shared_ptr<RTree<MIN, MAX, T>> found{};
 			for (auto child : children) {
 				if (child.get() == node) {
@@ -132,9 +128,7 @@ namespace r2d2 {
 				// do the node insertion after the node removal to prevent splits,
 				// but do it before node underflow te prevent removal
 				for (auto raise_node : raise_nodes) {
-//					std::cout << "i " << *raise_node << std::endl;
 					// try inserting the raised node into this node
-//					std::cout << "remove insert" << std::endl << *raise_node << *this << std::endl;
 					auto leaf = find_leaf(raise_node, nullptr, 1);
 					// just use a nullptr here as find_leaf can always recurse from a branch
 					leaf->insert(raise_node);
@@ -205,8 +199,6 @@ namespace r2d2 {
 		}
 
 		virtual void underflow_treatment() {
-//			std::cout << "branch underflow" << std::endl;
-//			std::cout << *parent << std::endl;
 			// double removal/insertion to avoid object delete problems
 			parent->remove(this, {children.begin(), children.begin() + num_children});
 		}
@@ -240,7 +232,6 @@ namespace r2d2 {
 		// O((n log(n) + (n^2)) * NUM_AXES+1) = O(n^2)
 		// best case O(n^2)
 		std::shared_ptr<RTree<MIN, MAX, T>> split() {
-//			std::cout << "branch split" << std::endl;
 			// find the most efficient split between the nodes currently in the set
 			int bestAxis = 0, bestSpilt = 0;
 			r2d2::Box bestSplitBounds{};
@@ -289,8 +280,6 @@ namespace r2d2 {
 			for (int i = bestSpilt + 1; i < num_children; ++i) {
 				newTree.push_back(children[i]);
 				children[i] = nullptr;
-				// TODO this line might not be needed, but it could be good for performance
-				// test if it causes any problems with shared_ptr deconstruction
 			}
 			num_children = bestSpilt + 1;
 			// update the bounds of the parent(s)
@@ -305,19 +294,6 @@ namespace r2d2 {
 		// this can be used for things like checking whether to propagate bounds growing/schrinking
 		bool has_edge(const Box box) {
 			return !bounds.contains(box);
-			/*return box.get_bottom_left().get_x() / r2d2::Length::METER <=
-			       bounds.get_bottom_left().get_x() / r2d2::Length::METER ||
-			       box.get_bottom_left().get_y() / r2d2::Length::METER <=
-			       bounds.get_bottom_left().get_y() / r2d2::Length::METER ||
-			       box.get_bottom_left().get_z() / r2d2::Length::METER <=
-			       bounds.get_bottom_left().get_z() / r2d2::Length::METER ||
-
-			       box.get_top_right().get_x() / r2d2::Length::METER >=
-			       bounds.get_top_right().get_x() / r2d2::Length::METER ||
-			       box.get_top_right().get_y() / r2d2::Length::METER >=
-			       bounds.get_top_right().get_y() / r2d2::Length::METER ||
-			       box.get_top_right().get_z() / r2d2::Length::METER >=
-			       bounds.get_top_right().get_z() / r2d2::Length::METER;*/
 		}
 
 		virtual void add_bound(const Box box) {

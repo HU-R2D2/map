@@ -8,6 +8,8 @@ set(SOURCES_GTEST
 		source/src/ArrayBoxMap.cpp
 		source/src/BoxMap.cpp
 		source/src/MapInterface.cpp
+		source/src/RStarMap.cpp
+		source/src/RTreeLeaf.cpp
 		test/BoxInfoTest.cpp
 		test/BoxMap_Test.cpp
 		test/Main_TestAll.cpp
@@ -16,12 +18,7 @@ set(SOURCES_GTEST
 		../adt/source/src/Length.cpp
 		../adt/source/src/Box.cpp
 		../adt/source/src/Coordinate.cpp
-		../adt/source/src/Translation.cpp
-		source/include/RTree.hpp
-		source/include/RTreeLeaf.hpp
-		source/include/RTreeBranch.hpp
-		source/src/RStarMap.cpp source/include/RStarMap.hpp
-		source/include/RTreeRoot.hpp)
+		../adt/source/src/Translation.cpp)
 
 
 

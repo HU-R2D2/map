@@ -47,7 +47,7 @@ namespace r2d2 {
 									std::vector<std::shared_ptr<RTree<MIN, MAX, T>>>{
 											children.begin(),
 											children.begin() + num_children
-									} // TODO something with pointers
+									}
 							}
 					};
 					children[0]->set_parent(this);
@@ -55,7 +55,6 @@ namespace r2d2 {
 					children[1]->set_parent(this);
 					num_children = 2;
 					bounds = children[0]->get_bounds().get_union_box(children[1]->get_bounds());
-					// TODO recursive insert virtual root
 				} else {
 					// add bounds as the inner children could not have been removed
 					bounds = bounds.get_union_box(node->get_bounds());
@@ -78,16 +77,10 @@ namespace r2d2 {
 		virtual void underflow_treatment() override {
 			if (num_children == 0) {
 				bounds = {};
+
+				// the case of num_children == 1 doesn't have to be handled, as
+				// the one child will always comply to the min/max rules of the rtree
 			}
-			/*if (num_children == 1 && ) { // here should be something with type detection and stuff
-				// inherit all the child's children as the node is superfluous
-				auto child = children[0];
-				children = child->children;
-				num_children = child->num_children;
-				for (int i = 0; i < num_children; ++i) {
-					children[i]->set_parent(this);
-				}
-			}*/
 			// otherwise do nothing, as the root node is allowed to underflow
 		}
 

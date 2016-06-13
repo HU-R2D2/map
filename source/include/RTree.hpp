@@ -18,8 +18,8 @@ namespace r2d2 {
 	class RTree {
 	public:
 		RTree(r2d2::Box bounds) :
-				bounds{bounds},
-				parent{nullptr} {
+				parent{nullptr},
+				bounds{bounds} {
 //			std::cout << "rtree create" << this << std::endl;
 		}
 
