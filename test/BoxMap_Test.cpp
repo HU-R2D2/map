@@ -35,15 +35,15 @@
 /*
 * Constructor
 */
-TEST(BoxMap, DefaultConstructor) {
+TEST(ArrayBoxMap, DefaultConstructor) {
 	r2d2::ArrayBoxMap bm{};
 	ASSERT_EQ(0, bm.get_map_size());
 }
 
 /*
-* BoxMap::set_box_info() / BoxMap::get_map_size() test
+* ArrayBoxMap::set_box_info() / ArrayBoxMap::get_map_size() test
 */
-TEST(BoxMap, AddBox) {
+TEST(ArrayBoxMap, AddBox) {
 	r2d2::ArrayBoxMap bm{};
 	bm.set_box_info(r2d2::Box{r2d2::Coordinate{-1 * r2d2::Length::METER,
 	                                           -1 * r2d2::Length::METER,
@@ -56,9 +56,9 @@ TEST(BoxMap, AddBox) {
 }
 
 /*
-* BoxMap::get_box_info() test, automatic loop over possible values
+* ArrayBoxMap::get_box_info() test, automatic loop over possible values
 */
-TEST(BoxMap, GetBoxInfo1) {
+TEST(ArrayBoxMap, GetBoxInfo1) {
 	r2d2::ArrayBoxMap bm{};
 	for (int i = 0; i < 8; i++) {
 
@@ -106,9 +106,9 @@ TEST(BoxMap, GetBoxInfo1) {
 }
 
 /*
-* BoxMap::get_box_info() test, manual creation
+* ArrayBoxMap::get_box_info() test, manual creation
 */
-TEST(BoxMap, GetBoxInfo2) {
+TEST(ArrayBoxMap, GetBoxInfo2) {
 	r2d2::ArrayBoxMap bm{};
 
 	bm.set_box_info(
@@ -161,9 +161,9 @@ TEST(BoxMap, GetBoxInfo2) {
 }
 
 /*
-* BoxMap::get_bounding_box() test
+* ArrayBoxMap::get_bounding_box() test
 */
-TEST(BoxMap, BoundingBox) {
+TEST(ArrayBoxMap, BoundingBox) {
 	r2d2::ArrayBoxMap bm{};
 
 	bm.set_box_info(
@@ -210,7 +210,11 @@ TEST(BoxMap, BoundingBox) {
 	);
 }
 
-TEST(BoxMap, ZeroSizeUnknownTest) {
+/**
+ * test to test that getting information boxes of volume
+ * zero will still work correctly
+ */
+TEST(ArrayBoxMap, ZeroSizeUnknownTest) {
 	r2d2::ArrayBoxMap bm{};
 
 	bm.set_box_info(
@@ -304,7 +308,10 @@ TEST(BoxMap, ZeroSizeUnknownTest) {
 
 // defines the size of the grid of squares that will be inserted in the stress test
 #define MAP_TEST_SIZE 100
-
+/**
+ * stress test to see how performant the code is, also used to verify that the
+ * map will have the correct amount of boxes, and return a mixed boxinfo result
+ */
 TEST(ArrayBoxMap, StressTest) {
 	r2d2::ArrayBoxMap bm{};
 	cout << "May take a minute or 2...\n";
@@ -352,7 +359,7 @@ TEST(ArrayBoxMap, StressTest) {
 /*
 * Real world test
 */
-TEST(BoxMap, UsageExample) {
+TEST(ArrayBoxMap, UsageExample) {
 	r2d2::ArrayBoxMap bm{};
 	r2d2::Box box1 = r2d2::Box{
 			r2d2::Coordinate{
@@ -394,5 +401,4 @@ TEST(BoxMap, UsageExample) {
 
 	ASSERT_TRUE((gBox2.get_has_navigatable()) &&
 	            (gBox2.get_has_obstacle()));
-
 }
