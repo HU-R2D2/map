@@ -44,17 +44,22 @@ namespace r2d2 {
         virtual void save(std::string filename) override;
         virtual void load(std::string filename) override;
 
-        //! @brief  gets the amount of boxes within this map
-        //!         
+        //! @brief  gets the amount of boxes stored within this map
+        //!         this does not take into account any other boxes that might
+        //!         be used to store/access the information
         //! @return int BoxMap::map.size()
         virtual int get_map_size() const = 0;
 
+        //! @brief  get all the boxes that intersect with a given area
+        //! @parameter bounds
+        //!
+        //! @return an array of all the boxes intersecting with the bounds
         virtual std::vector<std::pair<Box, BoxInfo>> get_intersecting(const Box &bounds) const = 0;
 
         virtual std::ostream &print(std::ostream &lhs) = 0;
 
     private:
-        // add a box without doing any checks for overlapping
+        //! add a box without doing any checks for overlapping
         virtual void add_box(Box box, BoxInfo info) = 0;
 
     };

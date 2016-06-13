@@ -32,34 +32,24 @@
 #ifndef MAP_ARRAYBOXMAP_HPP
 #define MAP_ARRAYBOXMAP_HPP
 
-#include "rapidjson/document.h"
-#include "rapidjson/filereadstream.h"
-#include "rapidjson/stringbuffer.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/filewritestream.h"
 #include "BoxMap.hpp"
 #include <ostream>
 #include <string>
 #include <stdlib.h>
-#include <math.h>
 
-//! @author     Anas Shehata
-//! @date       22-04-16
-//! @version    1.0
-//! @brief      ArrayBoxMap is an implementation of MapInterface.cpp. a Box map type which retrieves and saves information about a certain area in a 3D Box map.
-//!
-//! The implementation works by putting all the boxes in a giant array, and then looping over it to check collision
 namespace r2d2 {
 
+	//! @author     Anas Shehata
+	//! @date       22-04-16
+	//! @version    1.0
+	//! @brief      ArrayBoxMap is an implementation of BoxMap. a Box map type which retrieves and saves information about a certain area in a 3D Box map.
+	//!             The implementation works by putting all the boxes in a giant array, and then looping over it to check collision
 	class ArrayBoxMap : public BoxMap {
 	public:
 		virtual const Box get_map_bounding_box() override;
 
 		virtual void set_box_info(const Box box, const BoxInfo box_info) override;
 
-		//! @brief  gets the size of map
-		//!
-		//! @return int BoxMap::map.size()
 		virtual int get_map_size() const override;
 
 		virtual std::vector<std::pair<Box, BoxInfo>> get_intersecting(const Box &bounds) const override;
@@ -71,7 +61,8 @@ namespace r2d2 {
 	private:
 		virtual void add_box(Box box, BoxInfo info) override;
 
-		std::vector<std::pair<Box, BoxInfo>> map; // a map in which boxes and boxinfos are stored in as a pairs
+		//! stores pairs of boxes with their corresponding boxinfos
+		std::vector<std::pair<Box, BoxInfo>> map;
 
 	};
 
