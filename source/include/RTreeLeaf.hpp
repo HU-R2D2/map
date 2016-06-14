@@ -11,34 +11,33 @@ namespace r2d2 {
 
 	template<int MIN, int MAX, typename T>
 	class RTreeLeaf : public RTree<MIN, MAX, T> {
+		using RTree<MIN, MAX, T>::shared_from_this;
 		using RTree<MIN, MAX, T>::bounds;
 		using RTree<MIN, MAX, T>::parent;
 	public:
-		RTreeLeaf(Box bounds, std::shared_ptr<T> data) :
+		RTreeLeaf(Box bounds, T &data) :
 				RTree<MIN, MAX, T>{bounds},
 				data(data) {
 		}
 
-		virtual std::vector<std::shared_ptr<r2d2::RTree<MIN, MAX, T>>> search(Box box, std::shared_ptr<r2d2::RTree<MIN, MAX, T>> this_ptr) const override {
-			if (box.intersects(bounds)) {
-				return std::vector<std::shared_ptr<RTree<MIN, MAX, T>>>{this_ptr};
+		virtual void search(const Box &box, std::vector<std::shared_ptr<r2d2::RTree<MIN, MAX, T>>> &add_to) override {
+			if (bounds.intersects(box)) {
+				add_to.push_back(this->shared_from_this());
 			}
-			return {};
 		}
 
-		virtual shared_ptr<r2d2::RTree<MIN, MAX, T>> find_leaf(shared_ptr<r2d2::RTree<MIN, MAX, T>> node,
-		                                                       shared_ptr<r2d2::RTree<MIN, MAX, T>> this_ptr,
-		                                                       int max_depth = -1) override {
-			return this_ptr;
+		virtual shared_ptr<r2d2::RTree<MIN, MAX, T>> find_leaf(
+				const shared_ptr<const r2d2::RTree<MIN, MAX, T>> node,
+				int max_depth = -1) override {
+			return shared_from_this();
 		}
 
 		virtual void insert(std::shared_ptr<r2d2::RTree<MIN, MAX, T>> node) override {
-//			std::cout << "  leaf insert" << std::endl;
 			parent->insert(node); // a leaf cannot insert into itself
 		}
 
-		virtual std::shared_ptr<T> get_data() const override {
-			return data;
+		virtual T *get_data() const override {
+			return &data;
 		}
 
 		virtual std::ostream &print(std::ostream &rhs, int level) const override {
@@ -49,7 +48,7 @@ namespace r2d2 {
 		}
 
 	private:
-		std::shared_ptr<T> data;
+		T data;
 
 	};
 

@@ -36,16 +36,24 @@
 /*
 * Constructor
 */
+void default_constructor_test(r2d2::BoxMap &bm) {
+	ASSERT_EQ(0, bm.get_map_size());
+}
+
 TEST(ArrayBoxMap, DefaultConstructor) {
 	r2d2::ArrayBoxMap bm{};
-	ASSERT_EQ(0, bm.get_map_size());
+	default_constructor_test(bm);
+}
+
+TEST(RStarMap, DefaultConstructor) {
+	r2d2::RStarMap bm{};
+	default_constructor_test(bm);
 }
 
 /*
 * ArrayBoxMap::set_box_info() / ArrayBoxMap::get_map_size() test
 */
-TEST(ArrayBoxMap, AddBox) {
-	r2d2::ArrayBoxMap bm{};
+void add_box_test(r2d2::BoxMap &bm) {
 	bm.set_box_info(r2d2::Box{r2d2::Coordinate{-1 * r2d2::Length::METER,
 	                                           -1 * r2d2::Length::METER,
 	                                           -1 * r2d2::Length::METER},
@@ -56,11 +64,20 @@ TEST(ArrayBoxMap, AddBox) {
 	ASSERT_EQ(1, bm.get_map_size());
 }
 
+TEST(ArrayBoxMap, AddBox) {
+	r2d2::ArrayBoxMap bm{};
+	add_box_test(bm);
+}
+
+TEST(RStarMap, AddBox) {
+	r2d2::RStarMap bm{};
+	add_box_test(bm);
+}
+
 /*
 * ArrayBoxMap::get_box_info() test, automatic loop over possible values
 */
-TEST(ArrayBoxMap, GetBoxInfo1) {
-	r2d2::ArrayBoxMap bm{};
+void get_boxinfo_1_test(r2d2::BoxMap &bm) {
 	for (int i = 0; i < 8; i++) {
 
 		r2d2::BoxInfo temp{
@@ -106,12 +123,20 @@ TEST(ArrayBoxMap, GetBoxInfo1) {
 	}
 }
 
+TEST(ArrayBoxMap, GetBoxInfo1) {
+	r2d2::ArrayBoxMap bm{};
+	get_boxinfo_1_test(bm);
+}
+
+TEST(RStarMap, GetBoxInfo1) {
+	r2d2::RStarMap bm{};
+	get_boxinfo_1_test(bm);
+}
+
 /*
 * ArrayBoxMap::get_box_info() test, manual creation
 */
-TEST(ArrayBoxMap, GetBoxInfo2) {
-	r2d2::ArrayBoxMap bm{};
-
+void get_boxinfo_2_test(r2d2::BoxMap &bm) {
 	bm.set_box_info(
 			r2d2::Box{
 					r2d2::Coordinate{
@@ -161,12 +186,20 @@ TEST(ArrayBoxMap, GetBoxInfo2) {
 	          ));
 }
 
+TEST(ArrayBoxMap, GetBoxInfo2) {
+	r2d2::ArrayBoxMap bm{};
+	get_boxinfo_2_test(bm);
+}
+
+TEST(RStarMap, GetBoxInfo2) {
+	r2d2::RStarMap bm{};
+	get_boxinfo_2_test(bm);
+}
+
 /*
 * ArrayBoxMap::get_bounding_box() test
 */
-TEST(ArrayBoxMap, BoundingBox) {
-	r2d2::ArrayBoxMap bm{};
-
+void bounding_box_test(r2d2::BoxMap &bm) {
 	bm.set_box_info(
 			r2d2::Box{
 					r2d2::Coordinate{
@@ -211,13 +244,21 @@ TEST(ArrayBoxMap, BoundingBox) {
 	);
 }
 
+TEST(ArrayBoxMap, BoundingBox) {
+	r2d2::ArrayBoxMap bm{};
+	bounding_box_test(bm);
+}
+
+TEST(RStarMap, BoundingBox) {
+	r2d2::RStarMap bm{};
+	bounding_box_test(bm);
+}
+
 /**
  * test to test that getting information boxes of volume
  * zero will still work correctly
  */
-TEST(ArrayBoxMap, ZeroSizeUnknownTest) {
-	r2d2::ArrayBoxMap bm{};
-
+void zero_size_test(r2d2::BoxMap &bm) {
 	bm.set_box_info(
 			r2d2::Box{
 					r2d2::Coordinate{
@@ -307,13 +348,23 @@ TEST(ArrayBoxMap, ZeroSizeUnknownTest) {
 	          )));
 }
 
+TEST(ArrayBoxMap, ZeroSizeUnknown) {
+	r2d2::ArrayBoxMap bm{};
+	zero_size_test(bm);
+}
+
+TEST(RStarMap, ZeroSizeUnknown) {
+	r2d2::RStarMap bm{};
+	zero_size_test(bm);
+}
+
 // defines the size of the grid of squares that will be inserted in the stress test
 #define MAP_TEST_SIZE 100
 /**
  * stress test to see how performant the code is, also used to verify that the
  * map will have the correct amount of boxes, and return a mixed boxinfo result
  */
-void test_map(r2d2::BoxMap &bm) {
+void stress_test(r2d2::BoxMap &bm) {
 	for (int y = 0; y < MAP_TEST_SIZE; ++y) {
 		for (int x = 0; x < MAP_TEST_SIZE; ++x) {
 			r2d2::Coordinate new_pos{
@@ -345,7 +396,6 @@ void test_map(r2d2::BoxMap &bm) {
 			);
 		}
 	}
-	bm.save("testmap1.map");
 
 	ASSERT_EQ(((MAP_TEST_SIZE + 1) * MAP_TEST_SIZE) - 1, bm.get_map_size());
 	ASSERT_TRUE(
@@ -354,21 +404,20 @@ void test_map(r2d2::BoxMap &bm) {
 	);
 }
 
-TEST(RTreeBoxMap, PerformanceTest) {
+TEST(RStarMap, PerformanceTest) {
     r2d2::RStarMap bm{};
-    test_map(bm);
+	stress_test(bm);
 }
 
 TEST(ArrayBoxMap, PerformanceTest) {
     r2d2::ArrayBoxMap bm{};
-    test_map(bm);
+	stress_test(bm);
 }
 
 /*
 * Real world test
 */
-TEST(ArrayBoxMap, UsageExample) {
-	r2d2::ArrayBoxMap bm{};
+void usage_example_test(r2d2::BoxMap &bm) {
 	r2d2::Box box1 = r2d2::Box{
 			r2d2::Coordinate{
 					-83.9178867229331 * r2d2::Length::METER,
@@ -409,4 +458,14 @@ TEST(ArrayBoxMap, UsageExample) {
 
 	ASSERT_TRUE((gBox2.get_has_navigatable()) &&
 	            (gBox2.get_has_obstacle()));
+}
+
+TEST(ArrayBoxMap, UsageExample) {
+	r2d2::ArrayBoxMap bm{};
+	usage_example_test(bm);
+}
+
+TEST(RStarMap, UsageExample) {
+	r2d2::RStarMap bm{};
+	usage_example_test(bm);
 }

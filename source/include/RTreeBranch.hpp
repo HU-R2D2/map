@@ -14,6 +14,7 @@ namespace r2d2 {
 	template<int MIN, int MAX, typename T>
 	class RTreeBranch : public RTree<MIN, MAX, T> {
 	protected:
+		using RTree<MIN, MAX, T>::shared_from_this;
 		using RTree<MIN, MAX, T>::set_parent;
 		using RTree<MIN, MAX, T>::remove;
 		using RTree<MIN, MAX, T>::parent;
@@ -48,40 +49,39 @@ namespace r2d2 {
 			num_children = int(S);
 		}
 
-		virtual std::vector<std::shared_ptr<RTree<MIN, MAX, T>>> search(r2d2::Box box, std::shared_ptr<RTree<MIN, MAX, T>> this_ptr) const override {
+		virtual void search(const r2d2::Box &box, std::vector<std::shared_ptr<RTree<MIN, MAX, T>>> &add_to) override {
 			std::vector<std::shared_ptr<RTree<MIN, MAX, T>>> found;
 			if (bounds.intersects(box)) {
 				for (int i = 0; i < num_children; ++i) {
-					std::vector<std::shared_ptr<RTree<MIN, MAX, T>>> childFound{children[i]->search(box, children[i])};
-					found.insert(found.cend(), childFound.cbegin(), childFound.cend());
+					children[i]->search(box, add_to);
 				}
 			}
-			return found;
 		}
 
 		// search for the leaf that is best suited for insertion of 'node'
-		virtual std::shared_ptr<RTree<MIN, MAX, T>> find_leaf(std::shared_ptr<RTree<MIN, MAX, T>> node,
-		                                                      std::shared_ptr<RTree<MIN, MAX, T>> this_ptr,
-		                                                      int max_depth = -1) override {
+		virtual std::shared_ptr<RTree<MIN, MAX, T>> find_leaf(
+				const std::shared_ptr<const RTree<MIN, MAX, T>> node,
+				int max_depth = -1) override {
 			// search for the best match to insert
 			if (max_depth == 0) {
-				return this_ptr;
+				return shared_from_this();
 			} else {
 				unsigned long bestIndex = 0;
-				std::tuple<r2d2::Box, double> bestBox{
+				r2d2::Length bestBox{
 						get_union_score(children[0]->get_bounds(), node->get_bounds())
 				};
 				for (int i = 1; i < num_children; ++i) {
 					// find the node with the least area plus enlargement
-					std::tuple<r2d2::Box, double> newBox = get_union_score(
-							children[i]->get_bounds(), node->get_bounds());
-					if (std::get<1>(newBox) < std::get<1>(bestBox)) {
+					r2d2::Length newBox{get_union_score(
+							children[i]->get_bounds(), node->get_bounds()
+					)};
+					if (newBox < bestBox) {
 						// this box takes less area and enlargement, therefore it is more efficient
 						bestIndex = i;
 						bestBox = newBox;
 					}
 				}
-				return children[bestIndex]->find_leaf(node, children[bestIndex], max_depth - 1);
+				return children[bestIndex]->find_leaf(node, max_depth - 1);
 			}
 		};
 
@@ -109,7 +109,7 @@ namespace r2d2 {
 			// reinsertion might be somewhat good for the performance, but adds too much complexity to the current program
 		}
 
-		virtual std::shared_ptr<T> get_data() const override {
+		virtual T *get_data() const override {
 			return nullptr; // branches do not store any data; call the default constructor just so we have some
 		}
 
@@ -129,9 +129,7 @@ namespace r2d2 {
 				// but do it before node underflow te prevent removal
 				for (auto raise_node : raise_nodes) {
 					// try inserting the raised node into this node
-					auto leaf = find_leaf(raise_node, nullptr, 1);
-					// just use a nullptr here as find_leaf can always recurse from a branch
-					leaf->insert(raise_node);
+					find_leaf(raise_node, 1)->insert(raise_node);
 				}
 
 				if (num_children < MIN) {
@@ -204,13 +202,10 @@ namespace r2d2 {
 		}
 
 		// O(1)
-		static std::tuple<r2d2::Box, double> get_union_score(const r2d2::Box &b1, const r2d2::Box &b2) {
+		static r2d2::Length get_union_score(const r2d2::Box &b1, const r2d2::Box &b2) {
 			r2d2::Box union_box{b1.get_union_box(b2)};
-			return std::tuple<r2d2::Box, double>{
-					union_box,
-					(get_box_margin(union_box) * 2.0 - get_box_margin(b2)) / Length::METER
-					// box margin is used here instead of the usual box size as it is not feasable in 3d
-			};
+			return get_box_margin(union_box) * 2.0 - get_box_margin(b2);
+					// box margin is used here instead of the usual box size as it is not feasible in 3d
 		}
 
 		// O(1)
@@ -257,7 +252,7 @@ namespace r2d2 {
 							overlap =
 							get_axis(children[i + 1]->get_bounds().get_bottom_left(), axis) / Length::METER
 							- get_axis(children[i]->get_bounds().get_top_right(), axis) / Length::METER,
-					// overlap also includes seperation from the two boxes
+					// overlap also includes separation from the two boxes
 							totalScore = firstScore * firstScore + secondScore * secondScore + overlap;
 					// taking the square of the score does two things:
 					// 1. it tries to minimise the difference between the box sizes
@@ -287,11 +282,11 @@ namespace r2d2 {
 			// bounds = bestSplitBounds;
 			// we already know the bounds here, but it's not very elegant to use them
 
-			return std::shared_ptr<RTree<MIN, MAX, T>>{new RTreeBranch<MIN, MAX, T>{newTree}};
+			return std::make_shared<RTreeBranch<MIN, MAX, T>>(newTree);
 		}
 
-		// checks wether a certain box has one of it's edges on the edge of this rtree node
-		// this can be used for things like checking whether to propagate bounds growing/schrinking
+		// checks whether a certain box has one of it's edges on the edge of this rtree node
+		// this can be used for things like checking whether to propagate bounds growing/shrinking
 		bool has_edge(const Box box) {
 			return !bounds.contains(box);
 		}

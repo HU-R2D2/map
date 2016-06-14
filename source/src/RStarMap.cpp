@@ -23,7 +23,9 @@ namespace r2d2 {
 				has_y = axis_size.get_y() > 0 * r2d2::Length::METER,
 				has_z = axis_size.get_z() > 0 * r2d2::Length::METER;
 
-		std::vector<std::shared_ptr<node_type>> found{map->search(box, map)};
+
+		std::vector<std::shared_ptr<node_type>> found;
+		map->search(box, found);
 		for (auto leaf : found) {
 			auto data = leaf->get_data();
 			Box bounds = leaf->get_bounds();
@@ -181,11 +183,14 @@ namespace r2d2 {
 	}
 
 	int RStarMap::get_map_size() const {
-		return int(map->search(map->get_bounds(), map).size());
+		std::vector<std::shared_ptr<node_type>> found;
+		map->search(map->get_bounds(), found);
+		return int(found.size());
 	}
 
 	std::vector<std::pair<Box, BoxInfo>> RStarMap::get_intersecting(const Box &bounds) const {
-		std::vector<std::shared_ptr<r2d2::node_type>> found{map->search(bounds, map)};
+		std::vector<std::shared_ptr<r2d2::node_type>> found;
+		map->search(bounds, found);
 		std::vector<std::pair<Box, BoxInfo>> pair_vector{};
 		for (auto item : found) {
 			pair_vector.push_back({item->get_bounds(), *item->get_data()});
@@ -195,17 +200,15 @@ namespace r2d2 {
 
 	void RStarMap::add_box(Box box, BoxInfo info) {
 		std::shared_ptr<node_type> newLeaf{
-				new RTreeLeaf<MIN_NODES, MAX_NODES, const BoxInfo>{
-						box, std::make_shared<const BoxInfo>(info)
-				}
-		};
+				std::make_shared<RTreeLeaf<MIN_NODES, MAX_NODES, const BoxInfo>>(
+						box, info
+				)};
 		insert(newLeaf);
 	}
 
 	void RStarMap::insert(std::shared_ptr<node_type> node) {
 		// first find the correct leaf to insert to, then insert it into that node
-		map->find_leaf(node, map)->insert(node);
-//		std::cout << "insert" << std::endl << *node << *map;
+		map->find_leaf(node)->insert(node);
 	}
 
 }

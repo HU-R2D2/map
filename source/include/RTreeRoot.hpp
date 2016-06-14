@@ -11,6 +11,7 @@ namespace r2d2 {
 
 	template<int MIN, int MAX, typename T>
 	class RTreeRoot : public RTreeBranch<MIN, MAX, T> {
+		using RTree<MIN, MAX, T>::shared_from_this;
 		using RTree<MIN, MAX, T>::bounds;
 		using RTreeBranch<MIN, MAX, T>::has_edge;
 		using RTreeBranch<MIN, MAX, T>::split;
@@ -22,13 +23,13 @@ namespace r2d2 {
 				RTreeRoot::RTreeBranch{{}} {
 		}
 
-		virtual shared_ptr<RTree<MIN, MAX, T>> find_leaf(shared_ptr<RTree<MIN, MAX, T>> node,
-		                                                 shared_ptr<RTree<MIN, MAX, T>> this_ptr,
-		                                                 int max_depth = -1) override {
+		virtual shared_ptr<RTree<MIN, MAX, T>> find_leaf(
+				const shared_ptr<const RTree<MIN, MAX, T>> node,
+				int max_depth = -1) override {
 			if (num_children > 0 || max_depth == 0) {
-				return RTreeBranch<MIN, MAX, T>::find_leaf(node, this_ptr, max_depth);
+				return RTreeBranch<MIN, MAX, T>::find_leaf(node, max_depth);
 			} else {
-				return this_ptr;
+				return shared_from_this();
 			}
 		}
 
@@ -61,11 +62,6 @@ namespace r2d2 {
 				}
 			}
 		}
-
-//		virtual void remove(const RTree<MIN, MAX, T> *node, std::vector<std::shared_ptr<RTree<MIN, MAX, T>>> raise_nodes = {}) override {
-//			std::cout << "test" << std::endl;
-//			RTreeBranch<MIN, MAX, T>::remove(node, raise_nodes);
-//		}
 
 		virtual void remove() override {
 			// clear the entire root, as this root is supposed to be removed

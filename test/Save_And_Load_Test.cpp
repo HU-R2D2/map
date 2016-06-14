@@ -35,11 +35,12 @@
 
 //! Tests saving and loading to its full extends
 //! Generates a map, saves it and then loads and compares the saved map and currently loaded map with eachother if they are equal
-TEST(SaveLoad, ArrayBoxMap) {
+template<typename T>
+void save_load_test() {
     std::uniform_real_distribution<double> random_real(-100.0, 100.0);
     std::default_random_engine re((unsigned int)(time(NULL)));
     srand((unsigned int)(time(NULL)));
-    r2d2::ArrayBoxMap bm{};
+    T bm{};
     cout << "May take a while... Please wait" << endl;
     int generate_box_count = 10;
     for (int i = 0; i < generate_box_count; i++) {
@@ -63,7 +64,7 @@ TEST(SaveLoad, ArrayBoxMap) {
     bm.save("save_and_load_test.map");
 
     cout << "Loading..." << endl;
-    r2d2::RStarMap bm2{}; // loading and unloading in different maps show compatibility
+    T bm2{};
     bm2.load("save_and_load_test.map");
     int rounds = 50;
     cout << "Comparing with " << rounds << " rounds" << endl;
@@ -85,4 +86,12 @@ TEST(SaveLoad, ArrayBoxMap) {
         --rounds;
     }
     ASSERT_EQ(bm.get_map_size(), bm2.get_map_size());
+}
+
+TEST(ArrayBoxMap, SaveLoad) {
+    save_load_test<r2d2::ArrayBoxMap>();
+}
+
+TEST(RStarMap, SaveLoad) {
+    save_load_test<r2d2::RStarMap>();
 }

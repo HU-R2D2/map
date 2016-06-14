@@ -15,32 +15,26 @@ namespace r2d2 {
 	class RTreeBranch;
 
 	template<int MIN, int MAX, typename T>
-	class RTree {
+	class RTree : public std::enable_shared_from_this<RTree<MIN, MAX, T>> {
 	public:
 		RTree(r2d2::Box bounds) :
 				parent{nullptr},
 				bounds{bounds} {
-//			std::cout << "rtree create" << this << std::endl;
-		}
-
-		virtual ~RTree() {
-//			std::cout << "rtree destruct " << this << std::endl;
 		}
 
 		const r2d2::Box &get_bounds() const {
 			return bounds;
 		}
 
-		virtual std::vector<std::shared_ptr<RTree<MIN, MAX, T>>> search(
-				r2d2::Box box, std::shared_ptr<RTree<MIN, MAX, T>> this_ptr) const = 0;
+		virtual void search(const Box &box, std::vector<std::shared_ptr<RTree<MIN, MAX, T>>> &add_to) = 0;
 
-		virtual std::shared_ptr<RTree<MIN, MAX, T>> find_leaf(std::shared_ptr<RTree<MIN, MAX, T>> node,
-		                                                      std::shared_ptr<RTree<MIN, MAX, T>> this_ptr,
-		                                                      int max_depth = -1) = 0;
+		virtual std::shared_ptr<RTree<MIN, MAX, T>> find_leaf(
+				const std::shared_ptr<const RTree<MIN, MAX, T>> node,
+				int max_depth = -1) = 0;
 
 		virtual void insert(std::shared_ptr<RTree<MIN, MAX, T>> node) = 0;
 
-		virtual std::shared_ptr<T> get_data() const = 0;
+		virtual T *get_data() const = 0;
 
 		// be sure that when you call this function the node is not
 		// disconnected from any tree, otherwise you will segfault
