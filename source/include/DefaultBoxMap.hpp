@@ -5,11 +5,11 @@
 #ifndef MAP_DEFAULTBOXMAP_HPP
 #define MAP_DEFAULTBOXMAP_HPP
 
-#include "RStarMap.hpp"
+#include "ArrayBoxMap.hpp"
 
 namespace r2d2 {
 
-	typedef RStarMap DefaultBoxMap;
+	typedef ArrayBoxMap DefaultBoxMap;
 
 }
 
