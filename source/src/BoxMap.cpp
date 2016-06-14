@@ -66,8 +66,8 @@ namespace r2d2 {
 			// subtract the volume that this box takes in from the total box area
 			axis_size = found_box.first.get_intersection_box(box).get_axis_size();
 			vol -= (has_x ? axis_size.get_x() / Length::METER : 1)
-			       * (has_x ? axis_size.get_y() / Length::METER : 1)
-			       * (has_x ? axis_size.get_z() / Length::METER : 1);
+			       * (has_y ? axis_size.get_y() / Length::METER : 1)
+			       * (has_z ? axis_size.get_z() / Length::METER : 1);
 
 			if (temp_has_obstacle && temp_has_unknown && temp_has_navigatable) {
 				// if all three are true then the result must be as such
