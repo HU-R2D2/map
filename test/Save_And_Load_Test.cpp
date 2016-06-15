@@ -29,7 +29,7 @@
 // ++--++
 
 #include "../source/include/ArrayBoxMap.hpp"
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include <random>
 
 //! Tests saving and loading to its full extends
