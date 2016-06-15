@@ -30,7 +30,7 @@
 
 #include "../source/include/MapInterface.hpp"
 #include "../source/include/BoxMap.hpp"
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 /**
 * Constructor
