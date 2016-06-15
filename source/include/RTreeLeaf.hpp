@@ -26,8 +26,8 @@ namespace r2d2 {
 			}
 		}
 
-		virtual shared_ptr<r2d2::RTree<MIN, MAX, T>> find_leaf(
-				const shared_ptr<const r2d2::RTree<MIN, MAX, T>> node,
+		virtual std::shared_ptr<r2d2::RTree<MIN, MAX, T>> find_leaf(
+				const std::shared_ptr<const r2d2::RTree<MIN, MAX, T>> node,
 				int max_depth = -1) override {
 			return shared_from_this();
 		}

@@ -23,8 +23,8 @@ namespace r2d2 {
 				RTreeRoot::RTreeBranch{{}} {
 		}
 
-		virtual shared_ptr<RTree<MIN, MAX, T>> find_leaf(
-				const shared_ptr<const RTree<MIN, MAX, T>> node,
+		virtual std::shared_ptr<RTree<MIN, MAX, T>> find_leaf(
+				const std::shared_ptr<const RTree<MIN, MAX, T>> node,
 				int max_depth = -1) override {
 			if (num_children > 0 || max_depth == 0) {
 				return RTreeBranch<MIN, MAX, T>::find_leaf(node, max_depth);

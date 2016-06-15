@@ -31,7 +31,7 @@
 #include "../source/include/ArrayBoxMap.hpp"
 #include "../source/include/RStarMap.hpp"
 #include "../source/include/DefaultBoxMap.hpp"
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 /*
 * Constructor

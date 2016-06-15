@@ -29,8 +29,8 @@
 // ++--++
 
 #include "../source/include/ArrayBoxMap.hpp"
-#include "gtest/gtest.h"
 #include "../source/include/RStarMap.hpp"
+#include <gtest/gtest.h>
 #include <random>
 
 //! Tests saving and loading to its full extends
