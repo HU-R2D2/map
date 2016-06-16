@@ -1,6 +1,6 @@
 // ++--++
-// @file BoxMap.hpp
-// @date Created: <07-06-16>
+// @file RStarMap.hpp
+// @date Created: <08-05-16>
 // @version <1.0.0>
 //
 // @author Chiel Douwes
@@ -28,41 +28,49 @@
 // OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // ++--++
 
-#ifndef _BOXMAP_HPP
-#define _BOXMAP_HPP
+#ifndef MAP_RSTARMAP_HPP
+#define MAP_RSTARMAP_HPP
 
-#include <fstream>
-#include <Box.hpp>
 #include "MapInterface.hpp"
+#include "RTreeRoot.hpp"
+#include "BoxMap.hpp"
 
 namespace r2d2 {
+    //! the minimum amount of nodes a branch can have
+    #define MIN_NODES 3
+	//! the maximum amount of nodes a branch can have
+    #define MAX_NODES 8
+    typedef RTreeRoot<MIN_NODES, MAX_NODES, const BoxInfo> root_type;
+    typedef RTree<MIN_NODES, MAX_NODES, const BoxInfo> node_type;
 
-    class BoxMap : public SaveLoadMap {
+    //! implementation of an R-tree
+    //!
+    //! the structure is described in it's corresponding paper: http://pages.cs.wisc.edu/~cs764-1/rtree.pdf
+    class RStarMap : public BoxMap {
     public:
-        virtual const BoxInfo get_box_info(const Box box) override;
+        RStarMap();
 
-        virtual void save(std::string filename) override;
-        virtual void load(std::string filename) override;
+        virtual const Box get_map_bounding_box() override;
 
-        //! @brief  gets the amount of boxes stored within this map
-        //!         this does not take into account any other boxes that might
-        //!         be used to store/access the information
-        //! @return int BoxMap::map.size()
-        virtual int get_map_size() const = 0;
+        virtual void set_box_info(const Box box, const BoxInfo box_info) override;
 
-        //! @brief  get all the boxes that intersect with a given area
-        //! @parameter bounds
-        //!
-        //! @return an array of all the boxes intersecting with the bounds
-        virtual std::vector<std::pair<Box, BoxInfo>> get_intersecting(const Box &bounds) const = 0;
+        virtual int get_map_size() const override;
 
-        //! print out the map to the ostream 'lhs', used for debugging purposes
-        virtual std::ostream &print(std::ostream &lhs) = 0;
+        virtual std::vector<std::pair<Box, BoxInfo>> get_intersecting(const Box &bounds) const override;
+
+        virtual std::ostream &print(std::ostream &lhs) {
+            return lhs << *map;
+        }
 
     private:
-        //! add a box without doing any checks for overlapping
-        virtual void add_box(Box box, BoxInfo info) = 0;
+        virtual void add_box(Box box, BoxInfo info) override;
+
+        //! insert a leaf into the map
+        void insert(std::shared_ptr<node_type> node);
+
+        std::shared_ptr<root_type> map;
 
     };
 }
-#endif //_BOXMAP_HPP
+
+#endif //MAP_RSTARMAP_HPP

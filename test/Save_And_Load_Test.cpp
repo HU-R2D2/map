@@ -29,17 +29,19 @@
 // ++--++
 
 #include "../source/include/ArrayBoxMap.hpp"
-#include "gtest/gtest.h"
+#include "../source/include/RStarMap.hpp"
+#include <gtest/gtest.h>
 #include <random>
 
 //! Tests saving and loading to its full extends
 //! Generates a map, saves it and then loads and compares the saved map and currently loaded map with eachother if they are equal
-TEST(SaveLoad, ArrayBoxMap) {
+template<typename T>
+void save_load_test() {
     std::uniform_real_distribution<double> random_real(-100.0, 100.0);
     std::default_random_engine re((unsigned int)(time(NULL)));
     srand((unsigned int)(time(NULL)));
-    r2d2::ArrayBoxMap bm{};
-    cout << "May take a while... Please wait" << endl;
+    T bm{};
+    std::cout << "May take a while... Please wait" << std::endl;
     int generate_box_count = 10;
     for (int i = 0; i < generate_box_count; i++) {
         bm.set_box_info(
@@ -58,14 +60,14 @@ TEST(SaveLoad, ArrayBoxMap) {
                 r2d2::BoxInfo{rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0}
         );
     }
-    cout << "Saving...";
+    std::cout << "Saving...";
     bm.save("save_and_load_test.map");
 
-    cout << "Loading..." << endl;
-    r2d2::ArrayBoxMap bm2{};
+    std::cout << "Loading..." << std::endl;
+    T bm2{};
     bm2.load("save_and_load_test.map");
     int rounds = 50;
-    cout << "Comparing with " << rounds << " rounds" << endl;
+    std::cout << "Comparing with " << rounds << " rounds" << std::endl;
     while (rounds >= 0) {
         r2d2::Box temp{
             r2d2::Coordinate{
@@ -84,4 +86,12 @@ TEST(SaveLoad, ArrayBoxMap) {
         --rounds;
     }
     ASSERT_EQ(bm.get_map_size(), bm2.get_map_size());
+}
+
+TEST(ArrayBoxMap, SaveLoad) {
+    save_load_test<r2d2::ArrayBoxMap>();
+}
+
+TEST(RStarMap, SaveLoad) {
+    save_load_test<r2d2::RStarMap>();
 }
