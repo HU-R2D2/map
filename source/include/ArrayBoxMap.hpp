@@ -39,28 +39,32 @@
 
 namespace r2d2 {
 
-	//! @author     Anas Shehata
-	//! @date       22-04-16
-	//! @version    1.0
-	//! @brief      ArrayBoxMap is an implementation of BoxMap. a Box map type which retrieves and saves information about a certain area in a 3D Box map.
-	//!             The implementation works by putting all the boxes in a giant array, and then looping over it to check collision
-	class ArrayBoxMap : public BoxMap {
-	public:
-		virtual const Box get_map_bounding_box() override;
+    //! @author     Anas Shehata
+    //! @date       22-04-16
+    //! @version    1.0
+    //! @brief      ArrayBoxMap is an implementation of BoxMap. a Box map type which retrieves and saves information about a certain area in a 3D Box map.
+    //!             The implementation works by putting all the boxes in a giant array, and then looping over it to check collision
+    class ArrayBoxMap : public BoxMap {
+    public:
+        virtual const Box get_map_bounding_box() override;
 
-		virtual void set_box_info(const Box box, const BoxInfo box_info) override;
+        virtual void set_box_info(const Box box, const BoxInfo box_info) override;
 
-		virtual int get_map_size() const override;
+        virtual int get_map_size() const override;
 
-		virtual std::vector<std::pair<Box, BoxInfo>> get_intersecting(const Box &bounds) const override;
+        virtual std::vector<std::pair<Box, BoxInfo>> get_intersecting(const Box &bounds) const override;
 
-	private:
-		virtual void add_box(Box box, BoxInfo info) override;
+        virtual std::ostream &print(std::ostream &rhs) {
+            return rhs;
+        }
 
-		//! stores pairs of boxes with their corresponding boxinfos
-		std::vector<std::pair<Box, BoxInfo>> map;
+    private:
+        virtual void add_box(Box box, BoxInfo info) override;
 
-	};
+        //! stores pairs of boxes with their corresponding boxinfos
+        std::vector<std::pair<Box, BoxInfo>> map;
+
+    };
 
 }
 

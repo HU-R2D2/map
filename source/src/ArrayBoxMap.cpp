@@ -33,196 +33,196 @@
 
 namespace r2d2 {
 
-	const Box ArrayBoxMap::get_map_bounding_box() {
-		if (map.empty()) {
-			return Box{};
-		}
-		Box temp_box{ map[0].first };
-		for (std::pair<Box, BoxInfo> box : map){
-			temp_box = temp_box.get_union_box(box.first);
-		}
-		return temp_box;
-	}
+    const Box ArrayBoxMap::get_map_bounding_box() {
+        if (map.empty()) {
+            return Box{};
+        }
+        Box temp_box{ map[0].first };
+        for (std::pair<Box, BoxInfo> box : map){
+            temp_box = temp_box.get_union_box(box.first);
+        }
+        return temp_box;
+    }
 
-	void ArrayBoxMap::set_box_info(const Box box, const BoxInfo box_info) {
-		std::vector<std::pair<Box, BoxInfo>> new_boxes;
+    void ArrayBoxMap::set_box_info(const Box box, const BoxInfo box_info) {
+        std::vector<std::pair<Box, BoxInfo>> new_boxes;
 
-		r2d2::Translation axis_size{box.get_axis_size()};
-		bool has_x = axis_size.get_x() > 0 * r2d2::Length::METER,
-				has_y = axis_size.get_y() > 0 * r2d2::Length::METER,
-				has_z = axis_size.get_z() > 0 * r2d2::Length::METER;
+        r2d2::Translation axis_size{box.get_axis_size()};
+        bool has_x = axis_size.get_x() > 0 * r2d2::Length::METER,
+                has_y = axis_size.get_y() > 0 * r2d2::Length::METER,
+                has_z = axis_size.get_z() > 0 * r2d2::Length::METER;
 
-		for (auto it = map.begin(); it != map.end();) {
-			// iterator used instead of int to be able to remove elements efficiently
-			// this implementation is separate from the get_intersecting one,
-			// as it does not support returning iterators
+        for (auto it = map.begin(); it != map.end();) {
+            // iterator used instead of int to be able to remove elements efficiently
+            // this implementation is separate from the get_intersecting one,
+            // as it does not support returning iterators
 
-			// do some wizzardry with length zero detection and stuff to circumvent some bugs
-			if ((   (it->first.get_top_right().get_x() > box.get_bottom_left().get_x() &&
-			         it->first.get_bottom_left().get_x() < box.get_top_right().get_x())
-			        || (!has_x &&
-			            (it->first.get_bottom_left().get_x() / r2d2::Length::METER) ==
-			            (box.get_bottom_left().get_x() / r2d2::Length::METER))
-			    )
-			    &&
-			    (   (it->first.get_top_right().get_y() > box.get_bottom_left().get_y() &&
-			         it->first.get_bottom_left().get_y() < box.get_top_right().get_y())
-			        || (!has_y &&
-			            (it->first.get_bottom_left().get_y() / r2d2::Length::METER) ==
-			            (box.get_bottom_left().get_y() / r2d2::Length::METER))
-			    )
-			    &&
-			    (   (it->first.get_top_right().get_z() > box.get_bottom_left().get_z() &&
-			         it->first.get_bottom_left().get_z() < box.get_top_right().get_z())
-			        || (!has_z &&
-			            (it->first.get_bottom_left().get_z() / r2d2::Length::METER) ==
-			            (box.get_bottom_left().get_z() / r2d2::Length::METER)))) {
-				// current box has to be cut because of intersecting with the insertion box
+            // do some wizzardry with length zero detection and stuff to circumvent some bugs
+            if ((   (it->first.get_top_right().get_x() > box.get_bottom_left().get_x() &&
+                     it->first.get_bottom_left().get_x() < box.get_top_right().get_x())
+                    || (!has_x &&
+                        (it->first.get_bottom_left().get_x() / r2d2::Length::METER) ==
+                        (box.get_bottom_left().get_x() / r2d2::Length::METER))
+                )
+                &&
+                (   (it->first.get_top_right().get_y() > box.get_bottom_left().get_y() &&
+                     it->first.get_bottom_left().get_y() < box.get_top_right().get_y())
+                    || (!has_y &&
+                        (it->first.get_bottom_left().get_y() / r2d2::Length::METER) ==
+                        (box.get_bottom_left().get_y() / r2d2::Length::METER))
+                )
+                &&
+                (   (it->first.get_top_right().get_z() > box.get_bottom_left().get_z() &&
+                     it->first.get_bottom_left().get_z() < box.get_top_right().get_z())
+                    || (!has_z &&
+                        (it->first.get_bottom_left().get_z() / r2d2::Length::METER) ==
+                        (box.get_bottom_left().get_z() / r2d2::Length::METER)))) {
+                // current box has to be cut because of intersecting with the insertion box
 
-				if (it->first.get_bottom_left().get_x()
-				    < box.get_bottom_left().get_x()) {
-					// the current box extends the new box in the -x direction
+                if (it->first.get_bottom_left().get_x()
+                    < box.get_bottom_left().get_x()) {
+                    // the current box extends the new box in the -x direction
 
-					// insert the extension
-					new_boxes.push_back(
-							{Box{it->first.get_bottom_left(), Coordinate{
-									box.get_bottom_left().get_x(),
-									it->first.get_top_right().get_y(),
-									it->first.get_top_right().get_z()
-							}},
-							 it->second}
-					);
+                    // insert the extension
+                    new_boxes.push_back(
+                            {Box{it->first.get_bottom_left(), Coordinate{
+                                    box.get_bottom_left().get_x(),
+                                    it->first.get_top_right().get_y(),
+                                    it->first.get_top_right().get_z()
+                            }},
+                             it->second}
+                    );
 
-					// resize the current box as to not include the newly made box
-					it->first = Box{Coordinate{
-							box.get_bottom_left().get_x(),
-							it->first.get_bottom_left().get_y(),
-							it->first.get_bottom_left().get_z()
-					}, it->first.get_top_right()};
-				}
+                    // resize the current box as to not include the newly made box
+                    it->first = Box{Coordinate{
+                            box.get_bottom_left().get_x(),
+                            it->first.get_bottom_left().get_y(),
+                            it->first.get_bottom_left().get_z()
+                    }, it->first.get_top_right()};
+                }
 
-				if (it->first.get_top_right().get_x()
-				    > box.get_top_right().get_x()) {
+                if (it->first.get_top_right().get_x()
+                    > box.get_top_right().get_x()) {
 
-					//Make new box
-					new_boxes.push_back(
-							{Box{Coordinate{
-									box.get_top_right().get_x(),
-									it->first.get_bottom_left().get_y(),
-									it->first.get_bottom_left().get_z()
-							}, it->first.get_top_right()},
-							 it->second
-							});
+                    //Make new box
+                    new_boxes.push_back(
+                            {Box{Coordinate{
+                                    box.get_top_right().get_x(),
+                                    it->first.get_bottom_left().get_y(),
+                                    it->first.get_bottom_left().get_z()
+                            }, it->first.get_top_right()},
+                             it->second
+                            });
 
-					//Cut-away old
-					it->first = Box{it->first.get_bottom_left(), Coordinate{
-							box.get_top_right().get_x(),
-							it->first.get_top_right().get_y(),
-							it->first.get_top_right().get_z()
-					}};
-				}
+                    //Cut-away old
+                    it->first = Box{it->first.get_bottom_left(), Coordinate{
+                            box.get_top_right().get_x(),
+                            it->first.get_top_right().get_y(),
+                            it->first.get_top_right().get_z()
+                    }};
+                }
 
-				if (it->first.get_bottom_left().get_y()
-				    < box.get_bottom_left().get_y()) {
-					new_boxes.push_back(
-							{Box{it->first.get_bottom_left(), Coordinate{
-									it->first.get_top_right().get_x(),
-									box.get_bottom_left().get_y(),
-									it->first.get_top_right().get_z()
-							}},
-							 it->second
-							});
+                if (it->first.get_bottom_left().get_y()
+                    < box.get_bottom_left().get_y()) {
+                    new_boxes.push_back(
+                            {Box{it->first.get_bottom_left(), Coordinate{
+                                    it->first.get_top_right().get_x(),
+                                    box.get_bottom_left().get_y(),
+                                    it->first.get_top_right().get_z()
+                            }},
+                             it->second
+                            });
 
-					it->first = Box{Coordinate{
-							it->first.get_bottom_left().get_x(),
-							box.get_bottom_left().get_y(),
-							it->first.get_bottom_left().get_z()
-					}, it->first.get_top_right()};
-				}
+                    it->first = Box{Coordinate{
+                            it->first.get_bottom_left().get_x(),
+                            box.get_bottom_left().get_y(),
+                            it->first.get_bottom_left().get_z()
+                    }, it->first.get_top_right()};
+                }
 
-				if (it->first.get_top_right().get_y()
-				    > box.get_top_right().get_y()) {
-					new_boxes.push_back(
-							{Box{Coordinate{
-									it->first.get_bottom_left().get_x(),
-									box.get_top_right().get_y(),
-									it->first.get_bottom_left().get_z()
-							}, it->first.get_top_right()},
-							 it->second
-							});
+                if (it->first.get_top_right().get_y()
+                    > box.get_top_right().get_y()) {
+                    new_boxes.push_back(
+                            {Box{Coordinate{
+                                    it->first.get_bottom_left().get_x(),
+                                    box.get_top_right().get_y(),
+                                    it->first.get_bottom_left().get_z()
+                            }, it->first.get_top_right()},
+                             it->second
+                            });
 
-					it->first = Box{it->first.get_bottom_left(), Coordinate{
-							it->first.get_top_right().get_x(),
-							box.get_top_right().get_y(),
-							it->first.get_top_right().get_z()
-					}};
-				}
+                    it->first = Box{it->first.get_bottom_left(), Coordinate{
+                            it->first.get_top_right().get_x(),
+                            box.get_top_right().get_y(),
+                            it->first.get_top_right().get_z()
+                    }};
+                }
 
-				if (it->first.get_top_right().get_z()
-				    > box.get_top_right().get_z()) {
-					new_boxes.push_back(
-							{Box{Coordinate{
-									it->first.get_bottom_left().get_x(),
-									it->first.get_bottom_left().get_y(),
-									box.get_top_right().get_z()
-							}, it->first.get_top_right()},
-							 it->second
-							});
+                if (it->first.get_top_right().get_z()
+                    > box.get_top_right().get_z()) {
+                    new_boxes.push_back(
+                            {Box{Coordinate{
+                                    it->first.get_bottom_left().get_x(),
+                                    it->first.get_bottom_left().get_y(),
+                                    box.get_top_right().get_z()
+                            }, it->first.get_top_right()},
+                             it->second
+                            });
 
-					// last box cutaway removed
-				}
+                    // last box cutaway removed
+                }
 
-				if (it->first.get_bottom_left().get_z()
-				    < box.get_bottom_left().get_z()) {
-					new_boxes.push_back(
-							{Box{it->first.get_bottom_left(), Coordinate{
-									it->first.get_top_right().get_x(),
-									it->first.get_top_right().get_y(),
-									box.get_bottom_left().get_z()
-							}},
-							 it->second
-							});
+                if (it->first.get_bottom_left().get_z()
+                    < box.get_bottom_left().get_z()) {
+                    new_boxes.push_back(
+                            {Box{it->first.get_bottom_left(), Coordinate{
+                                    it->first.get_top_right().get_x(),
+                                    it->first.get_top_right().get_y(),
+                                    box.get_bottom_left().get_z()
+                            }},
+                             it->second
+                            });
 
-					// last box cutaway removed
-				}
+                    // last box cutaway removed
+                }
 
-				// remove the old box as it will be split into multiple
-				it = map.erase(it);
-			} else {
-				++it;
-			}
-		}
+                // remove the old box as it will be split into multiple
+                it = map.erase(it);
+            } else {
+                ++it;
+            }
+        }
 
-		//Add newly cut boxes
-		for (std::pair<Box, BoxInfo> box_cut : new_boxes) {
-			map.push_back(box_cut);
-		}
+        //Add newly cut boxes
+        for (std::pair<Box, BoxInfo> box_cut : new_boxes) {
+            map.push_back(box_cut);
+        }
 
-		// if the new box has neither navigable or an obstacle
-		// then don't bother adding it as the empty area is unknown by default
-		if (box_info.get_has_navigatable() || box_info.get_has_obstacle()) {
-			//Add the actual new box
-			map.push_back(std::pair<Box, BoxInfo>{box, box_info});
-		}
-	}
+        // if the new box has neither navigable or an obstacle
+        // then don't bother adding it as the empty area is unknown by default
+        if (box_info.get_has_navigatable() || box_info.get_has_obstacle()) {
+            //Add the actual new box
+            map.push_back(std::pair<Box, BoxInfo>{box, box_info});
+        }
+    }
 
-	int ArrayBoxMap::get_map_size() const {
-		return int(map.size());
-	}
+    int ArrayBoxMap::get_map_size() const {
+        return int(map.size());
+    }
 
-	std::vector<std::pair<Box, BoxInfo>> ArrayBoxMap::get_intersecting(const Box &bounds) const {
-		std::vector<std::pair<Box, BoxInfo>> intersecting;
-		// naive algorithm for collision detection
-		for (auto item : map) {
-			if (bounds.intersects(item.first)) {
-				intersecting.push_back(item);
-			}
-		}
-		return intersecting;
-	}
+    std::vector<std::pair<Box, BoxInfo>> ArrayBoxMap::get_intersecting(const Box &bounds) const {
+        std::vector<std::pair<Box, BoxInfo>> intersecting;
+        // naive algorithm for collision detection
+        for (auto item : map) {
+            if (bounds.intersects(item.first)) {
+                intersecting.push_back(item);
+            }
+        }
+        return intersecting;
+    }
 
-	void ArrayBoxMap::add_box(Box box, BoxInfo info) {
-		map.push_back({box, info});
-	}
+    void ArrayBoxMap::add_box(Box box, BoxInfo info) {
+        map.push_back({box, info});
+    }
 
 }

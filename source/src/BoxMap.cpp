@@ -32,121 +32,121 @@
 
 namespace r2d2 {
 
-	const BoxInfo BoxMap::get_box_info(const Box box) {
-		bool temp_has_obstacle = false;
-		bool temp_has_unknown = false;
-		bool temp_has_navigatable = false;
+    const BoxInfo BoxMap::get_box_info(const Box box) {
+        bool temp_has_obstacle = false;
+        bool temp_has_unknown = false;
+        bool temp_has_navigatable = false;
 
-		Translation axis_size = box.get_axis_size();
-		double xlen = axis_size.get_x() / Length::METER,
-				ylen = axis_size.get_y() / Length::METER,
-				zlen = axis_size.get_z() / Length::METER;
-		// calculate the total area of the requested box
-		// if one of the axes is length zero then it won't be counted
-		// in the volume, as it will in result in zero volume
-		bool has_x = xlen > 0, has_y = ylen > 0, has_z = zlen > 0;
-		// adt has no unit for volume, we'll have to use a double for now
-		double vol = (has_x ? xlen : 1) *
-		             (has_y ? ylen : 1) *
-		             (has_z ? zlen : 1);
+        Translation axis_size = box.get_axis_size();
+        double xlen = axis_size.get_x() / Length::METER,
+                ylen = axis_size.get_y() / Length::METER,
+                zlen = axis_size.get_z() / Length::METER;
+        // calculate the total area of the requested box
+        // if one of the axes is length zero then it won't be counted
+        // in the volume, as it will in result in zero volume
+        bool has_x = xlen > 0, has_y = ylen > 0, has_z = zlen > 0;
+        // adt has no unit for volume, we'll have to use a double for now
+        double vol = (has_x ? xlen : 1) *
+                     (has_y ? ylen : 1) *
+                     (has_z ? zlen : 1);
 
-		for (auto &found_box : get_intersecting(box)) {
-			if (found_box.second.get_has_obstacle()) {
-				temp_has_obstacle = true;
-			}
+        for (auto &found_box : get_intersecting(box)) {
+            if (found_box.second.get_has_obstacle()) {
+                temp_has_obstacle = true;
+            }
 
-			if (found_box.second.get_has_navigatable()) {
-				temp_has_navigatable = true;
-			}
+            if (found_box.second.get_has_navigatable()) {
+                temp_has_navigatable = true;
+            }
 
-			if (found_box.second.get_has_unknown()) {
-				temp_has_unknown = true;
-			}
+            if (found_box.second.get_has_unknown()) {
+                temp_has_unknown = true;
+            }
 
-			// subtract the volume that this box takes in from the total box area
-			axis_size = found_box.first.get_intersection_box(box).get_axis_size();
-			vol -= (has_x ? axis_size.get_x() / Length::METER : 1)
-			       * (has_y ? axis_size.get_y() / Length::METER : 1)
-			       * (has_z ? axis_size.get_z() / Length::METER : 1);
+            // subtract the volume that this box takes in from the total box area
+            axis_size = found_box.first.get_intersection_box(box).get_axis_size();
+            vol -= (has_x ? axis_size.get_x() / Length::METER : 1)
+                   * (has_y ? axis_size.get_y() / Length::METER : 1)
+                   * (has_z ? axis_size.get_z() / Length::METER : 1);
 
-			if (temp_has_obstacle && temp_has_unknown && temp_has_navigatable) {
-				// if all three are true then the result must be as such
-				return BoxInfo{
-						temp_has_obstacle,
-						temp_has_unknown,
-						temp_has_navigatable
-				};
-			}
-		}
+            if (temp_has_obstacle && temp_has_unknown && temp_has_navigatable) {
+                // if all three are true then the result must be as such
+                return BoxInfo{
+                        temp_has_obstacle,
+                        temp_has_unknown,
+                        temp_has_navigatable
+                };
+            }
+        }
 
-		static const double significant = 0.0001;
-		// if there is some amount of uncovered area within the requested box
-		// then there is unknown in the area
-		if (vol > significant || !(temp_has_obstacle || temp_has_navigatable)) {
-			temp_has_unknown = true;
-		}
+        static const double significant = 0.0001;
+        // if there is some amount of uncovered area within the requested box
+        // then there is unknown in the area
+        if (vol > significant || !(temp_has_obstacle || temp_has_navigatable)) {
+            temp_has_unknown = true;
+        }
 
-		return BoxInfo{
-				temp_has_obstacle,
-				temp_has_navigatable,
-				temp_has_unknown
-		};
-	}
+        return BoxInfo{
+                temp_has_obstacle,
+                temp_has_navigatable,
+                temp_has_unknown
+        };
+    }
 
-	union BoxInfoByte {
-		char byte;
-		struct {
-			bool navigable : 1,
-					obstacle : 1,
-					unknown : 1;
-		} info;
-	};
+    union BoxInfoByte {
+        char byte;
+        struct {
+            bool navigable : 1,
+                    obstacle : 1,
+                    unknown : 1;
+        } info;
+    };
 
-	void BoxMap::save(std::string filename) {
-		std::ofstream ofs{filename, std::ios_base::out | std::ios_base::binary};
-		char buf[sizeof(double) * 6];
-		double *dvals{(double*)&buf};
+    void BoxMap::save(std::string filename) {
+        std::ofstream ofs{filename, std::ios_base::out | std::ios_base::binary};
+        char buf[sizeof(double) * 6];
+        double *dvals{(double*)&buf};
 
-		for (auto item : get_intersecting(get_map_bounding_box())) {
-			Box &box = item.first;
-			Coordinate bot{box.get_bottom_left()},
-					top{box.get_top_right()};
-			BoxInfoByte info;
-			info.info.navigable = item.second.get_has_navigatable();
-			info.info.obstacle = item.second.get_has_obstacle();
-			info.info.unknown = item.second.get_has_unknown();
-			dvals[0] = bot.get_x() / r2d2::Length::METER;
-			dvals[1] = bot.get_y() / r2d2::Length::METER;
-			dvals[2] = bot.get_z() / r2d2::Length::METER;
-			dvals[3] = top.get_x() / r2d2::Length::METER;
-			dvals[4] = top.get_y() / r2d2::Length::METER;
-			dvals[5] = top.get_z() / r2d2::Length::METER;
-			ofs.write(buf, sizeof(buf)) << info.byte;
-		}
+        for (auto item : get_intersecting(get_map_bounding_box())) {
+            Box &box = item.first;
+            Coordinate bot{box.get_bottom_left()},
+                    top{box.get_top_right()};
+            BoxInfoByte info;
+            info.info.navigable = item.second.get_has_navigatable();
+            info.info.obstacle = item.second.get_has_obstacle();
+            info.info.unknown = item.second.get_has_unknown();
+            dvals[0] = bot.get_x() / r2d2::Length::METER;
+            dvals[1] = bot.get_y() / r2d2::Length::METER;
+            dvals[2] = bot.get_z() / r2d2::Length::METER;
+            dvals[3] = top.get_x() / r2d2::Length::METER;
+            dvals[4] = top.get_y() / r2d2::Length::METER;
+            dvals[5] = top.get_z() / r2d2::Length::METER;
+            ofs.write(buf, sizeof(buf)) << info.byte;
+        }
 
-		ofs.close();
-	}
+        ofs.close();
+    }
 
-	void BoxMap::load(std::string filename) {
-		set_box_info(get_map_bounding_box(), {false, false, false});
+    void BoxMap::load(std::string filename) {
+        set_box_info(get_map_bounding_box(), {false, false, false});
 
-		// Open file
-		std::ifstream ifs{filename, std::ios_base::in | std::ios_base::binary};
-		char buf[sizeof(double) * 6];
-		double *dvals{(double*)&buf};
+        // Open file
+        std::ifstream ifs{filename, std::ios_base::in | std::ios_base::binary};
+        char buf[sizeof(double) * 6];
+        double *dvals{(double*)&buf};
 
-		BoxInfoByte info;
-		while (ifs.read(buf, sizeof(buf)) >> info.byte) {
-			add_box({Coordinate{dvals[0] * r2d2::Length::METER,
-			                         dvals[1] * r2d2::Length::METER,
-			                         dvals[2] * r2d2::Length::METER},
-			              Coordinate{dvals[3] * r2d2::Length::METER,
-			                         dvals[4] * r2d2::Length::METER,
-			                         dvals[5] * r2d2::Length::METER}},
-			             {info.info.obstacle, info.info.navigable, info.info.unknown});
-		}
+        BoxInfoByte info;
+        while (ifs.read(buf, sizeof(buf)) >> info.byte) {
+            add_box({Coordinate{dvals[0] * r2d2::Length::METER,
+                                     dvals[1] * r2d2::Length::METER,
+                                     dvals[2] * r2d2::Length::METER},
+                          Coordinate{dvals[3] * r2d2::Length::METER,
+                                     dvals[4] * r2d2::Length::METER,
+                                     dvals[5] * r2d2::Length::METER}},
+                         {info.info.obstacle, info.info.navigable, info.info.unknown});
+        }
 
-		ifs.close();
-	}
+        ifs.close();
+    }
 
 }
