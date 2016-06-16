@@ -41,7 +41,7 @@ void save_load_test() {
     std::default_random_engine re((unsigned int)(time(NULL)));
     srand((unsigned int)(time(NULL)));
     T bm{};
-    cout << "May take a while... Please wait" << endl;
+    std::cout << "May take a while... Please wait" << std::endl;
     int generate_box_count = 10;
     for (int i = 0; i < generate_box_count; i++) {
         bm.set_box_info(
@@ -60,14 +60,14 @@ void save_load_test() {
                 r2d2::BoxInfo{rand() % 2 == 0, rand() % 2 == 0, rand() % 2 == 0}
         );
     }
-    cout << "Saving...";
+    std::cout << "Saving...";
     bm.save("save_and_load_test.map");
 
-    cout << "Loading..." << endl;
+    std::cout << "Loading..." << std::endl;
     T bm2{};
     bm2.load("save_and_load_test.map");
     int rounds = 50;
-    cout << "Comparing with " << rounds << " rounds" << endl;
+    std::cout << "Comparing with " << rounds << " rounds" << std::endl;
     while (rounds >= 0) {
         r2d2::Box temp{
             r2d2::Coordinate{

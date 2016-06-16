@@ -33,6 +33,8 @@
 
 #include <limits>
 #include <algorithm>
+#include <cassert>
+
 #include "RTree.hpp"
 
 namespace r2d2 {
