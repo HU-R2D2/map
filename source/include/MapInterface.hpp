@@ -52,7 +52,7 @@
 #include <vector>
 #include <memory>
 
-#include "../../../adt/source/include/Box.hpp"
+#include <Box.hpp>
 
 namespace r2d2 {
     //! @author     Sander Kolman
