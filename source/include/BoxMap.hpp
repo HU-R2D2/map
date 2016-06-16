@@ -56,6 +56,7 @@ namespace r2d2 {
         //! @return an array of all the boxes intersecting with the bounds
         virtual std::vector<std::pair<Box, BoxInfo>> get_intersecting(const Box &bounds) const = 0;
 
+        //! print out the map to the ostream 'lhs', used for debugging purposes
         virtual std::ostream &print(std::ostream &lhs) = 0;
 
     private:

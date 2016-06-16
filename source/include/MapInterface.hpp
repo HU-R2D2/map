@@ -55,15 +55,15 @@
 #include "../../../adt/source/include/Box.hpp"
 
 namespace r2d2 {
-	//! @author     Sander Kolman
-	//! @date       08-04-16
-	//! @version    1.0
-	//! @brief      The BoxInfo class is the data that will actually be captured about a certain area.
-	//!             It contains 3 boolean attributes for different information about an area.
-	//!
-	//!             For example:
-	//!             @snippet source/src/main.cpp map_interface_example
-	//!
+    //! @author     Sander Kolman
+    //! @date       08-04-16
+    //! @version    1.0
+    //! @brief      The BoxInfo class is the data that will actually be captured about a certain area.
+    //!             It contains 3 boolean attributes for different information about an area.
+    //!
+    //!             For example:
+    //!             @snippet source/src/main.cpp map_interface_example
+    //!
     class BoxInfo {
     public:
 
@@ -115,15 +115,15 @@ namespace r2d2 {
         bool has_unknown;
 
     };
-	//! @author     Sander Kolman
-	//! @date       08-04-16
-	//! @version    1.0
-	//! @brief      The ReadOnlyMap class is the simplest interface,
-	//!				only allowing read functionality.
-	//!
-	//!             For example:
-	//!             @snippet source/src/main.cpp map_interface_example
-	//!
+    //! @author     Sander Kolman
+    //! @date       08-04-16
+    //! @version    1.0
+    //! @brief      The ReadOnlyMap class is the simplest interface,
+    //!                only allowing read functionality.
+    //!
+    //!             For example:
+    //!             @snippet source/src/main.cpp map_interface_example
+    //!
     class ReadOnlyMap {
     public:
 
@@ -150,15 +150,15 @@ namespace r2d2 {
         virtual const Box get_map_bounding_box() = 0;
     };
 
-	//! @author     Sander Kolman
-	//! @date       08-04-16
-	//! @version    1.0
-	//! @brief      The ReadWriteMap class inherits the ReadOnlyMap, 
-	//!				it also adds a write function to fill a map with data.  
-	//!
-	//!             For example:
-	//!             @snippet source/src/main.cpp map_interface_example
-	//!
+    //! @author     Sander Kolman
+    //! @date       08-04-16
+    //! @version    1.0
+    //! @brief      The ReadWriteMap class inherits the ReadOnlyMap,
+    //!                it also adds a write function to fill a map with data.
+    //!
+    //!             For example:
+    //!             @snippet source/src/main.cpp map_interface_example
+    //!
     class ReadWriteMap : public ReadOnlyMap {
     public:
 
@@ -174,16 +174,16 @@ namespace r2d2 {
         virtual void set_box_info(const Box box, const BoxInfo box_info) = 0;
     };
 
-	//! @author     Sander Kolman
-	//! @date       08-04-16
-	//! @version    1.0
-	//! @brief      The SaveLoadMap class inherits the functionality,
-	//!				of the ReadWriteMap class, it also adds functions to save,
-	//!				and load a map respectively to and from file I/O.
-	//!
-	//!             For example:
-	//!             @snippet source/src/main.cpp map_interface_example
-	//!
+    //! @author     Sander Kolman
+    //! @date       08-04-16
+    //! @version    1.0
+    //! @brief      The SaveLoadMap class inherits the functionality,
+    //!                of the ReadWriteMap class, it also adds functions to save,
+    //!                and load a map respectively to and from file I/O.
+    //!
+    //!             For example:
+    //!             @snippet source/src/main.cpp map_interface_example
+    //!
     class SaveLoadMap : public ReadWriteMap {
     public:
 

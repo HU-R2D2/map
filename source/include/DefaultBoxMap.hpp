@@ -9,7 +9,9 @@
 
 namespace r2d2 {
 
-	typedef RStarMap DefaultBoxMap;
+	//! the default boxmap implementation, used to be able to
+	//! quickly/seamlessly switch between different implementations of the map
+    typedef RStarMap DefaultBoxMap;
 
 }
 

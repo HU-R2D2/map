@@ -5,20 +5,19 @@ project(map)
 find_package (Threads)
 
 set(SOURCES_GTEST
-		source/src/ArrayBoxMap.cpp
-		source/src/BoxMap.cpp
-		source/src/MapInterface.cpp
-		source/src/RStarMap.cpp
-		source/src/RTreeLeaf.cpp
-		test/BoxInfoTest.cpp
-		test/BoxMap_Test.cpp
-		test/Main_TestAll.cpp
-		test/Save_And_Load_Test
-		../adt/source/include/ADT_Base.hpp
-		../adt/source/src/Length.cpp
-		../adt/source/src/Box.cpp
-		../adt/source/src/Coordinate.cpp
-		../adt/source/src/Translation.cpp)
+        source/src/ArrayBoxMap.cpp
+        source/src/BoxMap.cpp
+        source/src/MapInterface.cpp
+        source/src/RStarMap.cpp
+        test/BoxInfoTest.cpp
+        test/BoxMap_Test.cpp
+        test/Main_TestAll.cpp
+        test/Save_And_Load_Test
+        ../adt/source/include/ADT_Base.hpp
+        ../adt/source/src/Length.cpp
+        ../adt/source/src/Box.cpp
+        ../adt/source/src/Coordinate.cpp
+        ../adt/source/src/Translation.cpp)
 
 
 
